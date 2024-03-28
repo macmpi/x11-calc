@@ -36,6 +36,7 @@
 #                    - Renamed $TARGET to $BIN - MT
 #  27 Mar 24         - Aligned rules with the generic makefile but kept the
 #                      VERBOSE option - MT
+#  28 Mar 24         - Fixed linker opton - MT
 #
 
 MODEL	=  21
@@ -63,10 +64,10 @@ CFLAGS	+= -Wno-comment -Wno-deprecated-declarations -Wno-builtin-macro-redefined
 #endif
 
 # Operating system specific settings
-LDFLAGS	+= -L /usr/X11R7/lib/
+LDFLAGS	+= -L /usr/X11R7/lib/ -R /usr/X11R7/lib
 LDLIBS	+= -lcompat
 CFLAGS	+= -Wno-variadic-macros
-CFLAGS	+= -I /usr/X11R7/include/ -R /usr/X11R7/lib
+CFLAGS	+= -I /usr/X11R7/include/
 
 
 all: $(BIN)/$(TARGET)
