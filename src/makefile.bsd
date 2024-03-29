@@ -27,6 +27,10 @@
 #  28 Mar 24         - Initial version - macmpi
 #
 
+CFLAGS	?=
+LDFLAGS	?=
+LDLIBS	?=
+
 OS != uname -s
 
 # Operating system specific settings

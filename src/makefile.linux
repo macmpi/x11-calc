@@ -81,6 +81,10 @@
 #  23 Mar 25         - Rely on makefile.generic
 #
 
+CFLAGS	?= -O2
+LDFLAGS	?=
+LDLIBS	?=
+
 LANG	= LANG_$(shell (echo $$LANG | cut -f 1 -d '_'))
 
 COMMIT	!= git log -1 HEAD --format=%h 2> /dev/null

@@ -23,13 +23,24 @@
 #                    - Fixed default rule so it works on NetBSD, Tru64, and
 #                      Linux (now we can get rid of make.sh) - MT
 #  24 Mar 24         - Pass model number - MT
+#  29 Mar 24         - Use linx/bsd/osf1 makefiles
 #
 
 MODEL	=  21
 
 all:
-	@$(MAKE) -s -f "makefile.`uname | tr '[:upper:]' '[:lower:]'`" MODEL=$(MODEL) $@
+	@_flavor="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
+	case $$_flavor in \
+		netbsd) _flavor=bsd;; \
+		darwin) _flavor=bsd;; \
+	esac; \
+	$(MAKE) -s -f "makefile.$$_flavor" MODEL=$(MODEL) $@
 
 .DEFAULT:
-	@$(MAKE) -s -f "makefile.`uname | tr '[:upper:]' '[:lower:]'`" MODEL=$(MODEL) $@
+	@_flavor="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
+	case $$_flavor in \
+		netbsd) _flavor=bsd;; \
+		darwin) _flavor=bsd;; \
+	esac; \
+	$(MAKE) -s -f "makefile.$$_flavor" MODEL=$(MODEL) $@
 
