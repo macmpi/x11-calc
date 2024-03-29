@@ -387,6 +387,7 @@
  * 21 Mar 24         - Fixed display position (12C 15C and 16C)- MT
  * 29 Mar 24         - Fixed 'undefined behavior' warnings - MT
  *                   - Fixed 'unused result' compiler warnings - MT
+ *                   - Fixed 'array subscript' compiler warnings -MT
  *
  * To Do             - Finish adding code to display any modified registers
  *                     to every instruction.
@@ -1120,7 +1121,8 @@ void v_processor_tick(oprocessor *h_processor) /* Decode and execute a single in
 #endif
 
 #if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
-   static const int n_map_i[16] = {  3,  4,  5, 10,  8,  6, 11, -1,  2,  9,  7, 13,  1, 12,  0, -1 }; /* map nnnn to index */
+/* static const int n_map_i[16] = {  3,  4,  5, 10,  8,  6, 11, -1,  2,  9,  7, 13,  1, 12,  0, -1 }; /* map nnnn to index */
+   static const int n_map_i[16] = {  3,  4,  5, 10,  8,  6, 11, 255,  2,  9,  7, 13,  1, 12,  0, 255 }; /* map nnnn to index */
 #endif
 
    unsigned int i_last; /* Save the current PC */
