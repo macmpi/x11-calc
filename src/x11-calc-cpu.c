@@ -385,9 +385,10 @@
  * 03 Mar 24         - Updated error handling (now passes the  error number
  *                     to the error handler) - MT
  * 21 Mar 24         - Fixed display position (12C 15C and 16C)- MT
- * 29 Mar 24         - Fixed 'undefined behavior' warnings - MT
- *                   - Fixed 'unused result' compiler warnings - MT
- *                   - Fixed 'array subscript' compiler warnings -MT
+ * 29 Mar 24         - Fixed undefined behavior warnings - MT
+ *                   - Fixed unused result compiler warnings - MT
+ *                   - Fixed array subscript and string operation  compiler
+ *                     warnings -MT
  *
  * To Do             - Finish adding code to display any modified registers
  *                     to every instruction.
@@ -2099,14 +2100,14 @@ void v_processor_tick(oprocessor *h_processor) /* Decode and execute a single in
             if ((i_opcode >> 6) < 15)
             {
                if (h_processor->trace) fprintf(stdout, "st = 0 %-2d\t\t", n_map_i[i_opcode >> 6]);
-               h_processor->status[n_map_i[i_opcode >> 6]] = False;
+               h_processor->status[n_map_i[i_opcode >> 6]] = (unsigned char)False;
             }
             else
             {
                int i_count;
                if (h_processor->trace) fprintf(stdout, "clrst\t\t");
                for (i_count = 7; i_count >= 0; i_count--) /* Note only clears bits 7-0 of the status register */
-                  h_processor->status[n_map_i[i_opcode >> 6]] = False;
+                  h_processor->status[n_map_i[i_opcode >> 6]] = (unsigned char)False;
             }
             if (h_processor->trace) v_fprint_status(stdout, h_processor);
             break;
@@ -2119,7 +2120,7 @@ void v_processor_tick(oprocessor *h_processor) /* Decode and execute a single in
             if ((i_opcode >> 6) < 15)
             {
                if (h_processor->trace) fprintf(stdout, "st = 1 %-2d\t\t", n_map_i[i_opcode >> 6]);
-               h_processor->status[n_map_i[i_opcode >> 6]] = True;
+               h_processor->status[n_map_i[i_opcode >> 6]] = (unsigned char)True;
                if (h_processor->trace) v_fprint_status(stdout, h_processor);
             }
             else
