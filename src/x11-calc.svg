@@ -5,32 +5,8 @@
    style="fill:none"
    version="1.1"
    id="svg44"
-   sodipodi:docname="x11-calc.svg"
-   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs44" />
-  <sodipodi:namedview
-     id="namedview44"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="4"
-     inkscape:cx="58.625"
-     inkscape:cy="74.625"
-     inkscape:window-width="1440"
-     inkscape:window-height="828"
-     inkscape:window-x="0"
-     inkscape:window-y="25"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g51" />
   <g
      id="g51"
      transform="matrix(0.86,0,0,0.86,9.1,8.96)">
@@ -109,7 +85,7 @@
        height="12"
        x="68"
        y="40"
-       style="fill:#000000"
+       style="fill:#786721"
        id="rect10"
        rx="2%" />
     <rect
@@ -117,7 +93,7 @@
        height="8"
        x="69"
        y="41"
-       style="fill:#d3d3d3"
+       style="fill:#ffdd55"
        id="rect11"
        rx="2%" />
     <rect
@@ -125,7 +101,7 @@
        height="12"
        x="88"
        y="40"
-       style="fill:#000000"
+       style="fill:#337888"
        id="rect12"
        rx="2%" />
     <rect
@@ -133,7 +109,7 @@
        height="8"
        x="89"
        y="41"
-       style="fill:#d3d3d3"
+       style="fill:#66abbb"
        id="rect13"
        rx="2%" />
     <rect
@@ -165,7 +141,7 @@
        height="12"
        x="88"
        y="56"
-       style="fill:#786721"
+       style="fill:#000000"
        id="rect16-6"
        rx="2%" />
     <rect
@@ -188,7 +164,7 @@
        height="8"
        x="89"
        y="57"
-       style="fill:#ffdd55"
+       style="fill:#d3d3d3"
        id="rect19"
        rx="2%" />
     <rect
