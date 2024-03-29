@@ -28,7 +28,7 @@
 #
 
 MODEL	?=  21
-PROGRAM	=  x11-calc-$(MODEL)
+PROGRAM	:=  x11-calc-$(MODEL)
 BIN		?= ../bin
 
 # SHARED sources are model-dependant via HP$(MODEL) #define statements
