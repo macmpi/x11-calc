@@ -1,9 +1,9 @@
 #
-#  makefile.tru64
+#  makefile.generic - RPN (Reverse Polish) calculator simulator.
 #
-#  Copyright (C) 2013  MT
+#  Copyright(C) 2024 - macmpi, MT
 #
-#  A simplified makefile for Digital Tru64 UNIX.
+#  generic makefile for linux/NetBSD/Darwin
 #
 #  This  program is free software: you can redistribute it and/or modify it
 #  under  the terms of the GNU General Public License as published  by  the
@@ -20,69 +20,57 @@
 #
 #  Note seperator (tab) at the beginning of the line CANNOT be a space..!
 #
-#  26 Nov 23         - Initial version - MT
-#                    - Define OSF1 so conditional compilation works even if
-#                      the compiler doesn't define it automatically - MT
-#                    - Tidied up comments - MT
-#  25 Feb 24         - Added font module - MT
-#  02 Mar 24         - Fixed missing target - MT
-#  20 Mar 24         - Updated change history - MT
-#                    - Fixed issue with directory creation - MT
-#                    - Renamed $TARGET to $BIN - MT
+#  https://stackoverflow.com/questions/50941196/
 #
+#  https://www.gnu.org/software/make/manual/html_node/Prerequisite-Types.html
+#
+#  28 Mar 24         - Initial version - macmpi
 #
 
 MODEL	=  21
-PROGRAM	=  x11-calc
-TARGET	=  x11-calc-$(MODEL)
-SHARED	=  x11-calc.c $(TARGET).c x11-calc-cpu.c x11-calc-display.c x11-calc-segment.c x11-calc-messages.c x11-calc-button.c
-COMMON	=  x11-calc-switch.c x11-calc-label.c x11-calc-colour.c x11-calc-font.c gcc-wait.c gcc-exists.c x11-keyboard.c # Do not include x11-keyboard.c
-SOURCES	=  $(COMMON) $(SHARED)
+PROGRAM	=  x11-calc-$(MODEL)
+BIN		= ../bin
 
-LANG	=  LANG_$(shell (echo $$LANG | cut -f 1 -d '_'))
-LANG	=  LANG_en
-OS	=  $(shell uname)
-#OS	=  generic
-COMMIT	=  $(shell git log -1 HEAD --format=%h 2> /dev/null)
-BIN	=  ../bin
+# SHARED sources are model-dependant via HP$(MODEL) #define statements
+SHARED	=  x11-calc.c x11-calc-cpu.c x11-calc-display.c x11-calc-segment.c x11-calc-messages.c x11-calc-button.c x11-keyboard.c
+COMMON	=  x11-calc-switch.c x11-calc-label.c x11-calc-colour.c x11-calc-font.c gcc-wait.c gcc-exists.c
 
-LDLIBS	=  -lX11 -lm
-CFLAGS	=  -DHP$(MODEL) -D$(OS) -D$(LANG)
-CFLAGS	+=  -fcommon -Wall -pedantic -std=gnu99
+CC		= cc
+DEBUG	=
+
+LDLIBS	+= -lX11 -lm
+CFLAGS	+= -fcommon -Wall -pedantic -std=gnu99
 CFLAGS	+= -Wno-comment -Wno-deprecated-declarations -Wno-builtin-macro-redefined
+CFLAGS	+= -ansi
 
-ifneq ($(COMMIT),)
-CFLAGS	+= -D COMMIT_ID='"[Commit Id : $(COMMIT)]"'
-endif
+CFLAGS	+=  -D $(LANG)
+CFLAGS	+=  $(DEBUG)
 
-# NetBSD specific flags
-#LDLIBS	+= -lcompat
-#CFLAGS	+= -Wno-variadic-macros
-#CFLAGS	+= -I /usr/X11R7/include/ -R /usr/X11R7/lib
-#LDFLAGS	= -L /usr/X11R7/lib/
+all: $(BIN)/$(PROGRAM)
 
-
-all: $(BIN)/$(TARGET)
-
-$(BIN)/$(TARGET): $(SOURCES:.c=.o) $(BIN)
-	@echo '$(CC) $(LDFLAGS) $(SOURCES:.c=.o) -o $@ $(LDLIBS)'
-	@$(CC) $(LDFLAGS) $(SOURCES:.c=.o) -o $@ $(LDLIBS)
-	@echo
-
-$(BIN):
+$(BIN)/$(PROGRAM): $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o
 	@mkdir -p $(BIN)
+	@rm -f $(BIN)/$(PROGRAM)
+	@[ -n "$${VERBOSE+x}" ] && echo && \
+		echo "$(CC) $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o $(LDFLAGS) $(LDLIBS) -o $@" \
+		|| true
+	@$(CC) $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o $(LDFLAGS) $(LDLIBS) -o $@ && \
+		(cd $(BIN) && ls $$(echo $@ | sed "s:$(BIN)/::g") ) # Escape $ using $$...
 
-$(SHARED:.c=.o) : $(SHARED)
-	@echo '$(CC) $(CFLAGS) -c $(SHARED)'
-	@$(CC) $(CFLAGS) -c $(SHARED)
+.SUFFIXES: .o_HP$(MODEL) .o_cm .o
 
-$(COMMON:.c=.o) : $(COMMON)
-	@echo '$(CC) $(CFLAGS) -c $<'
-	@$(CC) $(CFLAGS) -c $(COMMON)
+.c.o_HP$(MODEL):
+	@[ -n "$${VERBOSE+x}" ] && echo && echo "$(CC) $(CFLAGS) -D HP$(MODEL) -c $< -o $@" || true
+	@$(CC) $(CFLAGS) -D HP$(MODEL) -c $< -o $@
 
-#$(COMMON:.c=.o) : %.o : %.c
-#	@echo '$(CC) $(CFLAGS) -c $<'
-#	@$(CC) $(CFLAGS) -c $<
+.c.o:
+	@[ -n "$${VERBOSE+x}" ] && echo && echo "$(CC) $(CFLAGS) -D HP$(MODEL) -c $< -o $@" || true
+	@$(CC) $(CFLAGS) -D HP$(MODEL) -c $< -o $@
+
+# COMMON files are NOT supposed to be instanciated per MODEL (will fix soon)
+.c.o_cm:
+	@[ -n "$${VERBOSE+x}" ] && echo && echo "$(CC) $(CFLAGS) -D HP$(MODEL) -c $< -o $@" || true
+	@$(CC) $(CFLAGS) -D HP$(MODEL) -c $< -o $@
 
 clean:
-	@rm -f $(SOURCES:.c=.o) # -v
+	@rm -f $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o
