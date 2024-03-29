@@ -1123,7 +1123,7 @@ void v_processor_tick(oprocessor *h_processor) /* Decode and execute a single in
 
 #if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
 /* static const int n_map_i[16] = {  3,  4,  5, 10,  8,  6, 11, -1,  2,  9,  7, 13,  1, 12,  0, -1 }; /* map nnnn to index */
-   static const int n_map_i[16] = {  3,  4,  5, 10,  8,  6, 11, 255,  2,  9,  7, 13,  1, 12,  0, 255 }; /* map nnnn to index */
+   static const int n_map_i[16] = {  3,  4,  5, 10,  8,  6, 11, 15,  2,  9,  7, 13,  1, 12,  0, 15 }; /* map nnnn to index */
 #endif
 
    unsigned int i_last; /* Save the current PC */
