@@ -385,6 +385,7 @@
  * 03 Mar 24         - Updated error handling (now passes the  error number
  *                     to the error handler) - MT
  * 21 Mar 24         - Fixed display position (12C 15C and 16C)- MT
+ * 29 Mar 24         - Fixed 'undefined behavior' warning at line 460 - MT
  *
  * To Do             - Finish adding code to display any modified registers
  *                     to every instruction.
@@ -394,8 +395,8 @@
  */
 
 #define NAME           "x11-calc-cpu"
-#define BUILD          "0169"
-#define DATE           "03 Mar 24"
+#define BUILD          "0171"
+#define DATE           "29 Mar 24"
 #define AUTHOR         "MT"
 
 #include <errno.h>     /* errno */
@@ -457,7 +458,7 @@ static void v_fprint_status(FILE *h_file, oprocessor *h_processor) /* Display th
 static void v_fprint_flags(FILE *h_file, oprocessor *h_processor) /* Display the current processor flags */
 {
    int i_count, i_temp = 0;
-   for (i_count = 0; i_count <= FLAGS; i_count++)
+   for (i_count = 0; i_count < FLAGS; i_count++)
       i_temp += h_processor->flags[i_count] << i_count;
    fprintf(h_file, "\tflags = 0x%04X%12c   ", i_temp, ' ');
 }
