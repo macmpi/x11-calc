@@ -385,7 +385,8 @@
  * 03 Mar 24         - Updated error handling (now passes the  error number
  *                     to the error handler) - MT
  * 21 Mar 24         - Fixed display position (12C 15C and 16C)- MT
- * 29 Mar 24         - Fixed 'undefined behavior' warning at line 460 - MT
+ * 29 Mar 24         - Fixed 'undefined behavior' warnings - MT
+ *                   - Fixed 'unused result' compiler warnings - MT
  *
  * To Do             - Finish adding code to display any modified registers
  *                     to every instruction.
@@ -718,36 +719,27 @@ void v_read_state(oprocessor *h_processor, char *s_pathname) /* Read processor s
 #if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
          for (i_count = 0; i_count < FLAGS; i_count++)
          {
-            fscanf(h_file, "%x,", &i_temp);
-            h_processor->flags[i_count] = i_temp;
+            if (fscanf(h_file, "%x,", &i_temp)) h_processor->flags[i_count] = i_temp;
          }
          for (i_count = 0; i_count < STATUS_BITS; i_count++)
          {
-            fscanf(h_file, "%x,", &i_temp);
-            h_processor->status[i_count] = i_temp;
+            if (fscanf(h_file, "%x,", &i_temp)) h_processor->status[i_count] = i_temp;
          }
          for (i_count = 0; i_count < REGISTERS; i_count++)
             for (i_counter = REG_SIZE - 1; i_counter >= 0 ; i_counter--)
             {
-               fscanf(h_file, "%x,", &i_temp);
-               h_processor->reg[i_count]->nibble[i_counter] = i_temp;
+               if (fscanf(h_file, "%x,", &i_temp)) h_processor->reg[i_count]->nibble[i_counter] = i_temp;
             }
-         fscanf(h_file, "%x,", &i_temp);
-         h_processor->p = i_temp;
-         fscanf(h_file, "%x,", &i_temp);
-         h_processor->q = i_temp;
-         fscanf(h_file, "%x,", &i_temp);
-         h_processor->f = i_temp;
-         fscanf(h_file, "%x,", &i_temp);
-         h_processor->g[0] = i_temp;
-         fscanf(h_file, "%x,", &i_temp);
-         h_processor->g[1] = i_temp;
+         if (fscanf(h_file, "%x,", &i_temp)) h_processor->p = i_temp;
+         if (fscanf(h_file, "%x,", &i_temp)) h_processor->q = i_temp;
+         if (fscanf(h_file, "%x,", &i_temp)) h_processor->f = i_temp;
+         if (fscanf(h_file, "%x,", &i_temp)) h_processor->g[0] = i_temp;
+         if (fscanf(h_file, "%x,", &i_temp)) h_processor->g[1] = i_temp;
 #endif
          for (i_count = 0; i_count < MEMORY_SIZE; i_count++)
             for (i_counter = REG_SIZE - 1; i_counter >= 0 ; i_counter--)
             {
-               fscanf(h_file, "%x,", &i_temp);
-               h_processor->mem[i_count]->nibble[i_counter] = i_temp;
+               if (fscanf(h_file, "%x,", &i_temp)) h_processor->mem[i_count]->nibble[i_counter] = i_temp;
             }
          fclose(h_file);
       }
