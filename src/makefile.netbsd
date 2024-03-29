@@ -1,9 +1,9 @@
 #
-#  makefile - RPN (Reverse Polish) calculator simulator.
+#  makefile.netbed - RPN (Reverse Polish) calculator simulator.
 #
 #  Copyright(C) 2019 - MT
 #
-#  makefile.
+#  A simplified makefile for NetBSD.
 #
 #  This  program is free software: you can redistribute it and/or modify it
 #  under  the terms of the GNU General Public License as published  by  the
@@ -20,56 +20,85 @@
 #
 #  Note seperator (tab) at the beginning of the line CANNOT be a space..!
 #
-#  https://stackoverflow.com/questions/50941196/
-#
-#  https://www.gnu.org/software/make/manual/html_node/Prerequisite-Types.html
-#
-#  16 Mar 24         - Initial version - MT
+#  26 Nov 23         - Initial version - MT
+#                    - Define OSF1 so conditional compilation works even if
+#                      the compiler doesn't define it automatically - MT
+#                    - Tidied up comments - MT
+#  25 Feb 24         - Added font module - MT
+#  02 Mar 24         - Fixed missing target - MT
 #  20 Mar 24         - Updated change history - MT
 #                    - Fixed issue with directory creation - MT
 #                    - Renamed $TARGET to $BIN - MT
 #  24 Mar 24         - Fixed bug in 'make clean' - MT
+#                    - Split compilation of the common and shared code into
+#                      seperate tasks - MT
+#  27 Mar 24         - Aligned rules with the generic makefile - MT
+#                    - Renamed $TARGET to $BIN - MT
+#  27 Mar 24         - Aligned rules with the generic makefile but kept the
+#                      VERBOSE option - MT
+#  28 Mar 24         - Fixed linker opton - MT
 #
 
 MODEL	=  21
 PROGRAM	=  x11-calc
-SOURCES	=  x11-calc.c x11-calc-cpu.c x11-calc-display.c x11-calc-segment.c
-SOURCES	+= x11-calc-button.c x11-calc-switch.c x11-calc-label.c x11-calc-colour.c
-SOURCES	+= x11-calc-font.c x11-calc-messages.c x11-keyboard.c gcc-wait.c gcc-exists.c
-OBJECTS	=  $(SOURCES:.c=.o)
-OUTPUT	=  $(PROGRAM).out
-UNAME	=  $(shell uname)
-COMMIT	=  $(shell git log -1 HEAD --format=%h 2> /dev/null)
+TARGET	=  x11-calc-$(MODEL)
+SHARED	=  x11-calc.c $(TARGET).c x11-calc-cpu.c x11-calc-display.c x11-calc-segment.c x11-calc-messages.c x11-calc-button.c
+COMMON	=  x11-calc-switch.c x11-calc-label.c x11-calc-colour.c x11-calc-font.c gcc-wait.c gcc-exists.c x11-keyboard.c # Do not include x11-keyboard.c
+SOURCES	=  $(COMMON) $(SHARED)
 
-BIN	=  ../bin
+#LANG	=  LANG_$(shell (echo $$LANG | cut -f 1 -d '_'))
 LANG	=  LANG_en
+#OS	=  $(shell uname)
+OS	=  netbsd
+#COMMIT	=  $(shell git log -1 HEAD --format=%h 2> /dev/null)
+BIN	=  ../bin
 
-LIBS	=  -lX11 -lm
-FLAGS	=  -fcommon -Wall -pedantic -std=gnu99
-FLAGS	+= -Wno-comment -Wno-deprecated-declarations -Wno-builtin-macro-redefined
+LDLIBS	=  -lX11 -lm
+
+CFLAGS	=  -DHP$(MODEL) -D$(OS) -D$(LANG)
+CFLAGS	+=  -fcommon -Wall -pedantic -std=gnu99
+CFLAGS	+= -Wno-comment -Wno-deprecated-declarations -Wno-builtin-macro-redefined
+
+#ifneq ($(COMMIT),)
+#CFLAGS	+= -D COMMIT_ID='"[Commit Id : $(COMMIT)]"'
+#endif
 
 # Operating system specific settings
-LIBS	+= -lcompat
-FLAGS	+= -Wno-variadic-macros
-FLAGS	+= -I /usr/X11R7/include/ -L /usr/X11R7/lib/ -R /usr/X11R7/lib
+LDFLAGS	+= -L /usr/X11R7/lib/ -R /usr/X11R7/lib
+LDLIBS	+= -lcompat
+CFLAGS	+= -Wno-variadic-macros
+CFLAGS	+= -I /usr/X11R7/include/
 
-LIBS	+= -no-pie
-FLAGS	+= -ansi
 
-all: $(BIN)/$(PROGRAM)-$(MODEL) $(OBJECTS)
-FLAGS	+= -D HP$(MODEL) -D $(LANG)
-SOURCES += x11-calc-$(MODEL).c
+all: $(BIN)/$(TARGET)
 
-$(BIN)/$(PROGRAM)-$(MODEL): $(OBJECTS) $(BIN)
-	@$(CC) $(FLAGS) $(OBJECTS) -o $@ $(LIBS) && (cd $(BIN) && ls $$(echo $@ | sed "s:$(BIN)/::g") ) # Escape $ using $$...
+$(BIN)/$(TARGET): $(SOURCES:.c=.o) $(BIN)
+.ifdef VERBOSE
+	@echo '   $(CC) $(LDFLAGS) $(SOURCES:.c=.o) -o $@ $(LDLIBS)'
+.endif
+	@$(CC) $(LDFLAGS) $(SOURCES:.c=.o) -o $@ $(LDLIBS) && (cd $(BIN) && ls $$(echo $@ | sed "s:$(BIN)/::g") ) # Escape $ using $$...
+.ifdef VERBOSE
+	@echo
+.endif
 
 $(BIN):
-	@mkdir $(BIN)
+	@mkdir -p $(BIN)
 
-$(OBJECTS) : $(SOURCES)
-	@rm -f $(BIN)/$(PROGRAM)-$(MODEL)
-	@$(CC) $(FLAGS) -c $(SOURCES)
+$(SHARED:.c=.o) : $(SHARED)
+.ifdef VERBOSE
+	@echo '   $(CC) $(CFLAGS) -c $(SHARED)'
+.endif
+	@$(CC) $(CFLAGS) -c $(SHARED)
+
+$(COMMON:.c=.o) : $(COMMON)
+.ifdef VERBOSE
+	@echo '   $(CC) $(CFLAGS) -c $<'
+.endif
+	@$(CC) $(CFLAGS) -c $(COMMON)
+
+#$(COMMON:.c=.o) : %.o : %.c
+#       @echo '   $(CC) $(CFLAGS) -c $<'
+#       @$(CC) $(CFLAGS) -c $<
 
 clean:
-#	@rm -f $(PROGRAM)-$(MODEL).o
-	@rm -f $(OBJECTS) # -v
+	@rm -f $(SOURCES:.c=.o) # -v

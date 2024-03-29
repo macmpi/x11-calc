@@ -274,6 +274,7 @@
  * 14 Mar 24         - Allow SCALE_HEIGHT and SCALE_WIDTH to be passed from
  *                     command line at compile time - MT
  * 18 Mar 24         - Embedded missing firmware - MT
+ * 29 Mar 24         - Fixed compiler warnings - MT
  *
  *
  * To Do             - Parse command line in a separate routine.
@@ -286,7 +287,7 @@
 
 #define NAME           "x11-calc"
 #define VERSION        "0.14"
-#define BUILD          "0136"
+#define BUILD          "0137"
 #define DATE           "18 Mar 24"
 #define AUTHOR         "MT"
 
