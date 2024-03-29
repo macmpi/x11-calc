@@ -30,17 +30,11 @@ MODEL	=  21
 
 all:
 	@_flavor="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
-	case $$_flavor in \
-		netbsd) _flavor=bsd;; \
-		darwin) _flavor=bsd;; \
-	esac; \
+	echo "$$_flavor" | grep -qvwE "netbsd|darwin" || _flavor=bsd; \
 	$(MAKE) -s -f "makefile.$$_flavor" MODEL=$(MODEL) $@
 
 .DEFAULT:
 	@_flavor="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
-	case $$_flavor in \
-		netbsd) _flavor=bsd;; \
-		darwin) _flavor=bsd;; \
-	esac; \
+	echo "$$_flavor" | grep -qvwE "netbsd|darwin" || _flavor=bsd; \
 	$(MAKE) -s -f "makefile.$$_flavor" MODEL=$(MODEL) $@
 
