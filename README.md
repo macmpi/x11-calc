@@ -168,6 +168,8 @@ The emulators have been tested on the following systems:
 
 - Fedora 35, gcc 11.3.1, x64
 
+- Fedora 35, clang 13.0.1, x64
+
 - Fedora 39, gcc 13.2.1, x64
 
 - Gentoo, gcc 11.2.0, x64
@@ -200,9 +202,9 @@ The following packages are required to build and/or run the simulator.
 
 - Debian : gcc | clang | tcc  make libc6-dev libx11-dev xfonts-base
 
-- Fedora : gcc make glibc-devel libX11-devel xorg-x11-fonts-base | xorg-x11-fonts-misc
+- Fedora : gcc | clang  make glibc-devel libX11-devel xorg-x11-fonts-base | xorg-x11-fonts-misc
 
-- Gentoo : gcc  make libc6-dev libx11-dev font-misc-misc
+- Gentoo : gcc make libc6-dev libx11-dev font-misc-misc
 
 - MacOS  : clang make [xquartz](https://www.xquartz.org/)
 
