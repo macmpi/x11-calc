@@ -26,13 +26,14 @@
  * 29 Jan 22         - Added an optional bezel to the display - MT
  * 12 Feb 22         - Updated layout and separated the initialisation code
  *                     for buttons and switches into two functions - MT
+ * 30 Mar 24         - Corrected number of switches - MT
  *
  */
 
 #define HEIGHT             450 * SCALE_HEIGHT
 #define WIDTH              200 * SCALE_WIDTH
 #define BUTTONS            35
-#define SWITCHES           2
+#define SWITCHES           1
 #define DIGITS             15
 
 #define DIGIT_COLOUR       RED
