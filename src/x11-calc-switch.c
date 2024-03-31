@@ -29,12 +29,14 @@
  * 24 Feb 24         - Do not need to include "x11-font.h" - MT
  * 03 Mar 24         - Updated error handling (now passes the  error number
  *                     to the error handler) - MT
+ * 29 Mar 24         - Fixed  compiler 'vairable may be used uninitialized'
+ *                     warnings - MT
  *
  */
 
 #define NAME           "x11-calc-switch"
-#define BUILD          "0008"
-#define DATE           "03 Mar 24"
+#define BUILD          "0009"
+#define DATE           "29 Mar 24"
 #define AUTHOR         "MT"
 
 #include <errno.h>     /* errno */
@@ -109,7 +111,7 @@ oswitch *h_switch_create(int i_index, char* s_on, char* s_mid, char* s_off,
 int i_switch_draw(Display *h_display, int x_application_window, int i_screen, oswitch *h_switch)
 {
    int i_indent, i_upper;
-   int i_on_colour, i_mid_colour, i_off_colour;
+   int i_on_colour = h_switch->colour, i_mid_colour = h_switch->alternate_colour, i_off_colour = h_switch->alternate_colour;
 
    if (h_switch != NULL)
    {

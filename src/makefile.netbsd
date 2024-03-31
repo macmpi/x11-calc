@@ -1,9 +1,9 @@
 #
-#  makefile.tru64
+#  makefile.netbed - RPN (Reverse Polish) calculator simulator.
 #
-#  Copyright (C) 2013  MT
+#  Copyright(C) 2019 - MT
 #
-#  A simplified makefile for Digital Tru64 UNIX.
+#  A simplified makefile for NetBSD.
 #
 #  This  program is free software: you can redistribute it and/or modify it
 #  under  the terms of the GNU General Public License as published  by  the
@@ -29,49 +29,76 @@
 #  20 Mar 24         - Updated change history - MT
 #                    - Fixed issue with directory creation - MT
 #                    - Renamed $TARGET to $BIN - MT
-#  24 Mar 24         - Updated to use $SHARED and $COMMON source files - MT
-#                    - Added 'make all' and 'make clean' - MT
+#  24 Mar 24         - Fixed bug in 'make clean' - MT
 #                    - Split compilation of the common and shared code into
-#                      seperate tasks (which is up to be 18% quicker) - MT
+#                      seperate tasks - MT
 #  27 Mar 24         - Aligned rules with the generic makefile - MT
+#                    - Renamed $TARGET to $BIN - MT
+#  27 Mar 24         - Aligned rules with the generic makefile but kept the
+#                      VERBOSE option - MT
+#  28 Mar 24         - Fixed linker opton - MT
 #
 
 MODEL	=  21
 PROGRAM	=  x11-calc
 TARGET	=  x11-calc-$(MODEL)
 SHARED	=  x11-calc.c $(TARGET).c x11-calc-cpu.c x11-calc-display.c x11-calc-segment.c x11-calc-messages.c x11-calc-button.c
-COMMON	=  x11-calc-switch.c x11-calc-label.c x11-calc-colour.c x11-calc-font.c gcc-wait.c gcc-exists.c # Do not include x11-keyboard.c
+COMMON	=  x11-calc-switch.c x11-calc-label.c x11-calc-colour.c x11-calc-font.c gcc-wait.c gcc-exists.c x11-keyboard.c # Do not include x11-keyboard.c
 SOURCES	=  $(COMMON) $(SHARED)
-OBJECTS	=  $(SOURCES:.c=.o)
 
 #LANG	=  LANG_$(shell (echo $$LANG | cut -f 1 -d '_'))
 LANG	=  LANG_en
 #OS	=  $(shell uname)
-OS	=  OSF1
+OS	=  netbsd
 #COMMIT	=  $(shell git log -1 HEAD --format=%h 2> /dev/null)
 BIN	=  ../bin
 
 LDLIBS	=  -lX11 -lm
+
 CFLAGS	=  -DHP$(MODEL) -D$(OS) -D$(LANG)
+CFLAGS	+=  -fcommon -Wall -pedantic -std=gnu99
+CFLAGS	+= -Wno-comment -Wno-deprecated-declarations -Wno-builtin-macro-redefined
+
+#ifneq ($(COMMIT),)
+#CFLAGS	+= -D COMMIT_ID='"[Commit Id : $(COMMIT)]"'
+#endif
+
+# Operating system specific settings
+LDFLAGS	+= -L /usr/X11R7/lib/ -R /usr/X11R7/lib
+LDLIBS	+= -lcompat
+CFLAGS	+= -Wno-variadic-macros
+CFLAGS	+= -I /usr/X11R7/include/
 
 
 all: $(BIN)/$(TARGET)
 
 $(BIN)/$(TARGET): $(SOURCES:.c=.o) $(BIN)
-	@echo '$(CC) $(LDFLAGS) $(SOURCES:.c=.o) -o $(BIN)/$@ $(LDLIBS)'
-	@$(CC) $(LDFLAGS) $(SOURCES:.c=.o) -o $(BIN)/$@ $(LDLIBS)
+.ifdef VERBOSE
+	@echo '   $(CC) $(LDFLAGS) $(SOURCES:.c=.o) -o $@ $(LDLIBS)'
+.endif
+	@$(CC) $(LDFLAGS) $(SOURCES:.c=.o) -o $@ $(LDLIBS) && (cd $(BIN) && ls $$(echo $@ | sed "s:$(BIN)/::g") ) # Escape $ using $$...
+.ifdef VERBOSE
 	@echo
+.endif
 
 $(BIN):
 	@mkdir -p $(BIN)
 
 $(SHARED:.c=.o) : $(SHARED)
-	@echo '$(CC) $(CFLAGS) -c $(SHARED)'
+.ifdef VERBOSE
+	@echo '   $(CC) $(CFLAGS) -c $(SHARED)'
+.endif
 	@$(CC) $(CFLAGS) -c $(SHARED)
 
 $(COMMON:.c=.o) : $(COMMON)
-	@echo '$(CC) $(CFLAGS) -c $(COMMON)'
+.ifdef VERBOSE
+	@echo '   $(CC) $(CFLAGS) -c $<'
+.endif
 	@$(CC) $(CFLAGS) -c $(COMMON)
+
+#$(COMMON:.c=.o) : %.o : %.c
+#       @echo '   $(CC) $(CFLAGS) -c $<'
+#       @$(CC) $(CFLAGS) -c $<
 
 clean:
 	@rm -f $(SOURCES:.c=.o) # -v

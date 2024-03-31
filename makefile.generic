@@ -31,9 +31,10 @@
 #                    - Fixed bug in 'make clean' - MT
 #
 
-PROGRAM		=  x11-calc
+PROGRAM	=  x11-calc
 
-MAKE		=  make
+
+MAKE	=  @make -s -C ./src -f makefile.generic
 
 all: hp35 hp45 hp70 hp80 hp21 hp22 hp25 hp25c hp27 hp29c hp67 hp31e hp32e hp33e hp33c hp34c hp37e hp38e hp38c hp10c hp11c hp12c hp15c hp16c x11-calc
 
@@ -47,84 +48,84 @@ voyager: hp10c hp11c hp12c hp15c hp16c x11-calc
 
 
 hp35:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=35; cd ..
+	$(MAKE) MODEL=35
 
 hp80:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=80; cd ..
+	$(MAKE) MODEL=80
 
 hp45:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=45; cd ..
+	$(MAKE) MODEL=45
 
 hp70:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=70; cd ..
+	$(MAKE) MODEL=70
 
 hp10:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=10; cd ..
+	$(MAKE) MODEL=10
 
 hp21:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=21; cd ..
+	$(MAKE) MODEL=21
 
 hp22:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=22; cd ..
+	$(MAKE) MODEL=22
 
 hp25:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=25; cd ..
+	$(MAKE) MODEL=25
 
 hp25c:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=25c; cd ..
+	$(MAKE) MODEL=25c
 
 hp27:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=27; cd ..
+	$(MAKE) MODEL=27
 
 hp29c:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=29c; cd ..
+	$(MAKE) MODEL=29c
 
 hp67:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=67; cd ..
+	$(MAKE) MODEL=67
 
 hp31e:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=31e; cd ..
+	$(MAKE) MODEL=31e
 
 hp32e:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=32e; cd ..
+	$(MAKE) MODEL=32e
 
 hp33e:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=33e; cd ..
+	$(MAKE) MODEL=33e
 
 hp33c:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=33c; cd ..
+	$(MAKE) MODEL=33c
 
 hp34c:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=34c; cd ..
+	$(MAKE) MODEL=34c
 
 hp37e:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=37e; cd ..
+	$(MAKE) MODEL=37e
 
 hp38e:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=38e; cd ..
+	$(MAKE) MODEL=38e
 
 hp38c:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=38c; cd ..
+	$(MAKE) MODEL=38c
 
 hp10c:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=10c; cd ..
+	$(MAKE) MODEL=10c
 
 hp11c:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=11c; cd ..
+	$(MAKE) MODEL=11c
 
 hp12c:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=12c; cd ..
+	$(MAKE) MODEL=12c
 
 hp15c:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=15c; cd ..
+	$(MAKE) MODEL=15c
 
 hp16c:
-	@cd ./src;$(MAKE) -f makefile.osf1 MODEL=16c; cd ..
+	$(MAKE) MODEL=16c
 
 x11-calc:
-	@installbsd -c -m 755 ./src/x11-calc.in ./bin/x11-calc
-#	@cp ./src/x11-calc.in ./bin/x11-calc
-#	@chmod +x ./bin/x11-calc
+#	@installbsd -c -m 755 ./src/x11-calc.in ./bin/x11-calc
+	@cp ./src/x11-calc.in ./bin/x11-calc
+	@chmod +x ./bin/x11-calc
 
 clean:
 #	@find src/ -type l -delete

@@ -22,21 +22,19 @@
 #  22 Mar 24         - Simple redirection, without extra make.sh - macmpi
 #                    - Fixed default rule so it works on NetBSD, Tru64, and
 #                      Linux (now we can get rid of make.sh) - MT
+#  24 Mar 24         - Pass model number - MT
+#  29 Mar 24         - Use linx/bsd/osf1 makefiles
 #
 
-all:
-	@_flavor="`uname | tr '[:upper:]' '[:lower:]'`"; \
-	if [ "$$_flavor" = "osf1" ]; then \
-		$(MAKE) -s -f "makefile.osf1" $@ ; \
-	else \
-		$(MAKE) -s -f "makefile.common" $@ ; \
-	fi
+MODEL	=  21
 
-.DEFAULT:
-	@_flavor="`uname | tr '[:upper:]' '[:lower:]'`"; \
-	if [ "$$_flavor" = "osf1" ]; then \
-		$(MAKE) -s -f "makefile.osf1" $@ ; \
-	else \
-		$(MAKE) -s -f "makefile.common" $@ ; \
-	fi
+all:
+	@_flavor="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
+	echo "$$_flavor" | grep -qwE "netbsd|darwin" && _flavor=bsd; \
+	$(MAKE) -f "makefile.$$_flavor" MODEL=$(MODEL) $@
+
+clean:
+	@_flavor="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
+	echo "$$_flavor" | grep -qwE "netbsd|darwin" && _flavor=bsd; \
+	$(MAKE) -f "makefile.$$_flavor" MODEL=$(MODEL) $@
 

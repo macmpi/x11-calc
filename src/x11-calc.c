@@ -271,6 +271,12 @@
  *                     any that are not - MT
  *                   - Added desktop file - MT
  * 09 Mar 24         - Updated makefile and screenshots - MT
+ * 14 Mar 24         - Allow SCALE_HEIGHT and SCALE_WIDTH to be passed from
+ *                     command line at compile time - MT
+ * 18 Mar 24         - Embedded missing firmware - MT
+ * 29 Mar 24         - Fixed compiler warnings - MT
+ * 30 Mar 24         - Corrected number of switches on models with only one
+ *                     switch - MT
  *
  *
  * To Do             - Parse command line in a separate routine.
@@ -282,9 +288,9 @@
  */
 
 #define NAME           "x11-calc"
-#define VERSION        "0.12"
-#define BUILD          "0134"
-#define DATE           "04 Mar 24"
+#define VERSION        "0.14"
+#define BUILD          "0138"
+#define DATE           "30 Mar 24"
 #define AUTHOR         "MT"
 
 #define INTERVAL 25    /* Number of ticks to execute before updating the display */
@@ -695,24 +701,24 @@ int main(int argc, char *argv[])
 #if defined(SWITCHES)
    if (h_switch[0] != NULL) h_processor->enabled = h_switch[0]->state; /* Allow switches to be undefined if not used */
 #if defined(HP10)
-   if (h_switch[1] != NULL)
-      switch(h_switch[1]->state)
-      {
-         case 0:
-            h_processor->print = MANUAL;
-            break;
-         case 3:
-         case 1:
-            h_processor->print = TRACE;
-            h_display->enabled = True;
-            break;
-         case 2:
-            h_processor->print = NORMAL;
-            h_display->enabled = False;
-            break;
-      }
+      if (SWITCHES == 2)
+         switch(h_switch[1]->state)
+         {
+            case 0:
+               h_processor->print = MANUAL;
+               break;
+            case 3:
+            case 1:
+               h_processor->print = TRACE;
+               h_display->enabled = True;
+               break;
+            case 2:
+               h_processor->print = NORMAL;
+               h_display->enabled = False;
+               break;
+         }
 #else
-   if (h_switch[1] != NULL) h_processor->mode = h_switch[1]->state;
+      if (SWITCHES == 2) h_processor->mode = h_switch[1]->state;
 #endif
 #endif
 
@@ -860,32 +866,33 @@ int main(int argc, char *argv[])
 #endif
                      }
                   }
+                  if (SWITCHES == 2)
 #if defined(HP10)
-                  if (h_switch_pressed(h_switch[1], x_event.xbutton.x, x_event.xbutton.y) != NULL)
-                  {
-                     switch(i_switch_click(h_switch[1]))
+                     if (h_switch_pressed(h_switch[1], x_event.xbutton.x, x_event.xbutton.y) != NULL)
                      {
-                     case 0:
-                        h_processor->print = MANUAL;
-                        break;
-                     case 3:
-                     case 1:
-                        h_processor->print = TRACE;
-                        h_display->enabled = True;
-                        break;
-                     case 2:
-                        h_processor->print = NORMAL;
-                        h_display->enabled = False;
-                        break;
+                        switch(i_switch_click(h_switch[1]))
+                        {
+                        case 0:
+                           h_processor->print = MANUAL;
+                           break;
+                        case 3:
+                        case 1:
+                           h_processor->print = TRACE;
+                           h_display->enabled = True;
+                           break;
+                        case 2:
+                           h_processor->print = NORMAL;
+                           h_display->enabled = False;
+                           break;
+                        }
+                        i_switch_draw(x_display, x_application_window, i_screen, h_switch[1]);
                      }
-                     i_switch_draw(x_display, x_application_window, i_screen, h_switch[1]);
-                  }
 #else
-                  if (h_switch_pressed(h_switch[1], x_event.xbutton.x, x_event.xbutton.y) != NULL)
-                  {
-                     h_processor->mode = i_switch_click(h_switch[1]); /* Update prgm/run switch */
-                     i_switch_draw(x_display, x_application_window, i_screen, h_switch[1]);
-                  }
+                     if (h_switch_pressed(h_switch[1], x_event.xbutton.x, x_event.xbutton.y) != NULL)
+                     {
+                        h_processor->mode = i_switch_click(h_switch[1]); /* Update prgm/run switch */
+                        i_switch_draw(x_display, x_application_window, i_screen, h_switch[1]);
+                     }
 #endif
                }
 #endif
