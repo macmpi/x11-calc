@@ -25,8 +25,18 @@
 #
 
 all:
-	@$(MAKE) -s -f "makefile.`uname | tr '[:upper:]' '[:lower:]'`" $@
+	@_flavor="`uname | tr '[:upper:]' '[:lower:]'`"; \
+	if [ "$$_flavor" = "osf1" ]; then \
+		$(MAKE) -s -f "makefile.osf1" $@ ; \
+	else \
+		$(MAKE) -s -f "makefile.common" $@ ; \
+	fi
 
 .DEFAULT:
-	@$(MAKE) -s -f "makefile.`uname | tr '[:upper:]' '[:lower:]'`" $@
+	@_flavor="`uname | tr '[:upper:]' '[:lower:]'`"; \
+	if [ "$$_flavor" = "osf1" ]; then \
+		$(MAKE) -s -f "makefile.osf1" $@ ; \
+	else \
+		$(MAKE) -s -f "makefile.common" $@ ; \
+	fi
 
