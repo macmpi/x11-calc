@@ -73,6 +73,7 @@
 #                    - Feed x11-calc _models with makefile  MODELS - macmpi
 #  24 Mar 24         - Updated FILES - MT
 #  28 Mar 24         - Leverage src/makefile.generic - macmpi
+#  30 Mar 24         - Now common makefile for Linux/NetBSD/Darwin - macmpi
 #
 
 PROGRAM		=  x11-calc
@@ -83,8 +84,8 @@ PRG		:= prg
 ROM		:= rom
 IMG		:= img
 
-DESTDIR		?=
-prefix		?= $$HOME/.local
+DESTDIR		=
+prefix		= $$HOME/.local
 
 FILES		=  $(wildcard $(SRC)/*.c) $(wildcard $(SRC)/*.h) $(wildcard $(SRC)/*.in)
 FILES		+= $(wildcard $(SRC)/*.c.[0-9]) $(wildcard $(SRC)/*.h.[0-9])  $(wildcard $(SRC)/*.in.[0-9])
@@ -106,7 +107,7 @@ FILES		+= $(wildcard $(IMG)/x11-calc*.png) $(wildcard $(IMG)/x11-calc*.png.[0-9]
 FILES		+= $(wildcard *.md) $(wildcard *.md.[0-9]) LICENSE
 FILES		+= .gitignore .gitattributes
 
-SUBMAKE		=  --no-print-directory -C ./src -f makefile.linux
+SUBMAKE		=  -C ./src -f makefile
 
 LIST		=  hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp16c
 
@@ -116,7 +117,7 @@ TOPCAT		=  hp67
 SPICE		=  hp31e hp32e hp33e hp33c hp34c hp37e hp38e hp38c
 VOYAGER		=  hp10c hp11c hp12c hp15c hp16c
 MODELS		=  $(CLASSIC) $(WOODSTOCK) $(TOPCAT) $(SPICE) $(VOYAGER)
-OTHERS		=  $(BIN)/x11-calc
+OTHERS		=  x11-calc
 
 
 .PHONY: clean
@@ -135,31 +136,40 @@ voyager: $(VOYAGER) $(OTHERS)
 
 # this is base model target:
 .DEFAULT:
-	@$(MAKE) $(SUBMAKE) MODEL=$(patsubst hp%,%,$@)
+	@$(MAKE) $(SUBMAKE) MODEL=${@:hp%=%} all
+
+x11-calc: $(BIN)/x11-calc
 
 $(BIN)/x11-calc: $(SRC)/x11-calc.in
-	@install -Dm755 $< $@
+	@mkdir -p $(BIN)
+	@cp -a $(SRC)/x11-calc.in $(BIN)/x11-calc
+	@chmod +x $(BIN)/x11-calc
 	@_mdls="$$(echo "$(MODELS)" | tr ' ' '|')"; \
-		sed -i "s/^_models=\".*/_models=\"$$_mdls\"/" $@
-	@(cd $(BIN) && ls --color x11-calc)
+		sed -i "s/^_models=\".*/_models=\"$$_mdls\"/" $(BIN)/x11-calc
+	@(cd $(BIN) && ls x11-calc)
 
-install: $(SRC)/x11-calc.desktop.in $(SRC)/x11-calc.svg $(PRG) | $(BIN)
+install: $(SRC)/x11-calc.desktop.in $(SRC)/x11-calc.svg $(PRG)
 	@[ -n "$(DESTDIR)" ] || [ -d "$(prefix)" ] || \
 		{ echo "Please ensure $(prefix) path exists or set DESTDIR for staged install." >&2; exit 1; }
-	@install -d "$(DESTDIR)$(prefix)"
+	@mkdir -p "$(DESTDIR)$(prefix)"
 	@cp -a $(BIN) "$(DESTDIR)$(prefix)"/ # Fail early if source and destination directories are the same
-	@install -Dm644 $(SRC)/x11-calc.desktop.in "$(DESTDIR)$(prefix)"/share/applications/x11-calc.desktop
+# .desktop file
+	@mkdir -p "$(DESTDIR)$(prefix)"/share/applications
+	@cp -a $(SRC)/x11-calc.desktop.in "$(DESTDIR)$(prefix)"/share/applications/x11-calc.desktop
+	@chmod 644 "$(DESTDIR)$(prefix)"/share/applications/x11-calc.desktop
 	@for _item in $(LIST); do \
 		printf "\n[Desktop Action $$_item]\nName=• $$_item\nExec=x11-calc $$_item\n" >> \
 			"$(DESTDIR)$(prefix)"/share/applications/x11-calc.desktop; \
 		sed -i "s/^Actions=.*/&;$$_item/" "$(DESTDIR)$(prefix)"/share/applications/x11-calc.desktop; \
 	done
-	@install -Dm644 $(SRC)/x11-calc.svg "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps/x11-calc.svg
-	@install -d "$(DESTDIR)$(prefix)"/share/x11-calc
+# icon file
+	@mkdir -p "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps
+	@cp $(SRC)/x11-calc.svg "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps/x11-calc.svg
+	@chmod 644 "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps/x11-calc.svg
+# prg folder
+	@mkdir -p "$(DESTDIR)$(prefix)"/share/x11-calc/
 	@cp -a $(PRG) "$(DESTDIR)$(prefix)"/share/x11-calc/
-
-$(BIN):
-	@install -d $(BIN)
+	@chmod -R 644 "$(DESTDIR)$(prefix)"/share/x11-calc/prg/*
 
 clean:
 	@find $(SRC)/ -type l -delete

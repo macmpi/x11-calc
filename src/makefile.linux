@@ -78,7 +78,7 @@
 #  23 Mar 25         - Instantiate without symlinks trick and use std FLAGS
 #                      to maximize use of implicit build rules - macmpi
 #                    - Remove VERBOSE in favor of make --dry-run - macmpi
-#  23 Mar 25         - Rely on makefile.generic
+#  23 Mar 25         - Rely on makefile.common
 #
 
 CFLAGS	?= -O2
@@ -99,4 +99,4 @@ ifneq ($(SCALE_HEIGHT),)
 CFLAGS		+= -D SCALE_HEIGHT=$(SCALE_HEIGHT)
 endif
 
-include makefile.generic
+include makefile.common
