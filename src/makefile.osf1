@@ -1,9 +1,9 @@
 #
-#  makefile.tru64
+#  makefile.osf1 - RPN (Reverse Polish) calculator simulator.
 #
-#  Copyright (C) 2013  MT
+#  Copyright(C) 2024 - macmpi, MT
 #
-#  A simplified makefile for Digital Tru64 UNIX.
+#  generic makefile for Tru64 UNIX.
 #
 #  This  program is free software: you can redistribute it and/or modify it
 #  under  the terms of the GNU General Public License as published  by  the
