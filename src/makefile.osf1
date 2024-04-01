@@ -34,44 +34,12 @@
 #                    - Split compilation of the common and shared code into
 #                      seperate tasks (which is up to be 18% quicker) - MT
 #  27 Mar 24         - Aligned rules with the generic makefile - MT
+#  31 Mar 24         - Leverage src/makefile.common
 #
 
-MODEL	=  21
-PROGRAM	=  x11-calc
-TARGET	=  x11-calc-$(MODEL)
-SHARED	=  x11-calc.c $(TARGET).c x11-calc-cpu.c x11-calc-display.c x11-calc-segment.c x11-calc-messages.c x11-calc-button.c
-COMMON	=  x11-calc-switch.c x11-calc-label.c x11-calc-colour.c x11-calc-font.c gcc-wait.c gcc-exists.c # Do not include x11-keyboard.c
-SOURCES	=  $(COMMON) $(SHARED)
-OBJECTS	=  $(SOURCES:.c=.o)
-
-#LANG	=  LANG_$(shell (echo $$LANG | cut -f 1 -d '_'))
 LANG	=  LANG_en
-#OS	=  $(shell uname)
-OS	=  OSF1
-#COMMIT	=  $(shell git log -1 HEAD --format=%h 2> /dev/null)
-BIN	=  ../bin
+CFLAGS	=
+LDFLAGS	=
+LDLIBS	=
 
-LDLIBS	=  -lX11 -lm
-CFLAGS	=  -DHP$(MODEL) -D$(OS) -D$(LANG)
-
-
-all: $(BIN)/$(TARGET)
-
-$(BIN)/$(TARGET): $(SOURCES:.c=.o) $(BIN)
-	@echo '$(CC) $(LDFLAGS) $(SOURCES:.c=.o) -o $(BIN)/$@ $(LDLIBS)'
-	@$(CC) $(LDFLAGS) $(SOURCES:.c=.o) -o $(BIN)/$@ $(LDLIBS)
-	@echo
-
-$(BIN):
-	@mkdir -p $(BIN)
-
-$(SHARED:.c=.o) : $(SHARED)
-	@echo '$(CC) $(CFLAGS) -c $(SHARED)'
-	@$(CC) $(CFLAGS) -c $(SHARED)
-
-$(COMMON:.c=.o) : $(COMMON)
-	@echo '$(CC) $(CFLAGS) -c $(COMMON)'
-	@$(CC) $(CFLAGS) -c $(COMMON)
-
-clean:
-	@rm -f $(SOURCES:.c=.o) # -v
+include makefile.common

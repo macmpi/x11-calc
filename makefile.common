@@ -74,38 +74,19 @@
 #  24 Mar 24         - Updated FILES - MT
 #  28 Mar 24         - Leverage src/makefile.generic - macmpi
 #  30 Mar 24         - Now common makefile for Linux/NetBSD/Darwin - macmpi
+#  01 Apr 24         - Now also common with osf1 - macmpi
 #
 
 PROGRAM		=  x11-calc
 
-BIN		:= bin
-SRC		:= src
-PRG		:= prg
-ROM		:= rom
-IMG		:= img
+BIN		= bin
+SRC		= src
+PRG		= prg
+ROM		= rom
+IMG		= img
 
 DESTDIR		=
 prefix		= $$HOME/.local
-
-FILES		=  $(wildcard $(SRC)/*.c) $(wildcard $(SRC)/*.h) $(wildcard $(SRC)/*.in)
-FILES		+= $(wildcard $(SRC)/*.c.[0-9]) $(wildcard $(SRC)/*.h.[0-9])  $(wildcard $(SRC)/*.in.[0-9])
-
-FILES		+= makefile makefile.linux makefile.osf1 makefile.netbsd makefile.darwin
-FILES		+= $(wildcard makefile.[0-9]) $(wildcard makefile.linux.[0-9]) $(wildcard makefile.osf1.[0-9]) $(wildcard makefile.netbsd.[0-9]) $(wildcard makefile.darwin.[0-9])
-FILES		+= $(SRC)/makefile $(SRC)/makefile.linux $(SRC)/makefile.osf1 $(SRC)/makefile.netbsd $(SRC)/makefile.darwin
-FILES		+= $(wildcard $(SRC)/makefile.[0-9]) $(wildcard $(SRC)/makefile.linux.[0-9]) $(wildcard $(SRC)/makefile.osf1.[0-9]) $(wildcard $(SRC)/makefile.netbsd.[0-9]) $(wildcard $(SRC)/makefile.darwin.[0-9])
-FILES		+= $(SRC)/make.com $(wildcard $(SRC)/make.com.[0-9])
-
-FILES		+= $(wildcard $(SRC)/x11-calc*.png) $(wildcard $(SRC)/x11-calc*.png.[0-9])
-FILES		+= $(wildcard $(SRC)/x11-calc*.ico) $(wildcard $(SRC)/x11-calc*.ico.[0-9])
-FILES		+= $(wildcard $(SRC)/x11-calc*.svg) $(wildcard $(SRC)/x11-calc*.svg.[0-9])
-
-FILES		+= $(wildcard $(ROM)/x11-calc*.rom) $(wildcard $(ROM)/x11-calc*.rom.[0-9])
-FILES		+= $(wildcard $(PRG)/x11-calc*.dat) $(wildcard $(PRG)/x11-calc*.dat.[0-9])
-FILES		+= $(wildcard $(IMG)/x11-calc*.png) $(wildcard $(IMG)/x11-calc*.png.[0-9])
-
-FILES		+= $(wildcard *.md) $(wildcard *.md.[0-9]) LICENSE
-FILES		+= .gitignore .gitattributes
 
 SUBMAKE		=  -C ./src -f makefile
 
@@ -142,11 +123,11 @@ x11-calc: $(BIN)/x11-calc
 
 $(BIN)/x11-calc: $(SRC)/x11-calc.in
 	@mkdir -p $(BIN)
-	@cp -a $(SRC)/x11-calc.in $(BIN)/x11-calc
-	@chmod +x $(BIN)/x11-calc
+	@cp -a $(SRC)/x11-calc.in $@
+	@chmod +x $@
 	@_mdls="$$(echo "$(MODELS)" | tr ' ' '|')"; \
-		sed -i "s/^_models=\".*/_models=\"$$_mdls\"/" $(BIN)/x11-calc
-	@(cd $(BIN) && ls x11-calc)
+		sed -i "s/^_models=\".*/_models=\"$$_mdls\"/" $@
+	@ls $@ | sed "s:$(BIN)/::g"
 
 install: $(SRC)/x11-calc.desktop.in $(SRC)/x11-calc.svg $(PRG)
 	@[ -n "$(DESTDIR)" ] || [ -d "$(prefix)" ] || \
@@ -176,5 +157,3 @@ clean:
 	@rm  -f $(SRC)/*.o $(SRC)/*.o_*
 	-@[ -d "$(BIN)" ] && rm -rf $(BIN)
 
-backup: $(FILES)
-	@echo "$(PROGRAM)-`date +'%Y%m%d%H%M'`.tar.gz"; tar -czpf ..\/$(PROGRAM)-`date +'%Y%m%d%H%M'`.tar.gz $(FILES)
