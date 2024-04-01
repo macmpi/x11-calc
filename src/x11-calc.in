@@ -63,6 +63,7 @@
 #  20 Mar 24         - Trim spaces before printing command line - MT
 #  23 Mar 24         - Updated some error messages and trimmed extra spaces
 #                      from the console output - MT
+#  01 Apr 24         - _models list to be filled by makefile - macmpi
 #
 
 SUCCESS=0
@@ -73,12 +74,8 @@ ENOACC=126 # Permission denied (not official)
 ENOCMD=127 # Executable file not found (not official)
 ENOFNT=192 # No font (not official)
 
-_classic="hp35|hp45|hp70|hp80"
-_woodstock="hp21|hp22|hp25|hp25c|hp27|hp29c"
-_topcat="hp67"
-_spice="hp31e|hp32e|hp33e|hp33c|hp34c|hp37e|hp38e|hp38c"
-_voyager="hp10c|hp11c|hp12c|hp15c|hp16c"
-_models="$_classic|$_woodstock|$_topcat|$_spice|$_voyager"
+# Prototype model list: will be filled-in by makefile
+_models="hp34c|hp11"
 
 #- launch()
 

@@ -88,8 +88,6 @@ IMG		= img
 DESTDIR		=
 prefix		= $$HOME/.local
 
-SUBMAKE		=  -C ./src -f makefile
-
 LIST		=  hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp16c
 
 CLASSIC		=  hp35 hp45 hp70 hp80
@@ -117,7 +115,9 @@ voyager: $(VOYAGER) $(OTHERS)
 
 # this is base model target:
 .DEFAULT:
-	@$(MAKE) $(SUBMAKE) MODEL=${@:hp%=%} all
+	@_model="`echo "$@" | sed 's/hp//'`"; \
+	cd $(SRC); \
+	$(MAKE) MODEL=$$_model all
 
 x11-calc: $(BIN)/x11-calc
 
@@ -125,7 +125,7 @@ $(BIN)/x11-calc: $(SRC)/x11-calc.in
 	@mkdir -p $(BIN)
 	@cp -a $(SRC)/x11-calc.in $@
 	@chmod +x $@
-	@_mdls="$$(echo "$(MODELS)" | tr ' ' '|')"; \
+	@_mdls="`echo "$(MODELS)" | tr ' ' '|'`"; \
 		sed -i "s/^_models=\".*/_models=\"$$_mdls\"/" $@
 	@ls $@ | sed "s:$(BIN)/::g"
 

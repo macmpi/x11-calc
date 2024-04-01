@@ -22,21 +22,22 @@
 #  22 Mar 24         - Simple redirection, without extra make.sh - macmpi
 #                    - Fixed default rule so it works on NetBSD, Tru64, and
 #                      Linux (now we can get rid of make.sh) - MT
+#  01 Apr 24         - Consolidate Linux/NetBSD/Darwin and OSF1 - macmpi
 #
 
 all:
 	@_flavor="`uname | tr '[:upper:]' '[:lower:]'`"; \
 	if [ "$$_flavor" = "osf1" ]; then \
-		$(MAKE) -s -f "makefile.osf1" $@ ; \
-	else \
 		$(MAKE) -s -f "makefile.common" $@ ; \
+	else \
+		$(MAKE) -s -f "makefile.complete" $@ ; \
 	fi
 
 .DEFAULT:
 	@_flavor="`uname | tr '[:upper:]' '[:lower:]'`"; \
 	if [ "$$_flavor" = "osf1" ]; then \
-		$(MAKE) -s -f "makefile.osf1" $@ ; \
-	else \
 		$(MAKE) -s -f "makefile.common" $@ ; \
+	else \
+		$(MAKE) -s -f "makefile.complete" $@ ; \
 	fi
 
