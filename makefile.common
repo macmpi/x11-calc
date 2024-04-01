@@ -74,7 +74,7 @@
 #  24 Mar 24         - Updated FILES - MT
 #  28 Mar 24         - Leverage src/makefile.generic - macmpi
 #  30 Mar 24         - Now common makefile for Linux/NetBSD/Darwin - macmpi
-#  01 Apr 24         - Now also common with osf1 - macmpi
+#  01 Apr 24         - Prep to be also common with osf1 - macmpi
 #
 
 PROGRAM		=  x11-calc
@@ -153,7 +153,6 @@ install: $(SRC)/x11-calc.desktop.in $(SRC)/x11-calc.svg $(PRG)
 	@chmod -R 644 "$(DESTDIR)$(prefix)"/share/x11-calc/prg/*
 
 clean:
-	@find $(SRC)/ -type l -delete
 	@rm  -f $(SRC)/*.o $(SRC)/*.o_*
 	-@[ -d "$(BIN)" ] && rm -rf $(BIN)
 
