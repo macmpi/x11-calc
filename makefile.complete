@@ -19,8 +19,10 @@
 #  Note separator (tab) at the beginning of the line CANNOT be a space..!
 #
 #
-#  01 Apr 24         - Spin off makefile for backup - macmpi
+#  01 Apr 24         - Complete makefile including backup - macmpi
 #
+
+include makefile.common
 
 FILES		=  $(wildcard $(SRC)/*.c) $(wildcard $(SRC)/*.h) $(wildcard $(SRC)/*.in)
 FILES		+= $(wildcard $(SRC)/*.c.[0-9]) $(wildcard $(SRC)/*.h.[0-9])  $(wildcard $(SRC)/*.in.[0-9])
