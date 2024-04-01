@@ -20,54 +20,26 @@
 #
 #  Note seperator (tab) at the beginning of the line CANNOT be a space..!
 #
-#  https://stackoverflow.com/questions/50941196/
+#  26 Nov 23         - Initial version - MT
+#                    - Define OSF1 so conditional compilation works even if
+#                      the compiler doesn't define it automatically - MT
+#                    - Tidied up comments - MT
+#  25 Feb 24         - Added font module - MT
+#  02 Mar 24         - Fixed missing target - MT
+#  20 Mar 24         - Updated change history - MT
+#                    - Fixed issue with directory creation - MT
+#                    - Renamed $TARGET to $BIN - MT
+#  24 Mar 24         - Updated to use $SHARED and $COMMON source files - MT
+#                    - Added 'make all' and 'make clean' - MT
+#                    - Split compilation of the common and shared code into
+#                      seperate tasks (which is up to be 18% quicker) - MT
+#  27 Mar 24         - Aligned rules with the generic makefile - MT
+#  31 Mar 24         - Leverage src/makefile.common
 #
-#  https://www.gnu.org/software/make/manual/html_node/Prerequisite-Types.html
-#
-#  31 Mar 24         - New version (derived from common makefile) - MT
-#
 
-MODEL	=  21
-PROGRAM	=  x11-calc-$(MODEL)
-BIN	= ../bin
+LANG	=  LANG_en
+CFLAGS	=
+LDFLAGS	=
+LDLIBS	=
 
-# SHARED sources are model-dependant via HP$(MODEL) #define statements
-SHARED	=  x11-calc.c x11-calc-cpu.c x11-calc-display.c x11-calc-segment.c x11-calc-messages.c x11-calc-button.c # x11-keyboard.c
-COMMON	=  x11-calc-switch.c x11-calc-label.c x11-calc-colour.c x11-calc-font.c gcc-wait.c gcc-exists.c
-
-CC	= cc
-DEBUG	=
-
-LDLIBS	= -lX11 -lm
-#CFLAGS	+= -fcommon -Wall -pedantic -std=gnu99
-#CFLAGS	+= -Wno-comment -Wno-deprecated-declarations -Wno-builtin-macro-redefined
-
-CFLAGS	=  $(DEBUG)
-
-all: $(BIN)/$(PROGRAM)
-
-$(BIN)/$(PROGRAM): $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o
-	@mkdir -p $(BIN)
-	@rm -f $(BIN)/$(PROGRAM)
-	@[ -n "$${VERBOSE+x}" ] && echo && \
-		echo "$(CC) $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o $(LDFLAGS) $(LDLIBS) -o $@" \
-		|| true
-	@$(CC) $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o $(LDFLAGS) $(LDLIBS) -o $@ && ls `echo $(BIN)/$@` | sed "s:$(BIN)/::g"
-
-.SUFFIXES: .o_HP$(MODEL) .o_cm .o
-
-.c.o_HP$(MODEL):
-	@[ -n "$${VERBOSE+x}" ] && echo && echo "$(CC) $(CFLAGS) -DHP$(MODEL) -c $< -o $@" || true
-	@$(CC) $(CFLAGS) -DHP$(MODEL) -c $< -o $@
-
-.c.o:
-	@[ -n "$${VERBOSE+x}" ] && echo && echo "$(CC) $(CFLAGS) -DHP$(MODEL) -c $< -o $@" || true
-	@$(CC) $(CFLAGS) -DHP$(MODEL) -c $< -o $@
-
-# COMMON files are NOT supposed to be instanciated per MODEL (will fix soon)
-.c.o_cm:
-	@[ -n "$${VERBOSE+x}" ] && echo && echo "$(CC) $(CFLAGS) -DHP$(MODEL) -c $< -o $@" || true
-	@$(CC) $(CFLAGS) -DHP$(MODEL) -c $< -o $@
-
-clean:
-	@rm -f $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o
+include makefile.common
