@@ -122,7 +122,7 @@ $(BIN)/x11-calc: $(SRC)/x11-calc.in
 
 clean:
 	@rm -f $(SRC)/*.o $(SRC)/*.o_*
-	-@[ -d "$(BIN)" ] && rm -rf $(BIN)
+	@[ -d "$(BIN)" ] && rm -rf $(BIN) || true
 
 install: $(SRC)/x11-calc.desktop.in $(SRC)/x11-calc.svg $(PRG)
 	@[ -n "$(DESTDIR)" ] || [ -d "$(prefix)" ] || \
