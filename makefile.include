@@ -1,7 +1,7 @@
 #
-#  makefile - RPN (Reverse Polish) calculator simulator.
+#  makefile.backup - RPN (Reverse Polish) calculator simulator.
 #
-#  Copyright(C) 2019 - MT
+#  Copyright(C) 2024 - macmpi - MT
 #
 #  This  program is free software: you can redistribute it and/or modify it
 #  under  the terms of the GNU General Public License as published  by  the
@@ -18,19 +18,13 @@
 #
 #  Note separator (tab) at the beginning of the line CANNOT be a space..!
 #
-#  09 Oct 21         - Initial version - MT
-#  22 Mar 24         - Simple redirection, without extra make.sh - macmpi
-#                    - Fixed default rule so it works on NetBSD, Tru64, and
-#                      Linux (now we can get rid of make.sh) - MT
-#  01 Apr 24         - Consolidate Linux/NetBSD/Darwin and OSF1 - macmpi
+#  01 Apr 24         - Initial version - MT
 #
 
-all:
-	@$(MAKE) -s -f "makefile.common" $@ ;
+PROGRAM		=  x11-calc
 
-backup:
-	@$(MAKE) -s -f "makefile.backup" $@ ;
-
-.DEFAULT:
-	@$(MAKE) -s -f "makefile.common" $@ ;
-
+BIN		= bin
+SRC		= src
+PRG		= prg
+ROM		= rom
+IMG		= img
