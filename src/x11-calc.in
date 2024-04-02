@@ -230,7 +230,7 @@ then
 # of the following:
 #
 EOF
-   echo "$_models" | sed 's/\(\([^|]*|\)\{8\}\)/\1\n/g' | sed 's/^/# /' >>"$_f_conf"
+   echo "$_models" | sed 's/\(\([^|]*|\)\{8\}\)/\1*/g' | tr '*' '\n' | sed 's/^/# /' >>"$_f_conf"
    cat <<-EOF >>"$_f_conf"
 
 MODEL=""
