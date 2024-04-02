@@ -1,0 +1,45 @@
+#
+#  makefile.freedesktop - RPN (Reverse Polish) calculator simulator.
+#
+#  Copyright(C) 2024 - macmpi - MT
+#
+#  This  program is free software: you can redistribute it and/or modify it
+#  under  the terms of the GNU General Public License as published  by  the
+#  Free  Software Foundation, either version 3 of the License, or (at  your
+#  option) any later version.
+#
+#  This  program  is distributed in the hope that it will  be  useful,  but
+#  WITHOUT   ANY   WARRANTY;   without even   the   implied   warranty   of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+#  Public License for more details.
+#
+#  You  should have received a copy of the GNU General Public License along
+#  with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#  Note separator (tab) at the beginning of the line CANNOT be a space..!
+#
+#  02 Apr 24         - Initial version - macmpi
+#
+
+LIST	= hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp16c
+
+include makefile.env
+
+desktop:
+# desktop integration files install for freedesktop compatible desktops
+# (workaround bsd sed -i syntax compatibility issues)
+	@mkdir -p "$(DESTDIR)$(prefix)"/share/applications;
+	@_dest_file="$(DESTDIR)$(prefix)/share/applications/x11-calc.desktop"; \
+	_tmp_file="`mktemp`"; \
+	cp $(SRC)/x11-calc.desktop.in "$$_dest_file"; \
+	for _item in $(LIST); do \
+		printf "\n[Desktop Action $$_item]\nName=• $$_item\nExec=x11-calc $$_item\n" >> "$$_dest_file"; \
+		sed "s/^Actions=.*/&;$$_item/" "$$_dest_file" > "$$_tmp_file" ; mv "$$_tmp_file" "$$_dest_file"; \
+	done; \
+	chmod 644 "$$_dest_file"; \
+	rm -f "$$_tmp_file"
+# icon file
+	@mkdir -p "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps
+	@cp $(SRC)/x11-calc.svg "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps/x11-calc.svg
+	@chmod 644 "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps/x11-calc.svg
+

@@ -76,20 +76,11 @@
 #  30 Mar 24         - Now common makefile for Linux/NetBSD/Darwin - macmpi
 #  01 Apr 24         - Prepairation for a common makefile on osf1 - macmpi
 #                    - Tested on Tru64 UNIX and fixed up minor issues - MT
+#  02 Apr 24         - Use  env  variables  include  and  spin-off  desktop
+#                      specific files - macmpi
 #
 
-PROGRAM		=  x11-calc
-
-BIN		= bin
-SRC		= src
-PRG		= prg
-ROM		= rom
-IMG		= img
-
-DESTDIR		=
-prefix		= $$HOME/.local
-
-LIST		= hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp16c
+include makefile.env
 
 CLASSIC		= hp35 hp45 hp70 hp80
 WOODSTOCK	= hp21 hp22 hp25 hp25c hp27 hp29c
@@ -124,39 +115,22 @@ x11-calc: $(BIN)/x11-calc
 
 $(BIN)/x11-calc: $(SRC)/x11-calc.in
 	@mkdir -p $(BIN)
-#	@cp $(SRC)/x11-calc.in $@
 	@_mdls=`echo "$(MODELS)" | tr ' ' '|'` ; \
-		cat $(SRC)/x11-calc.in | sed "s/^_models=\".*/_models=\"$$_mdls\"/" > $@
+		sed "s/^_models=\".*/_models=\"$$_mdls\"/" $(SRC)/x11-calc.in > $@
 	@chmod +x $@
 	@ls $@ | sed "s:$(BIN)/::g"
+
+clean:
+	@rm -f $(SRC)/*.o $(SRC)/*.o_*
+	-@[ -d "$(BIN)" ] && rm -rf $(BIN)
 
 install: $(SRC)/x11-calc.desktop.in $(SRC)/x11-calc.svg $(PRG)
 	@[ -n "$(DESTDIR)" ] || [ -d "$(prefix)" ] || \
 		{ echo "Please ensure $(prefix) path exists or set DESTDIR for staged install." >&2; exit 1; }
 	@mkdir -p "$(DESTDIR)$(prefix)"
 	@cp -R $(BIN) "$(DESTDIR)$(prefix)"/ # Fail early if source and destination directories are the same
-# .desktop file
-	@mkdir -p "$(DESTDIR)$(prefix)"/share/applications
-	@cp -R $(SRC)/x11-calc.desktop.in "$(DESTDIR)$(prefix)"/share/applications/x11-calc.desktop
-	@chmod 644 "$(DESTDIR)$(prefix)"/share/applications/x11-calc.desktop
-	@_flavor="`uname | tr '[:upper:]' '[:lower:]'`"; \
-	if [ "$$_flavor" != "osf1" ]; then \
-	for _item in $(LIST); do \
-		printf "\n[Desktop Action $$_item]\nName=• $$_item\nExec=x11-calc $$_item\n" >> \
-			"$(DESTDIR)$(prefix)"/share/applications/x11-calc.desktop; \
-		sed -i "s/^Actions=.*/&;$$_item/" "$(DESTDIR)$(prefix)"/share/applications/x11-calc.desktop; \
-	done; \
-	fi
-# icon file
-	@mkdir -p "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps
-	@cp $(SRC)/x11-calc.svg "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps/x11-calc.svg
-	@chmod 644 "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps/x11-calc.svg
 # prg folder
 	@mkdir -p "$(DESTDIR)$(prefix)"/share/x11-calc/
 	@cp -R $(PRG) "$(DESTDIR)$(prefix)"/share/x11-calc/
 	@chmod -R 644 "$(DESTDIR)$(prefix)"/share/x11-calc/prg/*
-
-clean:
-	@rm  -f $(SRC)/*.o $(SRC)/*.o_*
-	-@[ -d "$(BIN)" ] && rm -rf $(BIN)
 

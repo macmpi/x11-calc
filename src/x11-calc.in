@@ -74,7 +74,7 @@ ENOACC=126 # Permission denied (not official)
 ENOCMD=127 # Executable file not found (not official)
 ENOFNT=192 # No font (not official)
 
-# Prototype model list: will be filled-in by makefile
+# Prototype model list: is to be filled-in by makefile
 _models="hp34c|hp11"
 
 #- launch()
@@ -159,14 +159,16 @@ _config (){
 
    case $? in
       0)
+         _tmpfile="$(mktemp)"
          if [ "$DROPDOWN" ] # The seperator used by different forms is different!
          then
-            sed -i "s|^MODEL=.*|MODEL=\"${_selection%|*}\"|" "$_f_conf"
-            sed -i "s|^OPTIONS=.*|OPTIONS=\"${_selection#*|}\"|" "$_f_conf"
+            sed "s|^MODEL=.*|MODEL=\"${_selection%|*}\"|" "$_f_conf" > $_tmpfile
+            sed "s|^OPTIONS=.*|OPTIONS=\"${_selection#*|}\"|" $_tmpfile > "$_f_conf"
          else
-            sed -i "s|^MODEL=.*|MODEL=\"${_selection%,|*}\"|" "$_f_conf"
-            sed -i "s|^OPTIONS=.*|OPTIONS=\"${_selection#*,|}\"|" "$_f_conf"
+            sed "s|^MODEL=.*|MODEL=\"${_selection%,|*}\"|" "$_f_conf" > $_tmpfile
+            sed "s|^OPTIONS=.*|OPTIONS=\"${_selection#*,|}\"|" $_tmpfile > "$_f_conf"
          fi
+         rm -f $_tmpfile
          ;;
       1)
          exit 0 # User pressed cancel so just quit - don't attempt to launch the emulator
