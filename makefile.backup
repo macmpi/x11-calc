@@ -22,7 +22,7 @@
 #                    - Modified to work on Tru64 Linux - MT
 #
 
-include makefile.include
+include makefile.env
 
 FILES	= `ls makefile makefile.backup makefile.common makefile.*.[0-9] $(SRC)/makefile $(SRC)/makefile.common $(SRC)/makefile.linux $(SRC)/makefile.bsd $(SRC)/makefile.osf1 $(SRC)/makefile.*.[0-9] 2>/dev/null || true`
 SOURCE	= `ls $(SRC)/*.c $(SRC)/*.c.[0-9] $(SRC)/*.h $(SRC)/*.h.[0-9] $(SRC)/*.in $(SRC)/*.in.[0-9] 2>/dev/null || true`

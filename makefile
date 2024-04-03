@@ -23,14 +23,27 @@
 #                    - Fixed default rule so it works on NetBSD, Tru64, and
 #                      Linux (now we can get rid of make.sh) - MT
 #  01 Apr 24         - Consolidate Linux/NetBSD/Darwin and OSF1 - macmpi
+#  02 Apr 24         - Add differentiated desktop files installs - macmpi
 #
 
 all:
-	@$(MAKE) -s -f "makefile.common" $@ ;
-
-backup:
-	@$(MAKE) -s -f "makefile.backup" $@ ;
+	@$(MAKE) -s -f "makefile.common" $@
 
 .DEFAULT:
-	@$(MAKE) -s -f "makefile.common" $@ ;
+	@$(MAKE) -s -f "makefile.common" $@
+
+clean:
+	@$(MAKE) -s -f "makefile.common" $@
+
+install:
+	@$(MAKE) -s -f "makefile.common" $@
+	@_flavor="`uname | tr '[:upper:]' '[:lower:]'`"; \
+	if [ "$$_flavor" = "osf1" ]; then \
+		$(MAKE) -s -f "makefile.cde" desktop; \
+	else \
+		$(MAKE) -s -f "makefile.freedesktop" desktop; \
+	fi
+
+backup:
+	@$(MAKE) -s -f "makefile.backup" $@
 
