@@ -125,7 +125,7 @@ clean:
 	@rm -f $(SRC)/*.o $(SRC)/*.o_*
 	@[ -d "$(BIN)" ] && rm -rf $(BIN) || true
 
-install: #$(SRC)/x11-calc.desktop.in $(SRC)/x11-calc.svg $(PRG) $(BIN)
+install: $(SRC)/x11-calc.desktop.in $(SRC)/x11-calc.svg $(PRG)
 	@echo "make install"
 	@[ -n "$(DESTDIR)" ] || [ -d "$(prefix)" ] || \
 		{ echo "Please ensure $(prefix) path exists or set DESTDIR for staged install." >&2; exit 1; }
