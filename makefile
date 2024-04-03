@@ -24,7 +24,12 @@
 #                      Linux (now we can get rid of make.sh) - MT
 #  01 Apr 24         - Consolidate Linux/NetBSD/Darwin and OSF1 - macmpi
 #  02 Apr 24         - Add differentiated desktop files installs - macmpi
+#  03 Apr 24         - Allow more custom desktop files installs - macmpi
 #
+
+include makefile.env
+
+DESKTOP	= default
 
 all:
 	@$(MAKE) -s -f "makefile.common" $@
@@ -37,12 +42,22 @@ clean:
 
 install:
 	@$(MAKE) -s -f "makefile.common" $@
-	@_flavor="`uname | tr '[:upper:]' '[:lower:]'`"; \
-	if [ "$$_flavor" = "osf1" ]; then \
-		$(MAKE) -s -f "makefile.cde" desktop; \
-	else \
-		$(MAKE) -s -f "makefile.freedesktop" desktop; \
-	fi
+	@case "$(DESKTOP)" in \
+		default) \
+			_flavor="`uname | tr '[:upper:]' '[:lower:]'`"; \
+			if [ "$$_flavor" = "osf1" ]; then \
+				$(MAKE) -s -f "makefile.cde" desktop; \
+			else \
+				$(MAKE) -s -f "makefile.freedesktop" desktop; \
+			fi; \
+			;; \
+		none) \
+			:; \
+			;; \
+		*) \
+			$(MAKE) -s -f "makefile.$(DESKTOP)" desktop; \
+			;; \
+	esac
 
 backup:
 	@$(MAKE) -s -f "makefile.backup" $@
