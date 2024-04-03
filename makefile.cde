@@ -23,6 +23,8 @@
 
 include makefile.env
 
+prefix		= $$HOME/.dt
+
 desktop:
 # desktop integration files install for CDE
 # check dtcreate for desktop icon action file
