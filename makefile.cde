@@ -21,8 +21,6 @@
 #  02 Apr 24         - Initial version - macmpi
 #
 
-LIST	= hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp16c
-
 include makefile.env
 
 desktop:
@@ -30,7 +28,7 @@ desktop:
 # check dtcreate for desktop icon action file
 # icons in xpm format 16×16 (x11-calc.t.pm) 32×32 (x11-calc.m.pm) 48×48 (x11-calc.l.pm) in either:
 # /etc/dt/appconfig/icons/, /usr/dt/appconfig/icons/ or $HOME/.dt/icons
-	@:
+	@echo "Install application on CDE here!"
 #	@mkdir -p "$(DESTDIR)$(prefix)"/share/applications;
 #	@_dest_file="$(DESTDIR)$(prefix)/share/applications/x11-calc.desktop"; \
 #	_tmp_file="`mktemp`"; \

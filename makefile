@@ -25,6 +25,8 @@
 #  01 Apr 24         - Consolidate Linux/NetBSD/Darwin and OSF1 - macmpi
 #  02 Apr 24         - Add differentiated desktop files installs - macmpi
 #  03 Apr 24         - Allow more custom desktop files installs - macmpi
+#                    - Attempts  to detect the default desktop  environment
+#                      based on the existing directory structure - MT
 #
 
 include makefile.env
@@ -41,15 +43,18 @@ clean:
 	@$(MAKE) -s -f "makefile.common" $@
 
 install:
-	@$(MAKE) -s -f "makefile.common" $@
 	@case "$(DESKTOP)" in \
 		default) \
-			_flavor="`uname | tr '[:upper:]' '[:lower:]'`"; \
-			if [ "$$_flavor" = "osf1" ]; then \
+			if [ -d "$$HOME/.local" ]; then \
+				$(MAKE) -s -f "makefile.common" $@; \
+			elif  [ -d "$$HOME/.dt" ]; then \
 				$(MAKE) -s -f "makefile.cde" desktop; \
 			else \
-				$(MAKE) -s -f "makefile.freedesktop" desktop; \
+				:; \
 			fi; \
+			;; \
+		gnome | kde | mate | budgie | xfce ) \
+			$(MAKE) -s -f "makefile.common" $@; \
 			;; \
 		none) \
 			:; \

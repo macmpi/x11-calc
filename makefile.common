@@ -90,6 +90,7 @@ VOYAGER		= hp10c hp11c hp12c hp15c hp16c
 MODELS		= $(CLASSIC) $(WOODSTOCK) $(TOPCAT) $(SPICE) $(VOYAGER)
 OTHERS		= x11-calc
 
+prefix		= $$HOME/.local
 
 .PHONY: clean
 
@@ -124,13 +125,29 @@ clean:
 	@rm -f $(SRC)/*.o $(SRC)/*.o_*
 	@[ -d "$(BIN)" ] && rm -rf $(BIN) || true
 
-install: $(SRC)/x11-calc.desktop.in $(SRC)/x11-calc.svg $(PRG)
+install: #$(SRC)/x11-calc.desktop.in $(SRC)/x11-calc.svg $(PRG) $(BIN)
+	@echo "make install"
 	@[ -n "$(DESTDIR)" ] || [ -d "$(prefix)" ] || \
 		{ echo "Please ensure $(prefix) path exists or set DESTDIR for staged install." >&2; exit 1; }
 	@mkdir -p "$(DESTDIR)$(prefix)"
 	@cp -R $(BIN) "$(DESTDIR)$(prefix)"/ # Fail early if source and destination directories are the same
+# desktop integration files install for freedesktop compatible desktops
+# (workaround bsd sed -i syntax compatibility issues)
+	@mkdir -p "$(DESTDIR)$(prefix)"/share/applications;
+	@_dest_file="$(DESTDIR)$(prefix)/share/applications/x11-calc.desktop"; \
+	_tmp_file="`mktemp`"; \
+	cp $(SRC)/x11-calc.desktop.in "$$_dest_file"; \
+	for _item in $(LIST); do \
+		printf "\n[Desktop Action $$_item]\nName=• $$_item\nExec=x11-calc $$_item\n" >> "$$_dest_file"; \
+		sed "s/^Actions=.*/&;$$_item/" "$$_dest_file" > "$$_tmp_file" ; mv "$$_tmp_file" "$$_dest_file"; \
+	done; \
+	chmod 644 "$$_dest_file"; \
+	rm -f "$$_tmp_file"
+# icon file
+	@mkdir -p "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps
+	@cp $(SRC)/x11-calc.svg "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps/x11-calc.svg
+	@chmod 644 "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps/x11-calc.svg
 # prg folder
 	@mkdir -p "$(DESTDIR)$(prefix)"/share/x11-calc/
 	@cp -R $(PRG) "$(DESTDIR)$(prefix)"/share/x11-calc/
 	@chmod -R 644 "$(DESTDIR)$(prefix)"/share/x11-calc/prg/*
-
