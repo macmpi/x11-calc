@@ -84,8 +84,14 @@
 #                    - Attempts  to detect the default desktop  environment
 #                      based on the existing directory structure - MT
 #  04 Apr 24         - Aggregate everything in unique top makefile - macmpi
+#                    - Fixed some issues on Tru64, running make install did
+#                      not use the default desktop settings, but attempring
+#                      to detect the default desktop in the catch all  case
+#                      seems to work - MT
+#                    - Made DESKTOP case insensitive - MT
+#                    - Tidied up internal vairable names comments and error
+#                      messages - MT
 #
-
 
 PROGRAM		=  x11-calc
 
@@ -95,42 +101,44 @@ PRG		= prg
 ROM		= rom
 IMG		= img
 
-FILES	= `ls makefile makefile.*.[0-9] $(SRC)/makefile $(SRC)/makefile.common $(SRC)/makefile.linux $(SRC)/makefile.bsd $(SRC)/makefile.osf1 $(SRC)/makefile.*.[0-9] 2>/dev/null || true`
-SOURCE	= `ls $(SRC)/*.c $(SRC)/*.c.[0-9] $(SRC)/*.h $(SRC)/*.h.[0-9] $(SRC)/*.in $(SRC)/*.in.[0-9] 2>/dev/null || true`
-DATA	= `ls $(ROM)/$(PROGRAM)*.rom $(ROM)/$(PROGRAM)*.rom.[0-9] $(PRG)/$(PROGRAM)*.dat $(PRG)/$(PROGRAM)*.dat.[0-9] 2>/dev/null || true`
-IMAGES	= `ls $(SRC)/*.ico $(SRC)/*.ico.[0-9] $(SRC)/*.png $(SRC)/*.png.[0-9] $(SRC)/*.svg $(SRC)/*.svg.[0-9] $(IMG)/*.png $(IMG)/*.png.[0-9] 2>/dev/null || true`
-OTHERS	= `ls $(SRC)/make.com  $(SRC)/make.com.[0-9] *.md *.md.[0-9] .gitignore .gitattributes 2>/dev/null || true`
+_files		= `ls makefile makefile.*.[0-9] $(SRC)/makefile $(SRC)/makefile.common $(SRC)/makefile.linux $(SRC)/makefile.bsd $(SRC)/makefile.osf1 $(SRC)/makefile.*.[0-9] 2>/dev/null || true`
+_source		= `ls $(SRC)/*.c $(SRC)/*.c.[0-9] $(SRC)/*.h $(SRC)/*.h.[0-9] $(SRC)/*.in $(SRC)/*.in.[0-9] 2>/dev/null || true`
+_data		= `ls $(ROM)/$(PROGRAM)*.rom $(ROM)/$(PROGRAM)*.rom.[0-9] $(PRG)/$(PROGRAM)*.dat $(PRG)/$(PROGRAM)*.dat.[0-9] 2>/dev/null || true`
+_images		= `ls $(SRC)/*.ico $(SRC)/*.ico.[0-9] $(SRC)/*.png $(SRC)/*.png.[0-9] $(SRC)/*.svg $(SRC)/*.svg.[0-9] $(IMG)/*.png $(IMG)/*.png.[0-9] 2>/dev/null || true`
+_other		= `ls $(SRC)/make.com  $(SRC)/make.com.[0-9] *.md *.md.[0-9] .gitignore .gitattributes 2>/dev/null || true`
 
-_date	= `date +'%Y%m%d%H%M'`
+_date		= `date +'%Y%m%d%H%M'`
 
-CLASSIC		= hp35 hp45 hp70 hp80
-WOODSTOCK	= hp21 hp22 hp25 hp25c hp27 hp29c
-TOPCAT		= hp67
-SPICE		= hp31e hp32e hp33e hp33c hp34c hp37e hp38e hp38c
-VOYAGER		= hp10c hp11c hp12c hp15c hp16c
-MODELS		= $(CLASSIC) $(WOODSTOCK) $(TOPCAT) $(SPICE) $(VOYAGER)
+_classic	= hp35 hp45 hp70 hp80
+_woodstock	= hp21 hp22 hp25 hp25c hp27 hp29c
+_topcat		= hp67
+_spice		= hp31e hp32e hp33e hp33c hp34c hp37e hp38e hp38c
+_voyager	= hp10c hp11c hp12c hp15c hp16c
+
+MODELS		= $(_classic) $(_woodstock) $(_topcat) $(_spice) $(_voyager)
 
 prefix		= $$HOME/.local
 DESTDIR		=
 
-DESKTOP	= default
-MENU	= hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp16c
+DESKTOP		= default
 
-.PHONY: clean
+MENU		= hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp16c
+
+.PHONY: backup clean install
 
 all: $(MODELS) $(PROGRAM)
 
-classic: $(CLASSIC) $(PROGRAM)
+classic: $(_classic) $(PROGRAM)
 
-woodstock: $(WOODSTOCK) $(PROGRAM)
+woodstock: $(_woodstock) $(PROGRAM)
 
-topcat: $(TOPCAT) $(PROGRAM)
+topcat: $(_topcat) $(PROGRAM)
 
-spice: $(SPICE) $(PROGRAM)
+spice: $(_spice) $(PROGRAM)
 
-voyager: $(VOYAGER) $(PROGRAM)
+voyager: $(_voyager) $(PROGRAM)
 
-# this is base pre-model compile target:
+# Base pre-model compile target:
 .DEFAULT:
 	@_model="`echo "$@" | sed 's/hp//'`"; \
 	cd $(SRC); \
@@ -150,37 +158,60 @@ clean:
 	@[ -d "$(BIN)" ] && rm -rf $(BIN) || true
 
 install:
-	@case "$(DESKTOP)" in \
+	@case `echo "$(DESKTOP)" | tr '[:upper:]' '[:lower:]'` in \
 		default) \
 			if [ -d "$$HOME/.local" ]; then \
-				$(MAKE) -s install_freedesktop; \
+				$(MAKE) -s install_desktop; \
 			elif  [ -d "$$HOME/.dt" ]; then \
-				$(MAKE) -s install_cde; \
+				$(MAKE) -s install_cde prefix="$$HOME/.dt"; \
 			else \
-				echo "Not installing: please specify DESKTOP=<value> (none, freedesktop, cde,...)" && false; \
+				echo "Unable to detect desktop: please specify the DESKTOP (GNOME, KDE, MATE, XFCE, ... or NONE). "; \
 			fi; \
 			;; \
-		none|freedesktop|cde) \
-			$(MAKE) -s install_$(DESKTOP); \
+		freedesktop | \
+		gnome | mate | kde | lxde | lxqt | xfce) \
+			$(MAKE) install_desktop; \
+			;; \
+		cde) \
+			$(MAKE) -s install_$(DESKTOP) prefix="$$HOME/.dt"; \
+			;; \
+		none) \
+			$(MAKE) -s install_$(DESKTOP) prefix="$$HOME"; \
 			;; \
 		*) \
-			$(MAKE) -s install_freedesktop; \
+			echo "$(DESKTOP) was not recognised: Try 'make install' instead. "; \
 			;; \
 	esac
 
 install_none: $(PRG) $(BIN)
+# No  matter what desktop environment we are using (even if it is NONE)  we
+# need to copy the execuitables to the destination folder
+#
 	@[ -n "$(DESTDIR)" ] || [ -d "$(prefix)" ] || \
-		{ echo "Please ensure $(prefix) path exists or set DESTDIR for staged install." >&2; exit 1; }
+		{ echo "Please ensure $(prefix) exists (or set DESTDIR for staged install)." >&2; exit 1; }
+#	@echo "** Installing application in $(DESTDIR)$(prefix)"
 	@mkdir -p "$(DESTDIR)$(prefix)"
 	@cp -R $(BIN) "$(DESTDIR)$(prefix)"/ # Fail early if source and destination directories are the same
-# prg folder
-	@mkdir -p "$(DESTDIR)$(prefix)"/share/$(PROGRAM)/
-	@cp -R $(PRG) "$(DESTDIR)$(prefix)"/share/$(PROGRAM)/
-	@chmod -R 644 "$(DESTDIR)$(prefix)"/share/$(PROGRAM)/$(PRG)/*
 
-install_freedesktop: install_none 
-# desktop integration files install for freedesktop compatible desktops
-# (workaround bsd sed -i syntax compatibility issues)
+install_cde: install_none
+# Desktop integration files install for CDE - just a place holder for now.
+#
+#	@echo "** Adding files for CDE"
+#
+# ToDo - setup desktop and icons (in xpm format 16×16 (x11-calc.t.pm) 32×32
+# (x11-calc.m.pm) 48×48 (x11-calc.l.pm)) in either /etc/dt/appconfig/icons/,
+# /usr/dt/appconfig/icons/ or $HOME/.dt/icons
+#
+# Add program files
+	@cp -R $(PRG)/* "$(DESTDIR)$(prefix)/$(BIN)/"
+
+install_desktop: install_none
+# (SRC)/$(PROGRAM).desktop $(SRC)/$(PROGRAM).svg
+#
+# Desktop integration files install for all freedesktop compatible desktops
+# with workaround for bsd `sed -i` syntax
+#
+#	@echo "** Adding desktop files"
 	@mkdir -p "$(DESTDIR)$(prefix)"/share/applications;
 	@_dest_file="$(DESTDIR)$(prefix)/share/applications/$(PROGRAM).desktop"; \
 	_tmp_file="`mktemp`"; \
@@ -191,22 +222,21 @@ install_freedesktop: install_none
 	done; \
 	chmod 644 "$$_dest_file"; \
 	rm -f "$$_tmp_file"
-# icon file
+# Copy program files
+	@mkdir -p "$(DESTDIR)$(prefix)"/share/$(PROGRAM)/
+	@cp -R $(PRG) "$(DESTDIR)$(prefix)"/share/$(PROGRAM)/
+	@chmod -R 644 "$(DESTDIR)$(prefix)"/share/$(PROGRAM)/$(PRG)/*
+# Copy icon files
 	@mkdir -p "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps
 	@cp $(SRC)/$(PROGRAM).svg "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps/$(PROGRAM).svg
 	@chmod 644 "$(DESTDIR)$(prefix)"/share/icons/hicolor/scalable/apps/$(PROGRAM).svg
 
-install_cde: install_none
-# desktop integration files install for CDE
-# check dtcreate for desktop icon action file
-# icons in xpm format 16×16 (x11-calc.t.pm) 32×32 (x11-calc.m.pm) 48×48 (x11-calc.l.pm) in either:
-# /etc/dt/appconfig/icons/, /usr/dt/appconfig/icons/ or $HOME/.dt/icons
-	@echo "Install application on CDE here!"
-
 backup:
-	tar -cpf ..\/$(PROGRAM)-$(_date).tar $(FILES)
-	tar -rpf ..\/$(PROGRAM)-$(_date).tar $(SOURCE)
-	tar -rpf ..\/$(PROGRAM)-$(_date).tar $(DATA)
-	tar -rpf ..\/$(PROGRAM)-$(_date).tar $(IMAGES)
-	tar -rpf ..\/$(PROGRAM)-$(_date).tar $(OTHERS)
-	echo "$(PROGRAM)-$(_date).tar"
+# Backup known files to a tar archive (with nultiple workarounds to accomodate
+# tar limitations and maximum line length on Tru64 UNIX)
+	@tar -cf ..\/$(PROGRAM)-$(_date).tar $(_files)
+	@tar -rf ..\/$(PROGRAM)-$(_date).tar $(_source)
+	@tar -rf ..\/$(PROGRAM)-$(_date).tar $(_data)
+	@tar -rf ..\/$(PROGRAM)-$(_date).tar $(_images)
+	@tar -rf ..\/$(PROGRAM)-$(_date).tar $(_other)
+	@echo "$(PROGRAM)-$(_date).tar"
