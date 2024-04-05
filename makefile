@@ -120,7 +120,7 @@ MODELS		= $(_classic) $(_woodstock) $(_topcat) $(_spice) $(_voyager)
 prefix		= $$HOME/.local
 DESTDIR		=
 
-DESKTOP		= default
+DESKTOP		= local
 
 MENU		= hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp16c
 
@@ -158,25 +158,22 @@ clean:
 	@[ -d "$(BIN)" ] && rm -rf $(BIN) || true
 
 install:
-	@case `echo "$(DESKTOP)" | tr '[:upper:]' '[:lower:]'` in \
-		default) \
+	@_dsktp="`echo "$(DESKTOP)" | tr '[:upper:]' '[:lower:]'`"; \
+	case "$$_dsktp" in \
+		local) \
 			if [ -d "$$HOME/.local" ]; then \
 				$(MAKE) -s install_desktop; \
 			elif  [ -d "$$HOME/.dt" ]; then \
-				$(MAKE) -s install_cde prefix="$$HOME/.dt"; \
+				$(MAKE) -s prefix="$$HOME/.dt" install_cde; \
 			else \
-				echo "Unable to detect desktop: please specify the DESKTOP (GNOME, KDE, MATE, XFCE, ... or NONE). "; \
+				echo "Unable to detect local desktop: please specify the DESKTOP (GNOME, KDE, MATE, XFCE, ... or NONE). "; \
 			fi; \
 			;; \
-		freedesktop | \
-		gnome | mate | kde | lxde | lxqt | xfce) \
-			$(MAKE) install_desktop; \
+		freedesktop | gnome | mate | kde | lxde | lxqt | xfce) \
+			$(MAKE) -s install_freedesktop; \
 			;; \
-		cde) \
-			$(MAKE) -s install_$(DESKTOP) prefix="$$HOME/.dt"; \
-			;; \
-		none) \
-			$(MAKE) -s install_$(DESKTOP) prefix="$$HOME"; \
+		none | cde) \
+			$(MAKE) -s install_"$$_dsktp"; \
 			;; \
 		*) \
 			echo "$(DESKTOP) was not recognised: Try 'make install' instead. "; \
@@ -205,9 +202,7 @@ install_cde: install_none
 # Add program files
 	@cp -R $(PRG)/* "$(DESTDIR)$(prefix)/$(BIN)/"
 
-install_desktop: install_none
-# (SRC)/$(PROGRAM).desktop $(SRC)/$(PROGRAM).svg
-#
+install_freedesktop: install_none $(SRC)/$(PROGRAM).desktop.in $(SRC)/$(PROGRAM).svg
 # Desktop integration files install for all freedesktop compatible desktops
 # with workaround for bsd `sed -i` syntax
 #
