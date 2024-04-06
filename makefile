@@ -91,6 +91,11 @@
 #                    - Made DESKTOP case insensitive - MT
 #                    - Tidied up internal vairable names comments and error
 #                      messages - MT
+#  05 Apr 24         - Various tweaks - macmpi
+#  06 Apr 24         - Do not allow 'DESKTOP' and 'prefix' to be defined at
+#                      the same - MT
+#                    - Shortened  bash command line length and target names
+#                      for Tru64 UNIX compatibility - MT
 #
 
 PROGRAM		=  x11-calc
@@ -117,10 +122,10 @@ _voyager	= hp10c hp11c hp12c hp15c hp16c
 
 MODELS		= $(_classic) $(_woodstock) $(_topcat) $(_spice) $(_voyager)
 
-prefix		= $$HOME/.local
+prefix		=
 DESTDIR		=
 
-DESKTOP		= local
+DESKTOP		=
 
 MENU		= hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp16c
 
@@ -158,29 +163,55 @@ clean:
 	@[ -d "$(BIN)" ] && rm -rf $(BIN) || true
 
 install:
-	@_dsktp="`echo "$(DESKTOP)" | tr '[:upper:]' '[:lower:]'`"; \
-	case "$$_dsktp" in \
-		local) \
+# Attempt to 'install' the application and date files to the correct target
+# directories based on 'DESTDIR' and 'prefix'. Alternativly you can use the
+# 'DESKTOP' vairable to specify the name of the target desktop to select an
+# approprite 'prefix' automatically.  However as the script will attempt to
+# detect what 'prefix' to use based on the local directory structure unless
+# you are targetng another system or installing the application system wide
+# it isn't necessary to specify either - 'make install' should just work...
+#
+#
+	@_env="`echo "$(DESKTOP)" | tr '[:upper:]' '[:lower:]'`"; \
+	case "$(prefix)" in \
+	"") \
+		case "$$_env" in \
+		"") \
 			if [ -d "$$HOME/.local" ]; then \
-				$(MAKE) -s install_desktop; \
+				$(MAKE) -s do_env prefix="$$HOME/.local"; \
 			elif  [ -d "$$HOME/.dt" ]; then \
-				$(MAKE) -s prefix="$$HOME/.dt" install_cde; \
+				$(MAKE) -s do_cde prefix="$$HOME/.dt"; \
 			else \
-				echo "Unable to detect local desktop: please specify the DESKTOP (GNOME, KDE, MATE, XFCE, ... or NONE). "; \
+				echo "Unable to detect desktop: please specify the DESKTOP (GNOME, KDE, MATE, XFCE, ... or NONE)."; \
 			fi; \
 			;; \
 		freedesktop | gnome | mate | kde | lxde | lxqt | xfce) \
-			$(MAKE) -s install_freedesktop; \
+			$(MAKE) -s do_env prefix="$$HOME/.local"; \
 			;; \
-		none | cde) \
-			$(MAKE) -s install_"$$_dsktp"; \
+		cde) \
+			$(MAKE) -s do_cde prefix="$$HOME/.dt"; \
+			;; \
+		none) \
+			$(MAKE) -s do_none prefix="$$HOME"; \
 			;; \
 		*) \
-			echo "$(DESKTOP) was not recognised: Try 'make install' instead. "; \
+			echo "'DESKTOP=$(DESKTOP)' was not recognised: Try 'make install' instead."; \
 			;; \
+		esac \
+		;; \
+	*) \
+		case "$$_env" in \
+		"") \
+			$(MAKE) -s do_env; \
+			;; \
+		*) \
+			echo "Cannot define both 'DESKTOP=$(DESKTOP)' and 'prefix=$(prefix)' at the same time. "; \
+			;; \
+		esac \
+		;; \
 	esac
 
-install_none: $(PRG) $(BIN)
+do_copy: $(BIN)
 # No  matter what desktop environment we are using (even if it is NONE)  we
 # need to copy the execuitables to the destination folder
 #
@@ -188,9 +219,20 @@ install_none: $(PRG) $(BIN)
 		{ echo "Please ensure $(prefix) exists (or set DESTDIR for staged install)." >&2; exit 1; }
 #	@echo "** Installing application in $(DESTDIR)$(prefix)"
 	@mkdir -p "$(DESTDIR)$(prefix)"
-	@cp -R $(BIN) "$(DESTDIR)$(prefix)"/ # Fail early if source and destination directories are the same
+	@cp $$flags -R $(BIN) "$(DESTDIR)$(prefix)"/ # Fail early if source and destination directories are the same
 
-install_cde: install_none
+do_none: do_copy
+# Copy binaries (and saved programs ?) to $(BIN) if no desktop specified.
+#
+# Copying saved programs to the same folder and the application really only
+# makes sense if the application looks in it's current folder for a file it
+# can't load otherwise - which is not yet implemented.
+#
+# This target rule is a placeholder for now.
+#
+#	@cp -R $(PRG)/* "$(DESTDIR)$(prefix)/$(BIN)/"
+
+do_cde: do_copy
 # Desktop integration files install for CDE - just a place holder for now.
 #
 #	@echo "** Adding files for CDE"
@@ -202,7 +244,7 @@ install_cde: install_none
 # Add program files
 	@cp -R $(PRG)/* "$(DESTDIR)$(prefix)/$(BIN)/"
 
-install_freedesktop: install_none $(SRC)/$(PROGRAM).desktop.in $(SRC)/$(PROGRAM).svg
+do_env: do_copy $(SRC)/$(PROGRAM).desktop.in $(SRC)/$(PROGRAM).svg
 # Desktop integration files install for all freedesktop compatible desktops
 # with workaround for bsd `sed -i` syntax
 #
