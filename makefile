@@ -92,10 +92,11 @@
 #                    - Tidied up internal vairable names comments and error
 #                      messages - MT
 #  05 Apr 24         - Various tweaks - macmpi
-#  06 Apr 24         - Do not allow 'DESKTOP' and 'prefix' to be defined at
-#                      the same - MT
-#                    - Shortened  bash command line length and target names
+#  06 Apr 24         - Shortened  bash command line length and target names
 #                      for Tru64 UNIX compatibility - MT
+#                    - Only attempts to set the 'prefix' based on the local
+#                      environment if neither 'prefix' or 'DESTDIR' are set
+#                      by the user - MT
 #
 
 PROGRAM		=  x11-calc
@@ -106,6 +107,8 @@ PRG		= prg
 ROM		= rom
 IMG		= img
 
+# Files to be backed up (and the current date).
+
 _files		= `ls makefile makefile.*.[0-9] $(SRC)/makefile $(SRC)/makefile.common $(SRC)/makefile.linux $(SRC)/makefile.bsd $(SRC)/makefile.osf1 $(SRC)/makefile.*.[0-9] 2>/dev/null || true`
 _source		= `ls $(SRC)/*.c $(SRC)/*.c.[0-9] $(SRC)/*.h $(SRC)/*.h.[0-9] $(SRC)/*.in $(SRC)/*.in.[0-9] 2>/dev/null || true`
 _data		= `ls $(ROM)/$(PROGRAM)*.rom $(ROM)/$(PROGRAM)*.rom.[0-9] $(PRG)/$(PROGRAM)*.dat $(PRG)/$(PROGRAM)*.dat.[0-9] 2>/dev/null || true`
@@ -113,6 +116,8 @@ _images		= `ls $(SRC)/*.ico $(SRC)/*.ico.[0-9] $(SRC)/*.png $(SRC)/*.png.[0-9] $
 _other		= `ls $(SRC)/make.com  $(SRC)/make.com.[0-9] *.md *.md.[0-9] .gitignore .gitattributes 2>/dev/null || true`
 
 _date		= `date +'%Y%m%d%H%M'`
+
+# Calculator models available in the emulator.
 
 _classic	= hp35 hp45 hp70 hp80
 _woodstock	= hp21 hp22 hp25 hp25c hp27 hp29c
@@ -122,10 +127,14 @@ _voyager	= hp10c hp11c hp12c hp15c hp16c
 
 MODELS		= $(_classic) $(_woodstock) $(_topcat) $(_spice) $(_voyager)
 
-prefix		=
-DESTDIR		=
+# The prefix will only be modified by the installer it it is NOT set on the
+# command  line.  If no prefix is defined on the command line then the most
+# approprite  value will be chosen based on the current environment or  the
+# selected DESKTOP.
 
 DESKTOP		=
+prefix		=
+DESTDIR		=
 
 MENU		= hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp16c
 
@@ -163,7 +172,7 @@ clean:
 	@[ -d "$(BIN)" ] && rm -rf $(BIN) || true
 
 install:
-# Attempt to 'install' the application and date files to the correct target
+# Attempt to 'install' the application and data files to the correct target
 # directories based on 'DESTDIR' and 'prefix'. Alternativly you can use the
 # 'DESKTOP' vairable to specify the name of the target desktop to select an
 # approprite 'prefix' automatically.  However as the script will attempt to
@@ -171,53 +180,49 @@ install:
 # you are targetng another system or installing the application system wide
 # it isn't necessary to specify either - 'make install' should just work...
 #
+# Note that Tru64 requires both DESTDIR and prefix to be explicitly defined
+# when invoking make.
 #
-	@_env="`echo "$(DESKTOP)" | tr '[:upper:]' '[:lower:]'`"; \
-	case "$(prefix)" in \
-	"") \
-		case "$$_env" in \
+	@case "`echo "$(DESKTOP)" | tr '[:upper:]' '[:lower:]'`" in \
 		"") \
 			if [ -d "$$HOME/.local" ]; then \
-				$(MAKE) -s do_env prefix="$$HOME/.local"; \
+				if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then prefix="$$HOME/.local"; else (prefix=$(prefix)); fi; \
+				$(MAKE) -s DESTDIR=$(DESTDIR) prefix=$$prefix do_env; \
 			elif  [ -d "$$HOME/.dt" ]; then \
-				$(MAKE) -s do_cde prefix="$$HOME/.dt"; \
+				if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then prefix="$$HOME/.dt"; else (prefix=$(prefix)); fi; \
+				$(MAKE) -s DESTDIR=$(DESTDIR) prefix=$$prefix do_cde; \
 			else \
 				echo "Unable to detect desktop: please specify the DESKTOP (GNOME, KDE, MATE, XFCE, ... or NONE)."; \
 			fi; \
 			;; \
 		freedesktop | gnome | mate | kde | lxde | lxqt | xfce) \
-			$(MAKE) -s do_env prefix="$$HOME/.local"; \
+			if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then prefix="$$HOME/.local"; else (prefix=$(prefix)); fi; \
+			$(MAKE) -s DESTDIR=$(DESTDIR) prefix=$$prefix do_env; \
 			;; \
 		cde) \
-			$(MAKE) -s do_cde prefix="$$HOME/.dt"; \
+			if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then prefix="$$HOME/.dt"; else (prefix=$(prefix)); fi; \
+			$(MAKE) -s DESTDIR=$(DESTDIR) prefix=$$prefix do_cde; \
 			;; \
 		none) \
-			$(MAKE) -s do_none prefix="$$HOME"; \
+			if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then prefix="$$HOME"; else (prefix=$(prefix)); fi; \
+			$(MAKE) -s DESTDIR=$(DESTDIR) prefix=$$prefix do_none; \
 			;; \
 		*) \
 			echo "'DESKTOP=$(DESKTOP)' was not recognised: Try 'make install' instead."; \
 			;; \
-		esac \
-		;; \
-	*) \
-		case "$$_env" in \
-		"") \
-			$(MAKE) -s do_env; \
-			;; \
-		*) \
-			echo "Cannot define both 'DESKTOP=$(DESKTOP)' and 'prefix=$(prefix)' at the same time. "; \
-			;; \
-		esac \
-		;; \
-	esac
+	esac;
+
+#	echo "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789"; \
+#	echo "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789";
 
 do_copy: $(BIN)
 # No  matter what desktop environment we are using (even if it is NONE)  we
 # need to copy the execuitables to the destination folder
 #
+#	@[ -n "$${VERBOSE+x}" ] && echo "'DESKTOP=$(DESKTOP)' 'DESTDIR=$(DESTDIR)' 'prefix=$(prefix)'"
+#
 	@[ -n "$(DESTDIR)" ] || [ -d "$(prefix)" ] || \
 		{ echo "Please ensure $(prefix) exists (or set DESTDIR for staged install)." >&2; exit 1; }
-#	@echo "** Installing application in $(DESTDIR)$(prefix)"
 	@mkdir -p "$(DESTDIR)$(prefix)"
 	@cp $$flags -R $(BIN) "$(DESTDIR)$(prefix)"/ # Fail early if source and destination directories are the same
 
@@ -230,25 +235,36 @@ do_none: do_copy
 #
 # This target rule is a placeholder for now.
 #
+#
+	@[ -n "$${VERBOSE+x}" ] && echo "No desktop option selected" || true
+	@[ -n "$${VERBOSE+x}" ] && echo "Installing in $(DESTDIR)$(prefix)" || true
+#	@[ -n "$${VERBOSE+x}" ] && echo "prefix=$(prefix)" || true
+#
 #	@cp -R $(PRG)/* "$(DESTDIR)$(prefix)/$(BIN)/"
 
 do_cde: do_copy
 # Desktop integration files install for CDE - just a place holder for now.
 #
-#	@echo "** Adding files for CDE"
-#
 # ToDo - setup desktop and icons (in xpm format 16×16 (x11-calc.t.pm) 32×32
 # (x11-calc.m.pm) 48×48 (x11-calc.l.pm)) in either /etc/dt/appconfig/icons/,
 # /usr/dt/appconfig/icons/ or $HOME/.dt/icons
 #
+	@[ -n "$${VERBOSE+x}" ] && echo "Selected CDE desktop environment" || true
+	@[ -n "$${VERBOSE+x}" ] && echo "Installing in $(DESTDIR)$(prefix)" || true
+#	@[ -n "$${VERBOSE+x}" ] && echo "prefix=$(prefix)" || true
+#
 # Add program files
-	@cp -R $(PRG)/* "$(DESTDIR)$(prefix)/$(BIN)/"
+	@cp -R $(PRG)/* "$(DESTDIR)/$(prefix)/$(BIN)/"
 
 do_env: do_copy $(SRC)/$(PROGRAM).desktop.in $(SRC)/$(PROGRAM).svg
 # Desktop integration files install for all freedesktop compatible desktops
 # with workaround for bsd `sed -i` syntax
 #
-#	@echo "** Adding desktop files"
+	@[ -n "$${VERBOSE+x}" ] && echo "Selected freedesktop environment" || true
+	@[ -n "$${VERBOSE+x}" ] && echo "Installing in $(DESTDIR)$(prefix)" || true
+#	@[ -n "$${VERBOSE+x}" ] && echo "prefix=$(prefix)" || true
+#
+# Copy desktop files
 	@mkdir -p "$(DESTDIR)$(prefix)"/share/applications;
 	@_dest_file="$(DESTDIR)$(prefix)/share/applications/$(PROGRAM).desktop"; \
 	_tmp_file="`mktemp`"; \
