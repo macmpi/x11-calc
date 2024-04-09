@@ -23,7 +23,7 @@
 #                    - Fixed default rule so it works on NetBSD, Tru64, and
 #                      Linux (now we can get rid of make.sh) - MT
 #  24 Mar 24         - Pass model number - MT
-#  29 Mar 24         - Use linx/bsd/osf1 makefiles
+#  29 Mar 24         - Use linux/bsd/osf1 makefiles -macmpi
 #
 
 MODEL	=  21

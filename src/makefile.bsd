@@ -38,14 +38,14 @@ OS != uname -s
 LANG 	= LANG_en
 LDLIBS	+= -lcompat
 CFLAGS	+= -Wno-variadic-macros
-CFLAGS	+= -I /usr/X11R7/include/
-LDFLAGS	+= -L /usr/X11R7/lib/ -R /usr/X11R7/lib
+CFLAGS	+= -I/usr/X11R7/include/
+LDFLAGS	+= -L/usr/X11R7/lib/ -R /usr/X11R7/lib
 .endif
 
 .if ${OS} == "Darwin" # MacOS
 LANG 	= LANG_en
-CFLAGS	+= -I /opt/X11/include/X11/
-LDFLAGS += -L /opt/X11/lib/
+CFLAGS	+= -I/opt/X11/include/X11/
+LDFLAGS += -L/opt/X11/lib/
 .endif
 
 include makefile.common

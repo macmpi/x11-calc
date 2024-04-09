@@ -22,6 +22,9 @@
  * 19 Sep 21         - Initial version (Cheese House)- MT
  * 03 Jan 21         - Changed debug() macro so that debug code is executed
  *                     when DEBUG is defined (doesn't need to be true) - MT
+ * 01 Apr 24         - Only attempt to define the keyboard functions if the
+ *                     operating  system libraries support the key  symbols
+ *                     used to decode a keystroke - MT
  *
  */
 
@@ -41,6 +44,8 @@
 #include "x11-keyboard.h"
 
 #include "gcc-debug.h"
+
+#if defined(__linux__) || defined(__NetBSD__)
 
 /* Attempts to translate a key code into a character. */
 static void v_key_decode(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate) {
@@ -185,3 +190,5 @@ okeyboard *h_keyboard_create(Display* x_display) {
       h_keyboard = NULL;
    return(h_keyboard);
 }
+
+#endif
