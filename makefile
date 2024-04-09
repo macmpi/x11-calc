@@ -97,6 +97,7 @@
 #                    - Only attempts to set the 'prefix' based on the local
 #                      environment if neither 'prefix' or 'DESTDIR' are set
 #                      by the user - MT
+#  09 Apr 24         - Optimized install script - MT
 #
 
 PROGRAM		=  x11-calc
@@ -183,37 +184,40 @@ install:
 # Note that Tru64 requires both DESTDIR and prefix to be explicitly defined
 # when invoking make.
 #
-	@case "`echo "$(DESKTOP)" | tr '[:upper:]' '[:lower:]'`" in \
-		"") \
-			if [ -d "$$HOME/.local" ]; then \
-				if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then prefix="$$HOME/.local"; else (prefix=$(prefix)); fi; \
-				$(MAKE) -s DESTDIR=$(DESTDIR) prefix=$$prefix do_env; \
-			elif  [ -d "$$HOME/.dt" ]; then \
-				if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then prefix="$$HOME/.dt"; else (prefix=$(prefix)); fi; \
-				$(MAKE) -s DESTDIR=$(DESTDIR) prefix=$$prefix do_cde; \
-			else \
-				echo "Unable to detect desktop: please specify the DESKTOP (GNOME, KDE, MATE, XFCE, ... or NONE)."; \
-			fi; \
+#	@if [ -z "$${prefix+x}" ]; then echo "'prefix' NOT defined"; else echo "prefix='$(prefix)'";  fi;
+#	@if [ -z "$${DESTDIR+x}" ]; then echo "'DESTDIR' NOT defined"; else echo "DESTDIR='$(DESTDIR)'";  fi;
+
+	@_unset() { if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then return 0; else return 1; fi;}; \
+	_desktop="`echo "$(DESKTOP)" | tr '[:lower:]' '[:upper:]' `"; \
+	if [ -z "$$_desktop" ]; then \
+		if [ -d "$$HOME/.local" ]; then \
+			_desktop="FREEDESKTOP"; \
+		elif [ -d "$$HOME/.dt" ]; then \
+			_desktop="CDE"; \
+		else \
+			_desktop="NONE"; \
+		fi; \
+	fi; \
+	case $$_desktop in \
+		FREEDESKTOP | GNOME | MATE | KDE | LXDE | LXQT | XFCE) \
+			_unset && prefix="$$HOME/.local" || true; \
+			$(MAKE) -s DESKTOP=$$_desktop DESTDIR=$(DESTDIR) prefix=$$prefix do_env; \
 			;; \
-		freedesktop | gnome | mate | kde | lxde | lxqt | xfce) \
-			if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then prefix="$$HOME/.local"; else (prefix=$(prefix)); fi; \
-			$(MAKE) -s DESTDIR=$(DESTDIR) prefix=$$prefix do_env; \
-			;; \
-		cde) \
-			if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then prefix="$$HOME/.dt"; else (prefix=$(prefix)); fi; \
+		CDE) \
+			_unset && prefix="$$HOME/.dt" || true; \
 			$(MAKE) -s DESTDIR=$(DESTDIR) prefix=$$prefix do_cde; \
 			;; \
-		none) \
-			if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then prefix="$$HOME"; else (prefix=$(prefix)); fi; \
+		NONE) \
+			_unset && prefix="$$HOME" || true; \
 			$(MAKE) -s DESTDIR=$(DESTDIR) prefix=$$prefix do_none; \
+			;; \
+		"") \
+			echo "Unable to detect desktop: please specify the DESKTOP (GNOME, KDE, MATE, XFCE, ... or NONE)."; \
 			;; \
 		*) \
 			echo "'DESKTOP=$(DESKTOP)' was not recognised: Try 'make install' instead."; \
 			;; \
 	esac;
-
-#	echo "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789"; \
-#	echo "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789";
 
 do_copy: $(BIN)
 # No  matter what desktop environment we are using (even if it is NONE)  we
@@ -260,7 +264,7 @@ do_env: do_copy $(SRC)/$(PROGRAM).desktop.in $(SRC)/$(PROGRAM).svg
 # Desktop integration files install for all freedesktop compatible desktops
 # with workaround for bsd `sed -i` syntax
 #
-	@[ -n "$${VERBOSE+x}" ] && echo "Selected freedesktop environment" || true
+	@[ -n "$${VERBOSE+x}" ] && echo "Selected $(DESKTOP) environment" || true
 	@[ -n "$${VERBOSE+x}" ] && echo "Installing in $(DESTDIR)$(prefix)" || true
 #	@[ -n "$${VERBOSE+x}" ] && echo "prefix=$(prefix)" || true
 #
