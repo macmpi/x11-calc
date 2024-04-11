@@ -32,24 +32,22 @@
 
 typedef struct { /* Calculator button structure. */
    int index;
-   char key; /* Key code corisponding to button */
-   char* text; /* Text */
-   char* function; /* Function Text */
-   char* alternate; /* Alternate Function Text */
-   char* label; /* Label Text */
-   XFontStruct* text_font; /* Pointer to text font. */
-   XFontStruct* function_font; /* Pointer to function font. */
-   XFontStruct* label_font; /* Pointer to label font. */
-   int left;
-   int top;
-   int width;
-   int height;
+   XRectangle button_position;   /* Current button position */
+   XRectangle button_geometry;   /* Original button position */
+   XFontStruct* text_font;       /* Pointer to text font. */
+   XFontStruct* function_font;   /* Pointer to function font. */
+   XFontStruct* label_font;      /* Pointer to label font. */
    int state;
    int style;
-   unsigned int colour; /* Button colour */
-   unsigned int function_colour;  /* Function key colour */
-   unsigned int shifted_colour; /* Alternate function key colour */
-   unsigned int label_colour; /* Shifted function key colour */
+   char key;                     /* Key code corisponding to button */
+   char* text;                   /* Text */
+   char* function;               /* Function Text */
+   char* alternate;              /* Alternate Function Text */
+   char* label;                  /* Label Text */
+   unsigned int colour;          /* Button colour */
+   unsigned int function_colour; /* Function key colour */
+   unsigned int shifted_colour;  /* Alternate function key colour */
+   unsigned int label_colour;    /* Shifted function key colour */
 } obutton;
 
 obutton *h_button_key_pressed(obutton *h_button, char c_key);
@@ -63,5 +61,7 @@ obutton *h_button_create(int i_index, char c_key,
    int i_state, int i_style,
    unsigned int i_colour, unsigned int i_function_colour,
    unsigned int i_shifted_colour, unsigned int i_label_colour);
+
+int i_button_resize(obutton *h_button, float f_scale);
 
 int i_button_draw(Display *h_display, int x_application_window, int i_screen,obutton *h_button);

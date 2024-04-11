@@ -65,10 +65,10 @@ oswitch *h_switch_pressed(oswitch *h_switch, int i_xpos, int i_ypos)
 
    if (h_switch != NULL)
    {
-      i_indent = h_switch->left;
-      i_extent = h_switch->left + h_switch->width;
-      i_upper = h_switch->top;
-      i_lower = h_switch->top + h_switch->height;
+      i_indent = h_switch->switch_position.x;
+      i_extent = h_switch->switch_position.x + h_switch->switch_position.width;
+      i_upper = h_switch->switch_position.y;
+      i_lower = h_switch->switch_position.y + h_switch->switch_position.height;
 
       if (((i_xpos > i_indent ) && (i_xpos < i_extent)) &&
          ((i_ypos > i_upper ) && (i_ypos < i_lower)))
@@ -95,15 +95,34 @@ oswitch *h_switch_create(int i_index, char* s_on, char* s_mid, char* s_off,
    h_switch->off = s_off;
    h_switch->text_font = h_normal_font;
 
-   h_switch->left = i_left;
-   h_switch->top = i_top;
-   h_switch->width = i_width;
-   h_switch->height = i_height;
+   h_switch->switch_position.x = i_left;
+   h_switch->switch_position.y = i_top;
+   h_switch->switch_position.width = i_width;
+   h_switch->switch_position.height = i_height;
+
+   h_switch->switch_geometry = h_switch->switch_position;
 
    h_switch->state = b_state;
    h_switch->colour = i_colour;
    h_switch->alternate_colour = i_alternate_colour;
    return(h_switch);
+}
+
+/*
+ * switch_resize (display, scale)
+ *
+ * Resize switch based on original geometery
+ *
+ */
+
+int i_switch_resize(oswitch *h_switch, float f_scale)
+{
+   h_switch->switch_position.x = h_switch->switch_geometry.x * f_scale;
+   h_switch->switch_position.y = h_switch->switch_geometry.y * f_scale;
+   h_switch->switch_position.width = h_switch->switch_geometry.width * f_scale;
+   h_switch->switch_position.height = h_switch->switch_geometry.height * f_scale;
+
+   return 0;
 }
 
 /* switch_draw (display, window, screen, switch) */
@@ -118,7 +137,7 @@ int i_switch_draw(Display *h_display, int x_application_window, int i_screen, os
       XSetFont(h_display, DefaultGC(h_display, i_screen), h_switch->text_font->fid); /* Set the text font. */
       if ((h_switch->mid != NULL) && (h_switch->mid[0] != '\0'))
       {
-         i_upper = h_switch->top + (h_switch->text_font->ascent) + (h_switch->height / 2 - (h_switch->text_font->ascent + h_switch->text_font->descent)) / 2;
+         i_upper = h_switch->switch_position.y + (h_switch->text_font->ascent) + (h_switch->switch_position.height / 2 - (h_switch->text_font->ascent + h_switch->text_font->descent)) / 2;
          switch (h_switch->state)
          {
             case 0:
@@ -141,7 +160,7 @@ int i_switch_draw(Display *h_display, int x_application_window, int i_screen, os
       }
       else
       {
-         i_upper = h_switch->top + (h_switch->text_font->ascent) + (h_switch->height - (h_switch->text_font->ascent + h_switch->text_font->descent)) / 2;
+         i_upper = h_switch->switch_position.y + (h_switch->text_font->ascent) + (h_switch->switch_position.height - (h_switch->text_font->ascent + h_switch->text_font->descent)) / 2;
          switch (h_switch->state)
          {
             case 0:
@@ -158,17 +177,17 @@ int i_switch_draw(Display *h_display, int x_application_window, int i_screen, os
       }
 
       XSetForeground(h_display, DefaultGC(h_display, i_screen), i_on_colour);
-      i_indent = 1 + h_switch->left + ((h_switch->width / 2) - XTextWidth(h_switch->text_font, h_switch->on, strlen(h_switch->on))) / 2; /* Find position of the text */
+      i_indent = 1 + h_switch->switch_position.x + ((h_switch->switch_position.width / 2) - XTextWidth(h_switch->text_font, h_switch->on, strlen(h_switch->on))) / 2; /* Find position of the text */
       XDrawString(h_display, x_application_window, DefaultGC(h_display, i_screen), i_indent, i_upper, h_switch->on, strlen(h_switch->on)); /* Draw the main text */
 
       XSetForeground(h_display, DefaultGC(h_display, i_screen), i_off_colour);
-      i_indent = 1 + h_switch->left + (h_switch->width / 2) + ((h_switch->width / 2) - XTextWidth(h_switch->text_font, h_switch->on, strlen(h_switch->on))) / 2; /* Find position of the text */
+      i_indent = 1 + h_switch->switch_position.x + (h_switch->switch_position.width / 2) + ((h_switch->switch_position.width / 2) - XTextWidth(h_switch->text_font, h_switch->on, strlen(h_switch->on))) / 2; /* Find position of the text */
       XDrawString(h_display, x_application_window, DefaultGC(h_display, i_screen), i_indent, i_upper, h_switch->off, strlen(h_switch->off)); /* Draw the main text */
 
       if ((h_switch->mid != NULL) && (h_switch->mid[0] != '\0'))
       {
          XSetForeground(h_display, DefaultGC(h_display, i_screen), i_mid_colour);
-         i_indent = h_switch->left + h_switch->width / 2 - XTextWidth(h_switch->text_font, h_switch->mid, strlen(h_switch->mid)) / 2; /* Find position of the text */
+         i_indent = h_switch->switch_position.x + h_switch->switch_position.width / 2 - XTextWidth(h_switch->text_font, h_switch->mid, strlen(h_switch->mid)) / 2; /* Find position of the text */
          i_upper = i_upper + (h_switch->text_font->ascent + h_switch->text_font->descent);
          XDrawString(h_display, x_application_window, DefaultGC(h_display, i_screen), i_indent, i_upper, h_switch->mid, strlen(h_switch->mid)); /* Draw the main text */
       }

@@ -28,18 +28,16 @@
 
 typedef struct { /* Calculator switch structure */
    int index;
+   XRectangle switch_position;   /* Current switch position */
+   XRectangle switch_geometry;   /* Original switch position */
+   char state;
    char* on; /* On */
    char* mid; /* Alternate text */
    char* off; /* Off */
-   XFontStruct* text_font; /* Pointer to font */
-   int left;
-   int top;
-   int width;
-   int height;
-   char state;
    char inverted;
    unsigned int colour; /* Colour */
    unsigned int alternate_colour; /* Colour */
+   XFontStruct* text_font; /* Pointer to font */
 } oswitch;
 
 oswitch *h_switch_pressed(oswitch *h_switch, int i_xpos, int i_ypos);
@@ -48,6 +46,8 @@ oswitch *h_switch_create(int i_index, char* s_on, char* s_mid, char* s_off,
    XFontStruct *h_normal_font,
    int i_left, int i_top, int i_width, int i_height, char b_state,
    unsigned int i_colour, unsigned int i_alternate_colour);
+
+int i_switch_resize(oswitch *h_switch, float f_scale);
 
 int i_switch_draw(Display *h_display, int x_application_window, int i_screen, oswitch *h_switch);
 

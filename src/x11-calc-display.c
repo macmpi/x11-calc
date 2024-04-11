@@ -74,12 +74,21 @@
  *                     if it should be blank, eg when in print mode - MT
  * 03 Mar 24         - Updated error handling (now passes the  error number
  *                     to the error handler) - MT
+ * 09 Apr 24         - Removed some unused parameters from display-update()
+ *                     function - MT
+ *                   - Changed display data structure to store the size and
+ *                     position of the bezel and display using a predefined
+ *                     XRectangle structure - MT
+ *                   - Display structure stores both the original geometery
+ *                     and the current position of the display - MT
+ *                   - Finally renamed x11-calc-segment to the more correct
+ *                     x11-calc-digit - MT
  *
  */
 
 #define NAME           "x11-calc-display"
-#define BUILD          "0031"
-#define DATE           "03 Mar 24"
+#define BUILD          "0035"
+#define DATE           "09 Apr 24"
 #define AUTHOR         "MT"
 
 #include <errno.h>     /* errno */
@@ -98,7 +107,7 @@
 #include "x11-calc.h"
 
 #include "x11-calc-colour.h"
-#include "x11-calc-segment.h"
+#include "x11-calc-digit.h"
 #include "x11-calc-display.h"
 #include "x11-calc-cpu.h"
 
@@ -117,24 +126,32 @@
 
 odisplay *h_display_create(int i_index, int i_left, int i_top, int i_width, int i_height,
    int i_display_left, int i_display_top, int i_display_width, int i_display_height,
-   unsigned int i_foreground, unsigned int i_background, unsigned int i_fill, unsigned int i_border){
+   unsigned int i_foreground, unsigned int i_background, unsigned int i_fill, unsigned int i_border)
+{
 
    odisplay *h_display; /* Pointer to display. */
    int i_count, i_offset, i_size;
 
-
    /* Attempt to allocate memory for a display. */
    if ((h_display = malloc(sizeof(*h_display)))==NULL) v_error(errno, "Memory allocation failed!");
    h_display->index = i_index;
-   h_display->left = i_left;
-   h_display->top = i_top;
-   h_display->width = i_width;
-   h_display->height = i_height;
-   h_display->display_left = i_display_left;
-   h_display->display_top = i_display_top;
-   h_display->display_width = i_display_width;
-   h_display->display_height = i_display_height;
+
+   h_display->bezel_position.x = i_left; /* Set properties */
+   h_display->bezel_position.y = i_top;
+   h_display->bezel_position.width = i_width;
+   h_display->bezel_position.height = i_height;
+   h_display->display_position.x = i_display_left;
+   h_display->display_position.y = i_display_top;
+   h_display->display_position.width = i_display_width;
+   h_display->display_position.height = i_display_height;
    h_display->enabled = True;
+   h_display->foreground = i_foreground;
+   h_display->background = i_background;
+   h_display->fill = i_fill;
+   h_display->border = i_border;
+
+   h_display->bezel_geometry = h_display->bezel_position; /* Save current size and position */
+   h_display->display_geometry = h_display->display_position;
 
    i_size = ((i_display_width - 1)/ DIGITS);
    i_offset = (i_display_width - (i_size * DIGITS)) / 2;
@@ -143,15 +160,19 @@ odisplay *h_display_create(int i_index, int i_left, int i_top, int i_width, int 
    i_size = ((i_display_width - 1)/ DIGITS);
    i_offset = (i_display_width - (i_size * DIGITS)) / 2;
    i_offset = i_offset + i_left + i_display_left + 1;
-   for (i_count = 0; i_count < DIGITS; i_count++) {
-      h_display->segment[i_count] = h_segment_create(i_count, 0,
+
+   for (i_count = 0; i_count < DIGITS; i_count++)
+   {
+      h_display->digit[i_count] = h_digit_create(i_count, 0,
          (i_offset + i_size * i_count), /* Left */
          i_top + i_display_top + (i_display_height - (i_height / 2)) / 2, /* Top */
          (i_size - 2), (i_height / 2), /* Width and Height */
          i_foreground, i_background);
    }
-   for (i_count = 0; i_count < DIGITS; i_count++) {
-      h_display->segment[i_count]->mask = DISPLAY_SPACE;
+
+   for (i_count = 0; i_count < DIGITS; i_count++)
+   {
+      h_display->digit[i_count]->mask = DISPLAY_SPACE;
    }
 
 #if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
@@ -199,36 +220,31 @@ odisplay *h_display_create(int i_index, int i_left, int i_top, int i_width, int 
       i_width, i_height, i_foreground, i_background, False);
 #endif
 
-   h_display->foreground = i_foreground;
-   h_display->background = i_background;
-   h_display->fill = i_fill;
-   h_display->border = i_border;
    return (h_display);
 }
 
 /*
  * display_draw (display, window, screen, display)
  *
- * Draws a seven segment display on the screen.
+ * Draws the display on the screen.
  *
  */
 
-int i_display_draw(Display* x_display, int x_application_window, int i_screen, odisplay *h_display){
-
+int i_display_draw(Display* x_display, int x_application_window, int i_screen, odisplay *h_display)
+{
    int i_count;
 
-   if (h_display->display_top != 0 || h_display->display_left != 0 || h_display->display_width != h_display->width || h_display->height != h_display->display_height)
+   if (h_display->display_position.y != 0 || h_display->display_position.x != 0 || h_display->display_position.width != h_display->bezel_position.width || h_display->bezel_position.height != h_display->display_position.height)
    {
       XSetForeground(x_display, DefaultGC(x_display, i_screen), h_display->border); /* Set the border colour. */
-      XFillRectangle(x_display, x_application_window, DefaultGC(x_display, i_screen), h_display->left, h_display->top, h_display->width, h_display->height); /* Fill in the border. */
+      XFillRectangle(x_display, x_application_window, DefaultGC(x_display, i_screen), h_display->bezel_position.x, h_display->bezel_position.y, h_display->bezel_position.width, h_display->bezel_position.height); /* Fill in the border. */
    }
 
    XSetForeground(x_display, DefaultGC(x_display, i_screen), h_display->fill); /* Set the background colour. */
-   XFillRectangle(x_display, x_application_window, DefaultGC(x_display, i_screen), h_display->left + h_display->display_left, h_display->top + h_display->display_top, h_display->display_width, h_display->display_height); /* Fill in the background. */
+   XFillRectangle(x_display, x_application_window, DefaultGC(x_display, i_screen), h_display->bezel_position.x + h_display->display_position.x, h_display->bezel_position.y + h_display->display_position.y, h_display->display_position.width, h_display->display_position.height); /* Fill in the background. */
 
-   /* Draw display segments. */
-   for (i_count = 0; i_count < DIGITS; i_count++)
-      if (!(h_display->segment[i_count] == NULL)) i_segment_draw(x_display, x_application_window, i_screen, h_display->segment[i_count]);
+   for (i_count = 0; i_count < DIGITS; i_count++) /* Draw each digit. */
+      if (!(h_display->digit[i_count] == NULL)) i_digit_draw(x_display, x_application_window, i_screen, h_display->digit[i_count]);
 
 #if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
    for (i_count = 0; i_count < INDECATORS; i_count++)
@@ -240,13 +256,49 @@ int i_display_draw(Display* x_display, int x_application_window, int i_screen, o
 }
 
 /*
- * display_update (display, window, screen, display)
+ * display_resize (display, scale)
  *
- * Updates the display based on the contents of the A and B registers.
+ * Resize the display.
  *
  */
 
-int i_display_update(Display* x_display, int x_application_window, int i_screen, odisplay *h_display, oprocessor *h_processor){
+int i_display_resize(odisplay *h_display, float f_scale)  /* Resize display based on original geometery */
+{
+   int i_count;
+
+   h_display->bezel_position.x = h_display->bezel_geometry.x * f_scale;
+   h_display->bezel_position.y = h_display->bezel_geometry.y * f_scale;
+   h_display->bezel_position.width = h_display->bezel_geometry.width * f_scale;
+   h_display->bezel_position.height = h_display->bezel_geometry.height * f_scale;
+
+   h_display->display_position.x = h_display->display_geometry.x * f_scale;
+   h_display->display_position.y = h_display->display_geometry.y * f_scale;
+   h_display->display_position.width = h_display->display_geometry.width * f_scale;
+   h_display->display_position.height = h_display->display_geometry.height * f_scale;
+
+   for (i_count = 0; i_count < DIGITS; i_count++) /* Resize each digit. */
+      if (!(h_display->digit[i_count] == NULL)) i_digit_resize(h_display->digit[i_count], f_scale);
+
+#if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
+   for (i_count = 0; i_count < INDECATORS; i_count++)
+   {
+      h_display->label[i_count]->label_position.x = h_display->label[i_count]->label_position.x * f_scale;
+      h_display->label[i_count]->label_position.y = h_display->bezel_position.y + h_display->display_position.height - h_small_font->descent;
+      h_display->label[i_count]->label_position.width = h_display->label[i_count]->label_geometry.width * f_scale;
+   }
+#endif
+   return 0;
+}
+
+/*
+ * display_update (display, processor)
+ *
+ * Update the display.
+ *
+ */
+
+int i_display_update(odisplay *h_display, oprocessor *h_processor)
+{
 #if defined(HP67) || defined(HP19c)
    int i_count;
    static int c_digits [] =
@@ -255,41 +307,46 @@ int i_display_update(Display* x_display, int x_application_window, int i_screen,
       DISPLAY_EIGHT, DISPLAY_NINE, DISPLAY_r, DISPLAY_C, DISPLAY_o, DISPLAY_d, DISPLAY_E, DISPLAY_SPACE
    };
 
-   for (i_count = 0; i_count < DIGITS; i_count++) {
-      if (h_display->segment[i_count] != NULL) {
+   for (i_count = 0; i_count < DIGITS; i_count++)
+   {
+      if (h_display->digit[i_count] != NULL)
+      {
          if (h_processor->flags[DISPLAY_ENABLE] && h_processor->enabled)
          {
-            switch (i_count) {
+            switch (i_count)
+            {
             case 0: /* Ignore */
                break;
             case 12: /* Sign */
                if (h_processor->reg[A_REG]->nibble[REG_SIZE - i_count] == 0x0F)
-                  h_display->segment[i_count]->mask = DISPLAY_SPACE;
-               else {
+                  h_display->digit[i_count]->mask = DISPLAY_SPACE;
+               else
+               {
                   if (h_processor->reg[A_REG]->nibble[REG_SIZE - i_count] & 0x01)
-                     h_display->segment[0]->mask = DISPLAY_SPACE;
+                     h_display->digit[0]->mask = DISPLAY_SPACE;
                   else
-                     h_display->segment[0]->mask = DISPLAY_MINUS;
+                     h_display->digit[0]->mask = DISPLAY_MINUS;
                   if (h_processor->reg[A_REG]->nibble[REG_SIZE - i_count] >> 1)
-                     h_display->segment[i_count]->mask = DISPLAY_MINUS;
+                     h_display->digit[i_count]->mask = DISPLAY_MINUS;
                   else
-                     h_display->segment[i_count]->mask = DISPLAY_SPACE;
+                     h_display->digit[i_count]->mask = DISPLAY_SPACE;
                }
                break;
             default:
-               switch (h_processor->reg[B_REG]->nibble[REG_SIZE - i_count] & 0x0F) {
+               switch (h_processor->reg[B_REG]->nibble[REG_SIZE - i_count] & 0x0F)
+               {
                case 0x03: /* Decimal point */
-                  h_display->segment[i_count]->mask = DISPLAY_DECIMAL;
+                  h_display->digit[i_count]->mask = DISPLAY_DECIMAL;
                   break;
                case 0x0F:
                case 0x02:
                case 0x01: /* Space */
-                     h_display->segment[i_count]->mask = DISPLAY_SPACE;
+                     h_display->digit[i_count]->mask = DISPLAY_SPACE;
                   break;
                case 0x09:
                case 0x04:
                case 0x00: /* Number */
-                  h_display->segment[i_count]->mask = c_digits[h_processor->reg[A_REG]->nibble[REG_SIZE - i_count]];
+                  h_display->digit[i_count]->mask = c_digits[h_processor->reg[A_REG]->nibble[REG_SIZE - i_count]];
                   break;
                default:
                   debug(v_fprint_registers(stderr, h_processor);
@@ -298,7 +355,7 @@ int i_display_update(Display* x_display, int x_application_window, int i_screen,
             }
          }
          else
-            h_display->segment[i_count]->mask = DISPLAY_SPACE;
+            h_display->digit[i_count]->mask = DISPLAY_SPACE;
       }
    }
 #elif defined(HP35) || defined(HP80) || defined(HP45) || defined(HP70) || defined(HP55)
@@ -310,36 +367,41 @@ int i_display_update(Display* x_display, int x_application_window, int i_screen,
    };
 
    i_offset = REG_SIZE - 1;
-   for (i_count = 0; i_count < DIGITS; i_count++) {
-      if (h_display->segment[i_count] != NULL) {
+
+   for (i_count = 0; i_count < DIGITS; i_count++)
+   {
+      if (h_display->digit[i_count] != NULL)
+      {
          if (h_processor->flags[DISPLAY_ENABLE] && h_processor->enabled)
          {
-            switch (i_count) {
+            switch (i_count)
+            {
             case 0:
                if (h_processor->reg[A_REG]->nibble[REG_SIZE - i_count - 1] == 9)
-                  h_display->segment[i_count]->mask = DISPLAY_MINUS;
+                  h_display->digit[i_count]->mask = DISPLAY_MINUS;
                else
-                  h_display->segment[i_count]->mask = DISPLAY_SPACE;
+                  h_display->digit[i_count]->mask = DISPLAY_SPACE;
             break;
             case 12:
                i_offset = 2;
                if ((h_processor->reg[A_REG]->nibble[REG_SIZE - i_count] == 9) &&
                   (h_processor->reg[B_REG]->nibble[REG_SIZE - i_count] == 0))
-                  h_display->segment[i_count]->mask = DISPLAY_MINUS;
+                  h_display->digit[i_count]->mask = DISPLAY_MINUS;
                else
-                  h_display->segment[i_count]->mask = DISPLAY_SPACE;
+                  h_display->digit[i_count]->mask = DISPLAY_SPACE;
             break;
             default:
-               switch (h_processor->reg[B_REG]->nibble[REG_SIZE - i_count] & 0x0F) {
+               switch (h_processor->reg[B_REG]->nibble[REG_SIZE - i_count] & 0x0F)
+               {
                case 2: /* Decimal point */
-                  h_display->segment[i_count]->mask = DISPLAY_DECIMAL;
+                  h_display->digit[i_count]->mask = DISPLAY_DECIMAL;
                   i_offset++;
                   break;
                case 9: /* Space */
-                  h_display->segment[i_count]->mask = DISPLAY_SPACE;
+                  h_display->digit[i_count]->mask = DISPLAY_SPACE;
                   break;
                case 0: /* Number */
-                  if (i_offset >= 0) h_display->segment[i_count]->mask = c_digits[h_processor->reg[A_REG]->nibble[i_offset]];
+                  if (i_offset >= 0) h_display->digit[i_count]->mask = c_digits[h_processor->reg[A_REG]->nibble[i_offset]];
                   break;
                default:
                   debug(v_fprint_registers(stderr, h_processor);
@@ -348,7 +410,7 @@ int i_display_update(Display* x_display, int x_application_window, int i_screen,
             }
          }
          else
-            h_display->segment[i_count]->mask = DISPLAY_SPACE;
+            h_display->digit[i_count]->mask = DISPLAY_SPACE;
       }
       i_offset--;
    }
@@ -362,46 +424,46 @@ int i_display_update(Display* x_display, int x_application_window, int i_screen,
 
    for (i_count = 0; i_count < DIGITS; i_count++)
    {
-      if (h_display->segment[i_count] != NULL)
+      if (h_display->digit[i_count] != NULL)
       {
          if (h_processor->flags[DISPLAY_ENABLE] && h_processor->enabled)
          {
             if (i_count == 0)
-               h_display->segment[i_count]->mask = DISPLAY_SPACE;
+               h_display->digit[i_count]->mask = DISPLAY_SPACE;
             else
-               h_display->segment[i_count]->mask = c_digits[h_processor->reg[A_REG]->nibble[REG_SIZE - 1 - i_count]];
+               h_display->digit[i_count]->mask = c_digits[h_processor->reg[A_REG]->nibble[REG_SIZE - 1 - i_count]];
             if ((h_processor->reg[B_REG]->nibble[REG_SIZE - 1 - i_count] & 0x04) != 0)
             {
                if (i_count > 1)
                {
                   if (h_processor->reg[A_REG]->nibble[REG_SIZE - 1 - i_count]== 0x9)
-                     h_display->segment[i_count]->mask = DISPLAY_MINUS;
+                     h_display->digit[i_count]->mask = DISPLAY_MINUS;
                   else
-                     h_display->segment[i_count]->mask = DISPLAY_SPACE;
+                     h_display->digit[i_count]->mask = DISPLAY_SPACE;
                }
                else
-                  if (i_count == 1) h_display->segment[0]->mask = DISPLAY_MINUS; /* Negative value */
+                  if (i_count == 1) h_display->digit[0]->mask = DISPLAY_MINUS; /* Negative value */
             }
             if ((h_processor->reg[B_REG]->nibble[REG_SIZE - 1 - i_count] & 0x02) != 0)
             {
-               if ((h_display->segment[i_count]->mask != DISPLAY_COMMA)
-                  && (h_display->segment[i_count]->mask != DISPLAY_SPACE)
-                  && (h_display->segment[i_count]->mask != DISPLAY_MINUS))
-                  h_display->segment[i_count]->mask = h_display->segment[i_count]->mask | DISPLAY_COMMA;
+               if ((h_display->digit[i_count]->mask != DISPLAY_COMMA)
+                  && (h_display->digit[i_count]->mask != DISPLAY_SPACE)
+                  && (h_display->digit[i_count]->mask != DISPLAY_MINUS))
+                  h_display->digit[i_count]->mask = h_display->digit[i_count]->mask | DISPLAY_COMMA;
                if ((i_count == 1) && ((h_processor->reg[B_REG]->nibble[REG_SIZE - 3] & 0x02) != 0))
-                  h_display->segment[0]->mask = DISPLAY_MINUS; /* Self test */
+                  h_display->digit[0]->mask = DISPLAY_MINUS; /* Self test */
 
             }
             if ((h_processor->reg[B_REG]->nibble[REG_SIZE - 1 - i_count] & 0x01) != 0)
             {
                if (i_count == 0)
-                  h_display->segment[i_count]->mask = DISPLAY_SPACE;
+                  h_display->digit[i_count]->mask = DISPLAY_SPACE;
                else
-                  h_display->segment[i_count]->mask = h_display->segment[i_count]->mask | DISPLAY_DECIMAL;
+                  h_display->digit[i_count]->mask = h_display->digit[i_count]->mask | DISPLAY_DECIMAL;
             }
          }
          else
-            h_display->segment[i_count]->mask = DISPLAY_SPACE;
+            h_display->digit[i_count]->mask = DISPLAY_SPACE;
       }
    }
 #elif defined(HP10)
@@ -413,26 +475,27 @@ int i_display_update(Display* x_display, int x_application_window, int i_screen,
    };
 
    i_offset = REG_SIZE - DIGITS + 1;
-   for (i_count = 0; i_count < DIGITS - 1; i_count++) {
-      if (h_display->segment[i_count] != NULL)
+   for (i_count = 0; i_count < DIGITS - 1; i_count++)
+   {
+      if (h_display->digit[i_count] != NULL)
       {
          if (h_processor->flags[DISPLAY_ENABLE] && h_processor->enabled && h_display->enabled) /* Allows print mode to disable display */
          {
-            if (h_display->segment[i_count] != NULL)
-               h_display->segment[i_count]->mask = c_digits[h_processor->reg[A_REG]->nibble[REG_SIZE - i_offset - i_count - 1]];
+            if (h_display->digit[i_count] != NULL)
+               h_display->digit[i_count]->mask = c_digits[h_processor->reg[A_REG]->nibble[REG_SIZE - i_offset - i_count - 1]];
          }
          else
-            h_display->segment[i_count]->mask = DISPLAY_SPACE;
+            h_display->digit[i_count]->mask = DISPLAY_SPACE;
       }
    }
 #elif defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
    /*
     * Unlike the earlier models which display the contents of the processor
     * registers  directly, the voyager series use two memory registers ([9]
-    * and [10]) to hold that state of every segment (and annunciator).
+    * and [10]) to hold that state of every digit (and annunciator).
     *
     * When updating the display it is necessary to look up the state of all
-    * the segments individually, using the table below to map the values in
+    * the  digits individually, using the table below to map the values  in
     * the two memory registers to each segment in each digit...
     *
     */
@@ -504,20 +567,20 @@ int i_display_update(Display* x_display, int x_application_window, int i_screen,
       h_display->label[5]->state = (h_processor->mem[10]->nibble[9] & 0x4);   /* D.MY */
       h_display->label[6]->state = (h_processor->mem[10]->nibble[8] & 0x1);   /* C */
       h_display->label[7]->state = (h_processor->mem[10]->nibble[10] & 0x1);  /* PRGM */
-}
+   }
 #endif
    for (i_count = 0; i_count < DIGITS; i_count++)
    {
-      if (h_display->segment[i_count] != NULL)
+      if (h_display->digit[i_count] != NULL)
       {
-         h_display->segment[i_count]->mask = DISPLAY_SPACE;
+         h_display->digit[i_count]->mask = DISPLAY_SPACE;
          if (h_processor->flags[DISPLAY_ENABLE] && h_processor->enabled)
          {
             for (i_counter = 0; i_counter < 9; i_counter++)
             {
                if (i_map[i_count][i_counter][0] > 0)
                   if ((h_processor->mem[i_map[i_count][i_counter][0]]->nibble[i_map[i_count][i_counter][1]] & i_map[i_count][i_counter][2]))
-                     h_display->segment[i_count]->mask |= (1 << i_counter); /* Mask determines which segments are on */
+                     h_display->digit[i_count]->mask |= (1 << i_counter); /* Mask determines which segments are on */
             }
          }
       }
@@ -530,24 +593,27 @@ int i_display_update(Display* x_display, int x_application_window, int i_screen,
       DISPLAY_EIGHT, DISPLAY_NINE, DISPLAY_r, DISPLAY_c, DISPLAY_o, DISPLAY_P, DISPLAY_E, DISPLAY_SPACE
    };
 
-   for (i_count = 0; i_count < DIGITS; i_count++) {
-      if (h_display->segment[i_count] != NULL) {
+   for (i_count = 0; i_count < DIGITS; i_count++)
+   {
+      if (h_display->digit[i_count] != NULL)
+      {
          if (h_processor->flags[DISPLAY_ENABLE] && h_processor->enabled)
          {
-            h_display->segment[i_count]->mask = c_digits[h_processor->reg[A_REG]->nibble[REG_SIZE - 1 - i_count]];
-            switch (h_processor->reg[B_REG]->nibble[REG_SIZE - 1 - i_count] & 0x07) {
+            h_display->digit[i_count]->mask = c_digits[h_processor->reg[A_REG]->nibble[REG_SIZE - 1 - i_count]];
+            switch (h_processor->reg[B_REG]->nibble[REG_SIZE - 1 - i_count] & 0x07)
+            {
             case 0x02: /* Sign */
                if (h_processor->reg[A_REG]->nibble[REG_SIZE - 1 - i_count])
-                  h_display->segment[i_count]->mask = DISPLAY_MINUS;
+                  h_display->digit[i_count]->mask = DISPLAY_MINUS;
                else
-                  h_display->segment[i_count]->mask = DISPLAY_SPACE;
+                  h_display->digit[i_count]->mask = DISPLAY_SPACE;
                break;
             case 0x01: /* Number and decimal point */
-               h_display->segment[i_count]->mask = h_display->segment[i_count]->mask | DISPLAY_DECIMAL;
+               h_display->digit[i_count]->mask = h_display->digit[i_count]->mask | DISPLAY_DECIMAL;
             }
          }
          else
-            h_display->segment[i_count]->mask = DISPLAY_SPACE;
+            h_display->digit[i_count]->mask = DISPLAY_SPACE;
       }
    }
 #endif

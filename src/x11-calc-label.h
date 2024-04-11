@@ -26,12 +26,10 @@
 
 typedef struct { /* Calculator label structure */
    int index;
+   XRectangle label_position;    /* Current label position */
+   XRectangle label_geometry;    /* Original label position */
    char* text; /* Text */
    XFontStruct* text_font; /* Pointer to font */
-   int left;
-   int top;
-   int width;
-   int height;
    unsigned int colour; /* Colour */
    unsigned int background; /* Background colour */
    int state; /* Visible */
@@ -42,5 +40,7 @@ olabel *h_label_pressed(olabel *h_label, int i_xpos, int i_ypos);
 olabel *h_label_create(int i_index, char* s_text, XFontStruct *h_font,
    int i_left, int i_top, int i_width, int i_height,
    unsigned int i_colour, unsigned int i_background, int i_state);
+
+int i_label_resize(olabel *h_label, float f_scale);
 
 int i_label_draw(Display *h_display, int x_application_window, int i_screen, olabel *h_label);
