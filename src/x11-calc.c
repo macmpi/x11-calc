@@ -286,6 +286,12 @@
  *                     and the current position of the display - MT
  *                   - Finally renamed x11-calc-segment to the more correct
  *                     x11-calc-digit - MT
+ * 12 Apr 24         - Added command line option to allow window size to be
+ *                     increased '--zoom' - MT
+ *                   - Added parameter to '--zoom' to allow the scale to be
+ *                     adjusted - MT
+ *                   - Updated error messages to make the out of range text
+ *                     more generic (only German translation changed) - MT
  *
  * To Do             - Parse command line in a separate routine.
  *                   - Add verbose option.
@@ -297,7 +303,7 @@
 
 #define  NAME          "x11-calc"
 #define  VERSION       "0.14"
-#define  BUILD         "0142"
+#define  BUILD         "0145"
 #define  DATE          "09 Apr 24"
 #define  AUTHOR        "MT"
 
@@ -459,7 +465,7 @@ int main(int argc, char *argv[])
                            i_breakpoint = i_breakpoint * 8 + argv[i_count + 1][i_offset] - '0';
                      }
                      if ((i_breakpoint < 0)  || (i_breakpoint > ROM_SIZE) || (i_breakpoint > 07777)) /* Check address range */
-                        v_error(EINVAL, h_err_address_range, argv[i_count + 1]);
+                        v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]);
                      else {
                         if (i_count + 2 < argc) /* Remove the parameter from the arguments */
                            for (i_offset = i_count + 1; i_offset < argc - 1; i_offset++)
@@ -486,7 +492,7 @@ int main(int argc, char *argv[])
                            i_trap = i_trap * 8 + argv[i_count + 1][i_offset] - '0';
                      }
                      if ((i_trap < 0) || (i_trap > 01777)) /* Check range */
-                        v_error(EINVAL, h_err_address_range, argv[i_count + 1]);
+                        v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]);
                      else
                      {
                         if (i_count + 2 < argc) /* Remove the parameter from the arguments */
@@ -528,7 +534,23 @@ int main(int argc, char *argv[])
                else
                   if (!strncmp(argv[i_count], "--zoom", i_index))
                   {
-                     if (i_zoom < 5) i_zoom += 1;
+                     i_zoom = 0;
+                     for (i_offset = 0; i_offset < strlen(argv[i_count + 1]); i_offset++) /* Parse octal number */
+                     {
+                        if ((argv[i_count + 1][i_offset] < '0') || (argv[i_count + 1][i_offset] > '7'))
+                           v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]);
+                        else
+                           i_zoom = i_zoom * 8 + argv[i_count + 1][i_offset] - '0';
+                     }
+                     if ((i_zoom < 0) || (i_zoom > 8)) /* Check range */
+                        v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]); /** TODO: Add new error message */
+                     else
+                     {
+                        if (i_count + 2 < argc) /* Remove the parameter from the arguments */
+                           for (i_offset = i_count + 1; i_offset < argc - 1; i_offset++)
+                              argv[i_offset] = argv[i_offset + 1];
+                        argc--;
+                     }
                      f_scale = 1 + (0.125 * i_zoom);
                   }
                   else if (!strncmp(argv[i_count], "--no-cursor", i_index))
@@ -688,6 +710,8 @@ int main(int argc, char *argv[])
       DISPLAY_LEFT, DISPLAY_TOP, DISPLAY_WIDTH, DISPLAY_HEIGHT, DIGIT_COLOUR, DIGIT_BACKGROUND,
       DISPLAY_BACKGROUND, BEZEL_COLOUR); /* Create display */
 
+   v_init_buttons(h_button); /* Create buttons */
+
 #if defined(SWITCHES)
    v_init_switches(h_switch);
 #endif
@@ -696,6 +720,7 @@ int main(int argc, char *argv[])
    v_init_labels(h_label);
 #endif
 
+   /* Resize application window */
    o_window_position.x = o_window_geometry.x * f_scale;
    o_window_position.y = o_window_geometry.y * f_scale;
    o_window_position.width = o_window_geometry.width * f_scale;
@@ -709,9 +734,8 @@ int main(int argc, char *argv[])
    h_size_hint->max_width = o_window_position.width;
    XSetWMNormalHints(x_display, x_application_window, h_size_hint);
 
-   i_display_resize(h_display, f_scale); /* Minimum 0.935 Maximum 1.71 ? */
 
-   v_init_buttons(h_button); /* Create buttons */
+   i_display_resize(h_display, f_scale); /* Resize display */
 
    for (i_count = 0; i_count < BUTTONS; i_count++) /* Resize buttons */
       i_button_resize(h_button[i_count], f_scale);
