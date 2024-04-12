@@ -293,7 +293,8 @@
  *                   - Updated error messages to make the out of range text
  *                     more generic (only German translation changed) - MT
  *
- * To Do             - Parse command line in a separate routine.
+ * To Do             - Fix vertical button shape when zoomed in
+ *                   - Parse command line in a separate routine.
  *                   - Add verbose option.
  *                   - Allow VMS users to set breakpoints?
  *                   - Free up allocated memory on exit.
@@ -537,7 +538,7 @@ int main(int argc, char *argv[])
                      i_zoom = 0;
                      for (i_offset = 0; i_offset < strlen(argv[i_count + 1]); i_offset++) /* Parse octal number */
                      {
-                        if ((argv[i_count + 1][i_offset] < '0') || (argv[i_count + 1][i_offset] > '7'))
+                        if ((argv[i_count + 1][i_offset] < '0') || (argv[i_count + 1][i_offset] > '5'))
                            v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]);
                         else
                            i_zoom = i_zoom * 8 + argv[i_count + 1][i_offset] - '0';
