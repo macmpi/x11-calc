@@ -56,7 +56,9 @@
  * 25 Mar 24         - If the button is pressed the text now moves down one
  *                     pixel if using the classic button style, not up like
  *                     the later models - MT
- *
+ * 13 Apr 24         - Uses the key height to draw a button with horizontal
+ *                     dividing line in the same place regardless of aspect
+ *                     ratio - MT
  * To Do             - Add a new style to handle the type of button used by
  *                     the classic series.
  */
@@ -234,15 +236,16 @@ int i_button_draw(Display *h_display, int x_application_window, int i_screen, ob
 
       XSetForeground(h_display, DefaultGC(h_display, i_screen), i_tint(h_button->colour)); /* Set the foreground colour to lighter tint of the base colour. */
 
-      if (h_button->button_position.width < h_button->button_position.height)
-         i_offset = h_button->button_position.y + KBD_ROW + 2 + (h_button->button_position.height - KBD_ROW) / 2; /* Find middle of button. */
-      else
-         i_offset = h_button->button_position.y + 2 + h_button->button_position.height / 2; /* Find middle of button. */
-
       if (h_button->style == 0)
+      {
+         i_offset = h_button->button_position.y + 2 + (h_button->button_position.height - (KEY_HEIGHT / 2 * h_button->button_position.height / h_button->button_geometry.height));
          i_upper = i_upper + (1 + i_offset - i_upper + h_button->text_font->ascent + h_button->text_font->descent) / 2 - h_button->text_font->descent; /* Find vertical position of text */
+      }
       else
+      {
+         i_offset = h_button->button_position.y + 2 + h_button->button_position.height / 2; /* Find middle of button. */
          i_upper = i_offset + (h_button->text_font->ascent + h_button->text_font->descent) / 2 - h_button->text_font->descent - 2; /* Find vertical position of text */
+      }
       i_lower = i_offset + (i_lower - i_offset + h_button->label_font->ascent + h_button->label_font->descent) / 2 - h_button->label_font->descent;
 
       if (h_button->style == 0)

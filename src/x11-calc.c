@@ -292,6 +292,9 @@
  *                     adjusted - MT
  *                   - Updated error messages to make the out of range text
  *                     more generic (only German translation changed) - MT
+ * 13 Apr 24         - Uses the key height to draw a button with horizontal
+ *                     dividing line in the same place regardless of aspect
+ *                     ratio - MT
  *
  * To Do             - Fix vertical button shape when zoomed in
  *                   - Parse command line in a separate routine.
@@ -304,8 +307,8 @@
 
 #define  NAME          "x11-calc"
 #define  VERSION       "0.14"
-#define  BUILD         "0145"
-#define  DATE          "09 Apr 24"
+#define  BUILD         "0146"
+#define  DATE          "13 Apr 24"
 #define  AUTHOR        "MT"
 
 #define  INTERVAL 25   /* Number of ticks to execute before updating the display */
@@ -538,7 +541,7 @@ int main(int argc, char *argv[])
                      i_zoom = 0;
                      for (i_offset = 0; i_offset < strlen(argv[i_count + 1]); i_offset++) /* Parse octal number */
                      {
-                        if ((argv[i_count + 1][i_offset] < '0') || (argv[i_count + 1][i_offset] > '5'))
+                        if ((argv[i_count + 1][i_offset] < '0') || (argv[i_count + 1][i_offset] > '4'))
                            v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]);
                         else
                            i_zoom = i_zoom * 8 + argv[i_count + 1][i_offset] - '0';
