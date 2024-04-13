@@ -22,7 +22,7 @@ More [screenshots](./img/#top)
 12 Apr 24
 
    - Allows the size of the window to be adjusted using the `--zoom n` option
-     where n can be between 0 and 5.
+     where n can be between 0 and 4.
    - Added an install option to the makefile (by default the installer will
      use `$HOME/.local` if it exists, but it is possible to specify another
      directory by setting the directory `prefix`).
