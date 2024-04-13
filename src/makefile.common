@@ -25,7 +25,9 @@
 #  https://www.gnu.org/software/make/manual/html_node/Prerequisite-Types.html
 #
 #  28 Mar 24         - Initial version - macmpi
-#  28 Mar 24         - streamlin macros for use on osf1 - macmpi
+#  28 Mar 24         - Streamlined macros for use on osf1 - macmpi
+#  09 Apr 24         - Finally renamed x11-calc-segment to the more correct
+#                      x11-calc-digit - MT
 #
 
 MODEL	=  21
@@ -33,7 +35,7 @@ PROGRAM	=  x11-calc-$(MODEL)
 BIN		= ../bin
 
 # SHARED sources are model-dependant via HP$(MODEL) #define statements
-SHARED	=  x11-calc.c x11-calc-cpu.c x11-calc-display.c x11-calc-segment.c x11-calc-messages.c x11-calc-button.c x11-keyboard.c
+SHARED	=  x11-calc.c x11-calc-cpu.c x11-calc-display.c x11-calc-digit.c x11-calc-messages.c x11-calc-button.c x11-keyboard.c
 COMMON	=  x11-calc-switch.c x11-calc-label.c x11-calc-colour.c x11-calc-font.c gcc-wait.c gcc-exists.c
 
 CC		= cc
