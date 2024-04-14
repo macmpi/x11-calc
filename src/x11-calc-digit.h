@@ -1,5 +1,5 @@
 /*
- * x11-calc-segment.h - RPN (Reverse Polish) calculator simulator.
+ * x11-calc-digit.h - RPN (Reverse Polish) calculator simulator.
  *
  * Copyright(C) 2013   MT
  *
@@ -25,6 +25,8 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * 14 Jul 13         - Initial version - MT
+ * 09 Apr 24         - Finally renamed x11-calc-segment to the more correct
+ *                     x11-calc-digit - MT
  *
  */
 
@@ -39,20 +41,20 @@
 #define SEG_COMMA      0x0100
 #define SEG_COLON      0x0200
 
-typedef struct { /* Calculator segment structure. */
+typedef struct { /* Calculator 7 segment display structure. */
    int index;
+   XRectangle digit_position;    /* Current digit position */
+   XRectangle digit_geometry;    /* Original digit position */
    int mask;
-   int left;
-   int top;
-   int width;
-   int height;
    unsigned int foreground;
    unsigned int background;
-} osegment;
+} odigit;
 
-osegment *h_segment_create(int i_index, int i_mask, int i_left, int i_top,
+odigit *h_digit_create(int i_index, int i_mask, int i_left, int i_top,
    int i_width, int i_height, unsigned int i_foreground, unsigned int i_background);
 
-int i_segment_draw(Display *h_display, int x_application_window, int i_screen,osegment *h_segment);
+int i_digit_resize(odigit *h_digit, float f_scale);
+
+int i_digit_draw(Display *h_display, int x_application_window, int i_screen,odigit *h_digit);
 
 

@@ -277,9 +277,29 @@
  * 29 Mar 24         - Fixed compiler warnings - MT
  * 30 Mar 24         - Corrected number of switches on models with only one
  *                     switch - MT
+ * 09 Apr 24         - Removed some unused parameters from display-update()
+ *                     function - MT
+ *                   - Changed display data structure to store the size and
+ *                     position of the bezel and display using a predefined
+ *                     XRectangle structure - MT
+ *                   - Display structure stores both the original geometery
+ *                     and the current position of the display - MT
+ *                   - Finally renamed x11-calc-segment to the more correct
+ *                     x11-calc-digit - MT
+ * 12 Apr 24         - Added command line option to allow window size to be
+ *                     increased '--zoom' - MT
+ *                   - Added parameter to '--zoom' to allow the scale to be
+ *                     adjusted - MT
+ *                   - Updated error messages to make the out of range text
+ *                     more generic (only German translation changed) - MT
+ * 13 Apr 24         - Uses the key height to draw a button with horizontal
+ *                     dividing line in the same place regardless of aspect
+ *                     ratio - MT
+ * 14 Apr 24         - Fixed zoom validation and checks that zoom value has
+ *                     been specified - MT
  *
- *
- * To Do             - Parse command line in a separate routine.
+ * To Do             - Fix vertical button shape when zoomed in
+ *                   - Parse command line in a separate routine.
  *                   - Add verbose option.
  *                   - Allow VMS users to set breakpoints?
  *                   - Free up allocated memory on exit.
@@ -287,14 +307,14 @@
  *
  */
 
-#define NAME           "x11-calc"
-#define VERSION        "0.14"
-#define BUILD          "0138"
-#define DATE           "30 Mar 24"
-#define AUTHOR         "MT"
+#define  NAME          "x11-calc"
+#define  VERSION       "0.14"
+#define  BUILD         "0147"
+#define  DATE          "13 Apr 24"
+#define  AUTHOR        "MT"
 
-#define INTERVAL 25    /* Number of ticks to execute before updating the display */
-#define DELAY 50       /* Number of intervals to wait before exiting */
+#define  INTERVAL 25   /* Number of ticks to execute before updating the display */
+#define  DELAY 50      /* Number of intervals to wait before exiting */
 
 #include <errno.h>     /* errno */
 
@@ -317,7 +337,7 @@
 
 #include "x11-calc.h"
 
-#include "x11-calc-segment.h"
+#include "x11-calc-digit.h"
 #include "x11-calc-display.h"
 #include "x11-calc-cpu.h"
 
@@ -374,45 +394,55 @@ int main(int argc, char *argv[])
    XEvent x_event;
    XSizeHints *h_size_hint;
    Atom wm_delete;
-
-#if defined(SWITCHES)
-   oswitch *h_switch[SWITCHES];
-#endif
-#if defined(LABELS)
-   olabel *h_label[LABELS];
-#endif
+   XRectangle o_window_position;
+   XRectangle o_window_geometry;
    obutton *h_button[BUTTONS]; /* Array to hold pointers to buttons */
    obutton *h_pressed = NULL;
    odisplay *h_display; /* Pointer to display structure */
-#if defined(__linux__) || defined(__NetBSD__)
-   okeyboard *h_keyboard;
-#endif
    oprocessor *h_processor;
 
    char *s_display_name = ""; /* Just use the default display */
    char *s_title = TITLE; /* Windows title */
    char *s_pathname = NULL;
 
-   unsigned int i_screen_width; /* Screen width */
+   int i_window_top; /* Window top */
+   int i_window_left; /* Window left */
+   unsigned int i_window_width; /* Window width */
+   unsigned int i_window_height; /* Window height */
+
+   float f_scale = 1.0;
+
+   unsigned int i_screen_width;  /* Screen width */
    unsigned int i_screen_height; /* Screen height */
-   unsigned int i_window_width = WIDTH; /* Window width in pixels */
-   unsigned int i_window_height = HEIGHT; /* Window height in pixels */
+
    unsigned int i_background_colour = BACKGROUND; /* Window's background colour */
    unsigned int i_window_border = 4; /* Window's border width */
-   unsigned int i_colour_depth; /* Window's colour depth */
-   int i_window_left, i_window_top; /* Window's top-left corner */
-   int i_screen; /* Default screen number */
+   unsigned int i_colour_depth;  /* Window's colour depth */
+   int i_screen;                 /* Default screen number */
 
-   char b_trace = False; /* Trace flag */
-   char b_step = False; /* Single step flag flag */
-   char b_cursor = True; /* Draw a cursor */
-   char b_run = True; /* Run flag controls CPU instruction execution in main loop */
-   char b_abort = False; /*Abort flag controls execution of main loop */
+   char b_trace = False;         /* Trace flag */
+   char b_step = False;          /* Single step flag flag */
+   char b_cursor = True;         /* Draw a cursor */
+   char b_run = True;            /* Run flag controls CPU instruction execution in main loop */
+   char b_abort = False;         /*Abort flag controls execution of main loop */
 
    int i_offset, i_count, i_index;
-   int i_breakpoint = -1; /* Break-point */
-   int i_trap = -1; /* Trap instruction */
+   int i_zoom = 0;               /* Zoom level */
+   int i_breakpoint = -1;        /* Break-point */
+   int i_trap = -1;              /* Trap instruction */
    int i_ticks = -1;
+
+#if defined(SWITCHES)
+   oswitch *h_switch[SWITCHES];
+#endif
+
+#if defined(LABELS)
+   olabel *h_label[LABELS];
+#endif
+
+#if defined(__linux__) || defined(__NetBSD__)
+   okeyboard *h_keyboard;
+#endif
 
    h_processor = h_processor_create(i_rom);
 #if defined(unix) || defined(__unix__) || defined(__APPLE__) /* Parse UNIX style command line options */
@@ -441,7 +471,7 @@ int main(int argc, char *argv[])
                            i_breakpoint = i_breakpoint * 8 + argv[i_count + 1][i_offset] - '0';
                      }
                      if ((i_breakpoint < 0)  || (i_breakpoint > ROM_SIZE) || (i_breakpoint > 07777)) /* Check address range */
-                        v_error(EINVAL, h_err_address_range, argv[i_count + 1]);
+                        v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]);
                      else {
                         if (i_count + 2 < argc) /* Remove the parameter from the arguments */
                            for (i_offset = i_count + 1; i_offset < argc - 1; i_offset++)
@@ -468,7 +498,7 @@ int main(int argc, char *argv[])
                            i_trap = i_trap * 8 + argv[i_count + 1][i_offset] - '0';
                      }
                      if ((i_trap < 0) || (i_trap > 01777)) /* Check range */
-                        v_error(EINVAL, h_err_address_range, argv[i_count + 1]);
+                        v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]);
                      else
                      {
                         if (i_count + 2 < argc) /* Remove the parameter from the arguments */
@@ -508,7 +538,33 @@ int main(int argc, char *argv[])
                if (i_index == 2)
                  b_abort = True; /* '--' terminates command line processing */
                else
-                  if (!strncmp(argv[i_count], "--no-cursor", i_index))
+                  if (!strncmp(argv[i_count], "--zoom", i_index))
+                  {
+                     if (i_count + 1 < argc)
+                     {
+                        i_zoom = 0;
+                        for (i_offset = 0; i_offset < strlen(argv[i_count + 1]); i_offset++) /* Parse decimal number */
+                        {
+                           if ((argv[i_count + 1][i_offset] < '0') || (argv[i_count + 1][i_offset] > '9'))
+                              v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]);
+                           else
+                              i_zoom = i_zoom * 10 + argv[i_count + 1][i_offset] - '0';
+                        }
+                        if ((i_zoom < 0) || (i_zoom > 4)) /* Check range */
+                           v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]); /** TODO: Add new error message */
+                        else
+                        {
+                           if (i_count + 2 < argc) /* Remove the parameter from the arguments */
+                              for (i_offset = i_count + 1; i_offset < argc - 1; i_offset++)
+                                 argv[i_offset] = argv[i_offset + 1];
+                           argc--;
+                        }
+                        f_scale = 1 + (0.125 * i_zoom);
+                     }
+                     else
+                        v_error(EINVAL, h_err_missing_argument, argv[i_count]);
+                  }
+                  else if (!strncmp(argv[i_count], "--no-cursor", i_index))
                      b_cursor = False; /* Don't draw a cursor - unless drawn by the window manager */
                   else if (!strncmp(argv[i_count], "--cursor", i_index))
                      b_cursor = True; /* Draw cursor */
@@ -611,24 +667,30 @@ int main(int argc, char *argv[])
    i_screen_width = DisplayWidth(x_display, i_screen);
    i_screen_height = DisplayHeight(x_display, i_screen);
 
+   o_window_position.width = WIDTH; /* Window width in pixels */
+   o_window_position.height = HEIGHT; /* Window height in pixels */
+   o_window_position.x = (i_screen_width - o_window_position.width) / 2 ;  /* Centre window on screen - ignored by most window managers but useful in kiosk mode */
+   o_window_position.y = (i_screen_height - o_window_position.height) / 2;
+
+   o_window_geometry = o_window_position; /* Save window position */
+
    x_application_window = XCreateSimpleWindow(x_display, /* Create the application window, as a child of the root window */
       RootWindow(x_display, i_screen),
-   /**(i_screen_width - i_window_width) / 2 , (i_screen_height - i_window_height) / 2, /* Window position -ignored ? */
-      (i_screen_width - i_window_width) , (i_screen_height - i_window_height) , /* Window position -ignored ? */
-      i_window_width, /* Window width */
-      i_window_height, /* Window height */
+      o_window_position.x, o_window_position.y,
+      o_window_position.width, /* Window width */
+      o_window_position.height, /* Window height */
       i_window_border, /* Border width - ignored ? */
       BlackPixel(x_display, i_screen), /* Preferred method */
       i_background_colour); /* Background colour */
 
    h_size_hint = XAllocSizeHints(); /* Set application window size */
    h_size_hint->flags = PMinSize | PMaxSize;
-   h_size_hint->height = i_window_height; /* Obsolete but used by some older windows managers */
-   h_size_hint->width = i_window_width; /* Obsolete but used by some older windows managers */
-   h_size_hint->min_height = i_window_height;
-   h_size_hint->min_width = i_window_width;
-   h_size_hint->max_height = i_window_height;
-   h_size_hint->max_width = i_window_width;
+   h_size_hint->height = o_window_position.height; /* Obsolete but used by some oli_window_leftder windows managers */
+   h_size_hint->width = o_window_position.width; /* Obsolete but used by some older windows managers */
+   h_size_hint->min_height = o_window_position.height;
+   h_size_hint->min_width = o_window_position.width;
+   h_size_hint->max_height = o_window_position.height;
+   h_size_hint->max_width = o_window_position.width;
    XSetWMNormalHints(x_display, x_application_window, h_size_hint);
 
    XStoreName(x_display, x_application_window, s_title); /* Set the window title */
@@ -648,13 +710,16 @@ int main(int argc, char *argv[])
       x_cursor = XCreateFontCursor(x_display, XC_arrow); /* Create a 'default' cursor */
    else
       v_set_blank_cursor(x_display, x_application_window, &x_cursor); /* Get a blank cursor */
-
    XDefineCursor(x_display, x_application_window, x_cursor); /* Define the desired X cursor */
 
    if (!(h_normal_font = h_get_font(x_display, s_normal_fonts))) v_error(errno, h_err_font, s_normal_fonts[0]);
    if (!(h_small_font = h_get_font(x_display, s_small_fonts))) v_error(errno, h_err_font, s_small_fonts[0]);
    if (!(h_alternate_font = h_get_font(x_display, s_alternate_fonts))) v_error(errno, h_err_font, s_alternate_fonts[0]);
    if (!(h_large_font = h_get_font(x_display, s_large_fonts))) v_error(errno, h_err_font, s_large_fonts[0]);
+
+   h_display = h_display_create(0, BEZEL_LEFT, BEZEL_TOP, BEZEL_WIDTH, BEZEL_HEIGHT,
+      DISPLAY_LEFT, DISPLAY_TOP, DISPLAY_WIDTH, DISPLAY_HEIGHT, DIGIT_COLOUR, DIGIT_BACKGROUND,
+      DISPLAY_BACKGROUND, BEZEL_COLOUR); /* Create display */
 
    v_init_buttons(h_button); /* Create buttons */
 
@@ -666,9 +731,35 @@ int main(int argc, char *argv[])
    v_init_labels(h_label);
 #endif
 
-   h_display = h_display_create(0, BEZEL_LEFT, BEZEL_TOP, BEZEL_WIDTH, BEZEL_HEIGHT,
-      DISPLAY_LEFT, DISPLAY_TOP, DISPLAY_WIDTH, DISPLAY_HEIGHT, DIGIT_COLOUR, DIGIT_BACKGROUND,
-      DISPLAY_BACKGROUND, BEZEL_COLOUR); /* Create display */
+   /* Resize application window */
+   o_window_position.x = o_window_geometry.x * f_scale;
+   o_window_position.y = o_window_geometry.y * f_scale;
+   o_window_position.width = o_window_geometry.width * f_scale;
+   o_window_position.height = o_window_geometry.height * f_scale;
+
+   h_size_hint->height = o_window_position.height; /* Obsolete but used by some oli_window_leftder windows managers */
+   h_size_hint->width = o_window_position.width; /* Obsolete but used by some older windows managers */
+   h_size_hint->min_height = o_window_position.height;
+   h_size_hint->min_width = o_window_position.width;
+   h_size_hint->max_height = o_window_position.height;
+   h_size_hint->max_width = o_window_position.width;
+   XSetWMNormalHints(x_display, x_application_window, h_size_hint);
+
+
+   i_display_resize(h_display, f_scale); /* Resize display */
+
+   for (i_count = 0; i_count < BUTTONS; i_count++) /* Resize buttons */
+      i_button_resize(h_button[i_count], f_scale);
+
+#if defined(SWITCHES)
+   for (i_count = 0; i_count < SWITCHES; i_count++) /* Resize labels */
+      i_switch_resize(h_switch[i_count], f_scale);
+#endif
+
+#if defined(LABELS)
+   for (i_count = 0; i_count < LABELS; i_count++) /* Resize labels */
+      i_label_resize(h_label[i_count], f_scale);
+#endif
 
 #if defined(__linux__) || defined(__NetBSD__)
    h_keyboard = h_keyboard_create(x_display); /* Only works with Linux */
@@ -727,7 +818,7 @@ int main(int argc, char *argv[])
       i_count--;
       if (i_count < 0)
       {
-         i_display_update(x_display, x_application_window, i_screen, h_display, h_processor);
+         i_display_update(h_display, h_processor);
          i_display_draw(x_display, x_application_window, i_screen, h_display); /* Redraw display */
          i_count = INTERVAL;
 #if defined(HP67)
@@ -821,6 +912,7 @@ int main(int argc, char *argv[])
             break;
 #endif
          case ButtonPress :
+            debug(printf("Mouse button [%d] pressed.\n", x_event.xbutton.button));
             if (x_event.xbutton.button == 1)
             {
                int i_count;
