@@ -19,7 +19,7 @@ More [screenshots](./img/#top)
 
 ### Latest News
 
-12 Apr 24
+14 Apr 24
 
    - Allows the size of the window to be adjusted using the `--zoom n` option
      where n can be between 0 and 4.
