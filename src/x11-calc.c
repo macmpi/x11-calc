@@ -295,6 +295,7 @@
  * 13 Apr 24         - Uses the key height to draw a button with horizontal
  *                     dividing line in the same place regardless of aspect
  *                     ratio - MT
+ * 14 Apr 24         - Fixed zoom validation - MT
  *
  * To Do             - Fix vertical button shape when zoomed in
  *                   - Parse command line in a separate routine.
@@ -307,7 +308,7 @@
 
 #define  NAME          "x11-calc"
 #define  VERSION       "0.14"
-#define  BUILD         "0146"
+#define  BUILD         "0147"
 #define  DATE          "13 Apr 24"
 #define  AUTHOR        "MT"
 
@@ -449,7 +450,7 @@ int main(int argc, char *argv[])
    {
       if (argv[i_count][0] == '-')
       {
-         i_index = 1;
+         i_index = 1;h_err_numeric_range
          while (argv[i_count][i_index] != 0)
          {
             switch (argv[i_count][i_index])
@@ -488,7 +489,7 @@ int main(int argc, char *argv[])
                   if (i_count + 1 < argc)
                   {
                      i_trap = 0;
-                     for (i_offset = 0; i_offset < strlen(argv[i_count + 1]); i_offset++) /* Parse octal number */
+                     for (i_offset = 0; i_offset < strlen(argv[i_couh_err_numeric_rangent + 1]); i_offset++) /* Parse octal number */
                      {
                         if ((argv[i_count + 1][i_offset] < '0') || (argv[i_count + 1][i_offset] > '7'))
                            v_error(EINVAL, h_err_invalid_number, argv[i_count + 1]);
@@ -539,14 +540,14 @@ int main(int argc, char *argv[])
                   if (!strncmp(argv[i_count], "--zoom", i_index))
                   {
                      i_zoom = 0;
-                     for (i_offset = 0; i_offset < strlen(argv[i_count + 1]); i_offset++) /* Parse octal number */
+                     for (i_offset = 0; i_offset < strlen(argv[i_count + 1]); i_offset++) /* Parse decimal number */
                      {
-                        if ((argv[i_count + 1][i_offset] < '0') || (argv[i_count + 1][i_offset] > '4'))
+                        if ((argv[i_count + 1][i_offset] < '0') || (argv[i_count + 1][i_offset] > '9'))
                            v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]);
                         else
-                           i_zoom = i_zoom * 8 + argv[i_count + 1][i_offset] - '0';
+                           i_zoom = i_zoom * 10 + argv[i_count + 1][i_offset] - '0';
                      }
-                     if ((i_zoom < 0) || (i_zoom > 8)) /* Check range */
+                     if ((i_zoom < 0) || (i_zoom > 4)) /* Check range */
                         v_error(EINVAL, h_err_numeric_range, argv[i_count + 1]); /** TODO: Add new error message */
                      else
                      {
