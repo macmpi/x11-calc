@@ -450,7 +450,7 @@ int main(int argc, char *argv[])
    {
       if (argv[i_count][0] == '-')
       {
-         i_index = 1;h_err_numeric_range
+         i_index = 1;
          while (argv[i_count][i_index] != 0)
          {
             switch (argv[i_count][i_index])
@@ -489,7 +489,7 @@ int main(int argc, char *argv[])
                   if (i_count + 1 < argc)
                   {
                      i_trap = 0;
-                     for (i_offset = 0; i_offset < strlen(argv[i_couh_err_numeric_rangent + 1]); i_offset++) /* Parse octal number */
+                     for (i_offset = 0; i_offset < strlen(argv[i_count + 1]); i_offset++) /* Parse octal number */
                      {
                         if ((argv[i_count + 1][i_offset] < '0') || (argv[i_count + 1][i_offset] > '7'))
                            v_error(EINVAL, h_err_invalid_number, argv[i_count + 1]);
