@@ -35,6 +35,15 @@
  * 11 Dec 22         - Renamed models with continious memory and added HP25
  *                     HP33E, and HP38E - MT
  * 26 Oct 23         - Added an enabled property to the display - MT
+ * 09 Apr 24         - Removed some unused parameters from display-update()
+ *                     function - MT
+ *                   - Changed display data structure to store the size and
+ *                     position of the bezel and display using a predefined
+ *                     XRectangle structure - MT
+ *                   - Display structure stores both the original geometery
+ *                     and the current position of the display - MT
+ *                   - Finally renamed x11-calc-segment to the more correct
+ *                     x11-calc-digit - MT
  *
  */
 
@@ -69,17 +78,15 @@
 
 #endif
 
-typedef struct { /* Calculator display structure. */
+
+typedef struct /* Calculator display structure. */
+{
    int index;
-   osegment* segment[DIGITS];
-   int left;
-   int top;
-   int width;
-   int height;
-   int display_left;
-   int display_top;
-   int display_width;
-   int display_height;
+   XRectangle bezel_position;    /* Current bezel position */
+   XRectangle display_position;  /* Current display position */
+   XRectangle bezel_geometry;    /* Original bezel position */
+   XRectangle display_geometry;  /* Original display position */
+   odigit* digit[DIGITS];
    char enabled;
    unsigned int foreground;
    unsigned int background;
@@ -97,4 +104,6 @@ odisplay *h_display_create(int i_index,
 
 int i_display_draw(Display* x_display, int x_application_window, int i_screen, odisplay *h_display);
 
-int i_display_update(Display* x_display, int x_application_window, int i_screen, odisplay *h_display, oprocessor *h_processor);
+int i_display_resize(odisplay *h_display, float f_scale);
+
+int i_display_update(odisplay *h_display, oprocessor *h_processor);

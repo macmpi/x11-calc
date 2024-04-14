@@ -1,9 +1,9 @@
 #
-#  makefile.tru64
+#  makefile.osf1 - RPN (Reverse Polish) calculator simulator.
 #
-#  Copyright (C) 2013  MT
+#  Copyright(C) 2024 - macmpi, MT
 #
-#  A simplified makefile for Digital Tru64 UNIX.
+#  generic makefile for Tru64 UNIX.
 #
 #  This  program is free software: you can redistribute it and/or modify it
 #  under  the terms of the GNU General Public License as published  by  the
@@ -26,29 +26,20 @@
 #                    - Tidied up comments - MT
 #  25 Feb 24         - Added font module - MT
 #  02 Mar 24         - Fixed missing target - MT
-#                    - Create target if required - MT
+#  20 Mar 24         - Updated change history - MT
+#                    - Fixed issue with directory creation - MT
+#                    - Renamed $TARGET to $BIN - MT
+#  24 Mar 24         - Updated to use $SHARED and $COMMON source files - MT
+#                    - Added 'make all' and 'make clean' - MT
+#                    - Split compilation of the common and shared code into
+#                      seperate tasks (which is up to be 18% quicker) - MT
+#  27 Mar 24         - Aligned rules with the generic makefile - MT
+#  31 Mar 24         - Leverage src/makefile.common
 #
-#
-MODEL	= 21
-PROGRAM	= x11-calc
-OUTPUT	= x11-calc-$(MODEL)
-SOURCES	= x11-calc.c x11-calc-$(MODEL).c x11-calc-cpu.c x11-calc-display.c x11-calc-messages.c x11-calc-segment.c x11-calc-button.c x11-calc-switch.c x11-calc-label.c x11-calc-colour.c x11-calc-font.c gcc-wait.c gcc-exists.c
-FILES	= *.c *.h makefile README LICENSE
-OBJECTS	= $(SOURCES:.c=.o)
-TARGET	= ../bin
-#LANG	= LANG_$(shell (echo $$LANG | cut -f 1 -d '_'))
-#OS	= $(shell uname)
-LANG	= LANG_en
-OS	= OSF1
-CC	= cc
 
-$(OUTPUT): $(OBJECTS)
-	@mkdir -p $(TARGET)
-#	@echo '*** Linking $(OBJECTS)'
-	@$(CC) $(OBJECTS) -o $(TARGET)/$@ -lX11 -lm
+LANG	=  LANG_en
+CFLAGS	=
+LDFLAGS	=
+LDLIBS	=
 
-$(OBJECTS) : $(SOURCES)
-#	@echo '*** Compiling $(SOURCES)'
-	@$(CC) -c $(SOURCES)  -DHP$(MODEL) -D$(OS) -D $(LANG)
-
-#
+include makefile.common

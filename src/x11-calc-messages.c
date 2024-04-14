@@ -49,6 +49,10 @@
  * 16 Feb 24         - Added 'Can't create' error message - MT
  * 25 Feb 24         - Expanded 'Cannot load font' error message - MT
  * 29 Feb 24         - Changed description from simulator to emulator - MT
+ * 12 Apr 24         - Updated error messages to make the out of range text
+ *                     more generic (only German translation changed) - MT
+ *                   - Added a new command line option '--zoom' to the help
+ *                     text - MT
  *
  */
 
@@ -119,6 +123,7 @@ Una emulador de emulador RPN para X11.\n\n\
   -r  FILE                 leer el contenido de la ROM de FILE\n\
   -s,                      un paso\n\
   -t,                      seguimiento de la ejecucion\n\
+      --zoom ZOOM          ampliar el tamaño de la ventana\n\
       --cursor             mostrar cursor (default)\n\
       --no-cursor          ocultar cursor\n\
       --help               mostrar esta ayuda y salir\n\
@@ -127,7 +132,7 @@ const char * h_err_invalid_operand = "operando(s) inválido\n";
 const char * h_err_invalid_option = "opcion invalida -- '%c'\n";
 const char * h_err_unrecognised_option = "opcion no reconocida '%s'\n";
 const char * h_err_invalid_number = "no es un numero octal -- '%s' \n";
-const char * h_err_address_range = "fuera del rango  -- '%s' \n";
+const char * h_err_numeric_range = "fuera del rango  -- '%s' \n";
 const char * h_err_invalid_argument = "argumento esperado no es -- '%c' \n";
 #else
 const char * c_msg_usage = "Uso: %s [OPCION]... [ARCHIVO]\n\
@@ -174,10 +179,11 @@ const char * h_err_missing_argument = "option benoetigt ein argument -- '%s'\n";
 const char * c_msg_usage = "Verwendung: %s [OPTION]... [DATEI]\n\
 Eine RPN rechner-emulator fur X11.\n\n\
   -b  ADDR                 haltepunkt an adresse setzen (oktal)\n\
-  -i, OPCODE               haltepunkt auf Opcode setzen  (oktal)\n\
+  -i  OPCODE               haltepunkt auf Opcode setzen  (oktal)\n\
   -r  FILE                 lesen sie den ROM inhalt von FILE\n\
   -s,                      einzelschritt\n\
   -t,                      ausfuehrung protokollieren\n\
+      --zoom ZOOM          fenstergrobe erweitern\n\
       --cursor             cursor anzeigen (default)\n\
       --no-cursor          cursor verbergen\n\
       --help               diese hilfe anzeigen und dann beenden\n\
@@ -186,7 +192,7 @@ const char * h_err_invalid_operand = "ungueltige(r) operand(en)\n";
 const char * h_err_invalid_option = "ungueltige option -- '%c'\n";
 const char * h_err_unrecognised_option = "unbekannte option '%s'\n";
 const char * h_err_invalid_number = "keine gueltige oktalzahl -- '%s' \n";
-const char * h_err_address_range = "ausserhalb des adressbereichs -- '%s' \n";
+const char * h_err_numeric_range = "ausserhalb des zahlenbereichs -- '%s' \n";
 const char * h_err_invalid_argument = "argument erwartet, nicht -- '%c' \n";
 #else
 const char * c_msg_usage = "Verwendung: %s [OPTION...] [DATEI]\n\
@@ -233,10 +239,11 @@ const char * h_err_missing_argument = "l'option necessite un argument -- '%s'\n"
 const char * c_msg_usage = "Utilisation : %s [OPTION]... [FICHIER]\n\
 Une émulateur RPN Calculator pour X11.\n\n\
   -b  ADDR                 définir un point d'arrêt (octal)\n\
-  -i, OPCODE               définir un piège d'instruction (octal)\n\
+  -i  OPCODE               définir un piège d'instruction (octal)\n\
   -r  FILE                 lire le contenu de la ROM de FILE\n\
   -s,                      single step\n\
   -t,                      trace execution\n\
+      --zoom ZOOM          agrandir la taille de la fenêtre\n\
       --cursor             curseur d'affichage (par défaut)\n\
       --no-cursor          masquer le curseur\n\
       --help               afficher cette aide et quitter\n\
@@ -245,7 +252,7 @@ const char * h_err_invalid_operand = "opérande(s) invalide(s)\n";
 const char * h_err_invalid_option = "option invalide -- '%c'\n";
 const char * h_err_unrecognised_option = "option non reconnue '%s'\n";
 const char * h_err_invalid_number = "pas un nombre octal -- '%s' \n";
-const char * h_err_address_range = "hors de portée -- '%s' \n";
+const char * h_err_numeric_range = "hors de portée -- '%s' \n";
 const char * h_err_invalid_argument = "argument attendu -- '%c' \n";
 #else
 const char * c_msg_usage = "Utilisation : %s [OPTION]... [FICHIER]\n\
@@ -293,10 +300,11 @@ const char * h_err_missing_argument = "option requires an argument -- '%s'\n";
 const char * c_msg_usage = "Usage: %s [OPTION]... [FILE]\n\
 An RPN Calculator emulator for X11.\n\n\
   -b  ADDR                 set break-point (octal)\n\
-  -i, OPCODE               set instruction trap (octal)\n\
+  -i  OPCODE               set instruction trap (octal)\n\
   -r  FILE                 read ROM from FILE\n\
   -s,                      single step\n\
   -t,                      trace\n\
+      --zoom ZOOM          enlarge window size\n\
       --cursor             display cursor\n\
       --no-cursor          hide cursor\n\
       --help               display this help and exit\n\
@@ -305,7 +313,7 @@ const char * h_err_invalid_operand = "invalid operand(s)\n";
 const char * h_err_invalid_option = "invalid option -- '%c'\n";
 const char * h_err_unrecognised_option = "unrecognised option '%s'\n";
 const char * h_err_invalid_number = "not an octal number -- '%s' \n";
-const char * h_err_address_range = "out of range -- '%s' \n";
+const char * h_err_numeric_range = "out of range -- '%s' \n";
 const char * h_err_invalid_argument = "expected argument not -- '%c' \n";
 #else
 const char * c_msg_usage = "Usage: %s [OPTION...] [FILE]\n\

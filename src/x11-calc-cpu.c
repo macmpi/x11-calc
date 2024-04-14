@@ -384,6 +384,11 @@
  * 23 Feb 24         - Fixed bug in read_rom() - MT
  * 03 Mar 24         - Updated error handling (now passes the  error number
  *                     to the error handler) - MT
+ * 21 Mar 24         - Fixed display position (12C 15C and 16C)- MT
+ * 29 Mar 24         - Fixed undefined behavior warnings - MT
+ *                   - Fixed unused result compiler warnings - MT
+ *                   - Fixed array subscript and string operation  compiler
+ *                     warnings -MT
  *
  * To Do             - Finish adding code to display any modified registers
  *                     to every instruction.
@@ -393,8 +398,8 @@
  */
 
 #define NAME           "x11-calc-cpu"
-#define BUILD          "0169"
-#define DATE           "03 Mar 24"
+#define BUILD          "0171"
+#define DATE           "29 Mar 24"
 #define AUTHOR         "MT"
 
 #include <errno.h>     /* errno */
@@ -456,7 +461,7 @@ static void v_fprint_status(FILE *h_file, oprocessor *h_processor) /* Display th
 static void v_fprint_flags(FILE *h_file, oprocessor *h_processor) /* Display the current processor flags */
 {
    int i_count, i_temp = 0;
-   for (i_count = 0; i_count <= FLAGS; i_count++)
+   for (i_count = 0; i_count < FLAGS; i_count++)
       i_temp += h_processor->flags[i_count] << i_count;
    fprintf(h_file, "\tflags = 0x%04X%12c   ", i_temp, ' ');
 }
@@ -716,36 +721,27 @@ void v_read_state(oprocessor *h_processor, char *s_pathname) /* Read processor s
 #if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
          for (i_count = 0; i_count < FLAGS; i_count++)
          {
-            fscanf(h_file, "%x,", &i_temp);
-            h_processor->flags[i_count] = i_temp;
+            if (fscanf(h_file, "%x,", &i_temp)) h_processor->flags[i_count] = i_temp;
          }
          for (i_count = 0; i_count < STATUS_BITS; i_count++)
          {
-            fscanf(h_file, "%x,", &i_temp);
-            h_processor->status[i_count] = i_temp;
+            if (fscanf(h_file, "%x,", &i_temp)) h_processor->status[i_count] = i_temp;
          }
          for (i_count = 0; i_count < REGISTERS; i_count++)
             for (i_counter = REG_SIZE - 1; i_counter >= 0 ; i_counter--)
             {
-               fscanf(h_file, "%x,", &i_temp);
-               h_processor->reg[i_count]->nibble[i_counter] = i_temp;
+               if (fscanf(h_file, "%x,", &i_temp)) h_processor->reg[i_count]->nibble[i_counter] = i_temp;
             }
-         fscanf(h_file, "%x,", &i_temp);
-         h_processor->p = i_temp;
-         fscanf(h_file, "%x,", &i_temp);
-         h_processor->q = i_temp;
-         fscanf(h_file, "%x,", &i_temp);
-         h_processor->f = i_temp;
-         fscanf(h_file, "%x,", &i_temp);
-         h_processor->g[0] = i_temp;
-         fscanf(h_file, "%x,", &i_temp);
-         h_processor->g[1] = i_temp;
+         if (fscanf(h_file, "%x,", &i_temp)) h_processor->p = i_temp;
+         if (fscanf(h_file, "%x,", &i_temp)) h_processor->q = i_temp;
+         if (fscanf(h_file, "%x,", &i_temp)) h_processor->f = i_temp;
+         if (fscanf(h_file, "%x,", &i_temp)) h_processor->g[0] = i_temp;
+         if (fscanf(h_file, "%x,", &i_temp)) h_processor->g[1] = i_temp;
 #endif
          for (i_count = 0; i_count < MEMORY_SIZE; i_count++)
             for (i_counter = REG_SIZE - 1; i_counter >= 0 ; i_counter--)
             {
-               fscanf(h_file, "%x,", &i_temp);
-               h_processor->mem[i_count]->nibble[i_counter] = i_temp;
+               if (fscanf(h_file, "%x,", &i_temp)) h_processor->mem[i_count]->nibble[i_counter] = i_temp;
             }
          fclose(h_file);
       }
@@ -1126,7 +1122,8 @@ void v_processor_tick(oprocessor *h_processor) /* Decode and execute a single in
 #endif
 
 #if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
-   static const int n_map_i[16] = {  3,  4,  5, 10,  8,  6, 11, -1,  2,  9,  7, 13,  1, 12,  0, -1 }; /* map nnnn to index */
+/* static const int n_map_i[16] = {  3,  4,  5, 10,  8,  6, 11, -1,  2,  9,  7, 13,  1, 12,  0, -1 }; /* map nnnn to index */
+   static const int n_map_i[16] = {  3,  4,  5, 10,  8,  6, 11, 15,  2,  9,  7, 13,  1, 12,  0, 15 }; /* map nnnn to index */
 #endif
 
    unsigned int i_last; /* Save the current PC */
@@ -2103,14 +2100,14 @@ void v_processor_tick(oprocessor *h_processor) /* Decode and execute a single in
             if ((i_opcode >> 6) < 15)
             {
                if (h_processor->trace) fprintf(stdout, "st = 0 %-2d\t\t", n_map_i[i_opcode >> 6]);
-               h_processor->status[n_map_i[i_opcode >> 6]] = False;
+               h_processor->status[n_map_i[i_opcode >> 6]] = (unsigned char)False;
             }
             else
             {
                int i_count;
                if (h_processor->trace) fprintf(stdout, "clrst\t\t");
                for (i_count = 7; i_count >= 0; i_count--) /* Note only clears bits 7-0 of the status register */
-                  h_processor->status[n_map_i[i_opcode >> 6]] = False;
+                  h_processor->status[n_map_i[i_opcode >> 6]] = (unsigned char)False;
             }
             if (h_processor->trace) v_fprint_status(stdout, h_processor);
             break;
@@ -2123,7 +2120,7 @@ void v_processor_tick(oprocessor *h_processor) /* Decode and execute a single in
             if ((i_opcode >> 6) < 15)
             {
                if (h_processor->trace) fprintf(stdout, "st = 1 %-2d\t\t", n_map_i[i_opcode >> 6]);
-               h_processor->status[n_map_i[i_opcode >> 6]] = True;
+               h_processor->status[n_map_i[i_opcode >> 6]] = (unsigned char)True;
                if (h_processor->trace) v_fprint_status(stdout, h_processor);
             }
             else

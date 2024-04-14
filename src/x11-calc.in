@@ -57,6 +57,13 @@
 #  09 Mar 24         - Can launch a specific emulator from the command line
 #                      using either hp<model_no> or just <model_no> (aligns
 #                      behaviour with makefile) - MT
+#  16 Mar 24         - Better -r option handling & give error clue - macmpi
+#  18 Mar 24         - No need to load ROM for voyager models - MT
+#  19 Mar 24         - Dynamically split models list in conf file -- macmpi
+#  20 Mar 24         - Trim spaces before printing command line - MT
+#  23 Mar 24         - Updated some error messages and trimmed extra spaces
+#                      from the console output - MT
+#  01 Apr 24         - _models list to be filled by makefile - macmpi
 #
 
 SUCCESS=0
@@ -67,47 +74,33 @@ ENOACC=126 # Permission denied (not official)
 ENOCMD=127 # Executable file not found (not official)
 ENOFNT=192 # No font (not official)
 
-_classic="hp35|hp45|hp70|hp80"
-_woodstock="hp21|hp22|hp25|hp25c|hp27|hp29c"
-_topcat="hp67"
-_spice="hp31e|hp32e|hp33e|hp33c|hp34c|hp37e|hp38e|hp38c"
-_voyager="hp10c|hp11c|hp12c|hp15c|hp16c"
-_models="$_classic|$_woodstock|$_topcat|$_spice|$_voyager"
+# Prototype model list: is to be filled-in by makefile
+_models="hp34c|hp11c"
 
+#- launch()
 
 _launch() {
 
-   if [ -z "$MODEL" ]; then exit 0; fi
-
-   _model="`echo $MODEL | sed 's/^hp//'`"
-
-   if echo "$MODEL" | grep -qE "$_voyager"
-   then
-      # if OPTIONS does not point to a rom file, set expected option to default location
-      # no need to check file existence: app will error-out with proper message if missing
-      if echo "$OPTIONS" | grep -Fvq ".rom"
-      then
-         OPTIONS="-r ${_data_path}x11-calc-${_model}.rom"
-      fi
-   fi
-
+   [ -z "$MODEL" ] && exit 0
    [ -n "$CMD_OPTS" ] && OPTIONS="$CMD_OPTS" # Allow command line to override options
 
-   _core_app="/x11-calc-$_model"
-   echo "`basename $0`: Executing '`dirname "$0"`"$_core_app $OPTIONS"'."
+   MODEL="`echo "$MODEL" | sed 's/^hp//'`"
+   _core_app="`dirname "$0"`/x11-calc-$MODEL"
+   echo "`basename $0`: Executing '`echo $_core_app $OPTIONS`'."
 
-   if [ -f "`dirname "$0"`"$_core_app ]; then
-      "`dirname "$0"`"$_core_app $OPTIONS # Assume script is in the same directory as the executable files
+   if [ -f "$_core_app" ]; then
+      "$_core_app" $OPTIONS # Assume script is in the same directory as the executable files
    else
       `exit $ENOCMD`
    fi
 
-
-   case $? in
+   _err=$?
+   case $_err in
+      # NOTE: * characters in messages below are intended for seach & replace by newline for zenity
       $SUCCESS)
          ;;
       $EINVAL)
-         _errmsg="Invalid operand or parameter '$OPTIONS'."
+         _errmsg="Invalid operand or parameter:**'$OPTIONS'"
          ;;
       $ENOFNT)
          _fonts="'xfonts-base' or equivalent"
@@ -116,10 +109,11 @@ _launch() {
          grep -sqE "ubuntu|debian" "${_f_os_release}" && _fonts="'xfonts-base'"
          grep -sq "fedora" "${_f_os_release}" && _fonts="'xorg-x11-fonts-base' or 'xorg-x11-fonts-misc'"
          grep -sq "gentoo" "${_f_os_release}" && _fonts="'font-misc-misc'"
-         _errmsg="Please install missing fonts in $_fonts."
+         _errmsg="Please install missing fonts from:**$_fonts."
          ;;
       $ENOENT)
-         _errmsg="Missing ROM file!"
+         _errmsg="`echo "$OPTIONS" | awk -F '-r ' '{ print $2 }' | awk -F '-. ' '{ print $1 }'`"
+         _errmsg="Unable to open file:**'$_errmsg'**Please check that the file exists and you*can access it. Then specify the correct*path using the '-r' option."
          ;;
       $ENODATA)
          _errmsg="Empty ROM file!"
@@ -136,51 +130,57 @@ _launch() {
 
    if [ -n "$_errmsg" ]; then
       if _has_zenity; then
-         zenity --height=100 --width=300 --error --text="$_errmsg"
+         zenity --height=100 --width=400 --error --text="` echo "$_errmsg" | tr '*' '\n'`" #  Replace * by newline
       fi
-      echo "`basename $0`: $_errmsg"
+      printf '%s\n' "`basename $0`: `echo "$_errmsg" | tr '*' ' ' | tr -s ' '`" >&2 # Remove multiple spaces
    fi
+
+   return $_err
 }
 
+#- config()
 
 _config (){
 
    if [ "$DROPDOWN" ]
    then
-      _selection=`zenity --forms --title="x11-calc Setup" \
+      _selection="$(zenity --forms --title="x11-calc Setup" \
          --text="Select model number" \
          --add-combo="Model:" --combo-values=${_models} \
          --add-entry="Options:" --ok-label="OK" \
-         --height=96 --width=256 2>/dev/null`
+         --height=96 --width=256 2>/dev/null)"
    else
-      _selection=`zenity --forms --title="x11-calc Setup" \
+      _selection="$(zenity --forms --title="x11-calc Setup" \
          --text="Select model number" \
          --add-list="Model:" --list-values=${_models} \
          --add-entry="Options:" --ok-label="OK" \
-         --width=256 2>/dev/null`
+         --width=256 2>/dev/null)"
    fi
 
    case $? in
       0)
+         _tmpfile="$(mktemp)"
          if [ "$DROPDOWN" ] # The seperator used by different forms is different!
          then
-            sed -i "s|^MODEL=.*|MODEL=\"${_selection%|*}\"|" "$_f_conf"
-            sed -i "s|^OPTIONS=.*|OPTIONS=\"${_selection#*|}\"|" "$_f_conf"
+            sed "s|^MODEL=.*|MODEL=\"${_selection%|*}\"|" "$_f_conf" > $_tmpfile
+            sed "s|^OPTIONS=.*|OPTIONS=\"${_selection#*|}\"|" $_tmpfile > "$_f_conf"
          else
-            sed -i "s|^MODEL=.*|MODEL=\"${_selection%,|*}\"|" "$_f_conf"
-            sed -i "s|^OPTIONS=.*|OPTIONS=\"${_selection#*,|}\"|" "$_f_conf"
+            sed "s|^MODEL=.*|MODEL=\"${_selection%,|*}\"|" "$_f_conf" > $_tmpfile
+            sed "s|^OPTIONS=.*|OPTIONS=\"${_selection#*,|}\"|" $_tmpfile > "$_f_conf"
          fi
+         rm -f $_tmpfile
          ;;
       1)
          exit 0 # User pressed cancel so just quit - don't attempt to launch the emulator
          ;;
       *)
-         echo "`basename $0`: An unexpected error has occurred."
+         echo "`basename $0`: An unexpected zenity error ($?) has occurred."
       ;;
    esac
 
 }
 
+#- setup()
 
 _setup() {
    if _has_zenity
@@ -198,9 +198,7 @@ _setup() {
    . "$_f_conf" # Reload modified settings from config file
 }
 
-
-
-
+#- main()
 
 : "${XDG_CONFIG_HOME:="$HOME/.config"}" # Define default path for XDG_CONFIG_HOME if not defined
 : "${XDG_DATA_HOME:="$HOME/.local/share"}" # Define default path for XDG_DATA_HOME if not defined
@@ -208,9 +206,6 @@ _setup() {
 if [ -d "$XDG_DATA_HOME" ] # Does XDG_DATA_HOME exist
 then
    mkdir -p "${XDG_DATA_HOME}/x11-calc" # If it does create the application data directory
-   _data_path="$XDG_DATA_HOME/x11-calc/"
-else
-   _data_path="$HOME/."
 fi
 
 if [ -d "$XDG_CONFIG_HOME" ] # Does XDG_CONFIG_HOME exist
@@ -227,19 +222,16 @@ _has_zenity() { return "$has_zenity"; }
 
 if [ ! -f "$_f_conf" ]
 then
-   if ! _has_zenity; then echo "\n`basename $0`: Did you know that installing 'zenity' will give you a graphical setup interface.\n"; fi
+   ! _has_zenity && echo "`basename $0`: Did you know that installing 'zenity' will give you a graphical setup interface?"
    mkdir -p "`dirname "${_f_conf}"`"
    cat <<-EOF >"$_f_conf"
 #
 # Select which emulator to run by setting the MODEL to one
 # of the following:
 #
-# classic: $_classic
-# woodstock: $_woodstock
-# topcat: $_topcat
-# spice: $_spice
-# voyager: $_voyager
-#
+EOF
+   echo "$_models" | sed 's/\(\([^|]*|\)\{8\}\)/\1*/g' | tr '*' '\n' | sed 's/^/# /' >>"$_f_conf"
+   cat <<-EOF >>"$_f_conf"
 
 MODEL=""
 OPTIONS=""
@@ -259,10 +251,10 @@ echo "`basename $0`: Using '$_f_conf'"
 . "$_f_conf"
 
 if [ -z "$MODEL" ]; then
-   echo "`basename $0`: Model not defined - configure using '$0 --setup'"
+   echo "`basename $0`: Default model not defined - configure using '$0 --setup'"
 fi
 
-if $(echo "$1" | grep -qE "$_models") || $(echo "hp$1" | grep -qE "$_models")
+if echo "$1" | grep -qwE "$_models" || echo "hp$1" | grep -qwE "$_models"
 then
    MODEL="$1"
    shift
@@ -277,7 +269,7 @@ case $1 in
       _launch
       ;;
    --help)
-      if [ -z "$MODEL" ]; then _setup; fi
+      [ -z "$MODEL" ] && _setup
       CMD_OPTS="--help"
       if _has_zenity
       then
@@ -287,7 +279,7 @@ case $1 in
       fi
       ;;
    *)
-      if [ -z "$MODEL" ]; then _setup; fi
+      [ -z "$MODEL" ] && _setup
       CMD_OPTS="$*"
       _launch
       ;;

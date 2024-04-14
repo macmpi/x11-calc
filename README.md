@@ -12,10 +12,6 @@ avoided in order to try to make the code as portable as possible.
 The  aim  is to have the same source code compile without  modification  on
 Linux, VAX/VMS, and Tru64 Unix.
 
-Unlike  all the other emulators the ROM images for the HP10C, HP11C, HP12C,
-HP15C, HP16C are not defined in the the source code and must be loaded from
-a separate ROM file.
-
 ![HP10](./img/x11-calc-10c.png) ![HP11](./img/x11-calc-11c.png)
 
 More [screenshots](./img/#top)
@@ -23,13 +19,22 @@ More [screenshots](./img/#top)
 
 ### Latest News
 
+14 Apr 24
+
+   - Allows the size of the window to be adjusted using the `--zoom n` option
+     where n can be between 0 and 4.
+   - Added an install option to the makefile (by default the installer will
+     use `$HOME/.local` if it exists, but it is possible to specify another
+     directory by setting the directory `prefix`).
+   - Embedded missing firmware.
+
 24 Feb 24
    - By default the application will attempt to use the X11 base fonts. But
      if these are not available it will try to select an suitable alternate
      font instead from a predefined list.
 
      For all the fonts to be rendered as intended users should ensure  that
-     the X11 base fonts are installed (see prerequsites).
+     the X11 base fonts are installed (see prerequisites).
 
 16 Feb 24
    - For UNIX based systems the default location used to store the state of
@@ -53,45 +58,51 @@ More [screenshots](./img/#top)
 
 ### Compiling
 
-To  build the simulator on Linux check that you have all the  prerequisites
-installed  then  download the source code from github and unzip it  (a  new
-folder  will  be created to automatically).  Then change directory  to  the
-new  folder run 'make all' build all the simulators.
+To  build the simulator check that you have all the prerequisites installed
+then download the source code from github and unzip it (this will created a
+new directory automatically).
 
 e.g:
 ```
 $ wget https://github.com/mike632t/x11-calc/archive/refs/heads/stable.zip
 $ unzip x11-calc-stable.zip
+```
+Then change directory to the new folder.
+```
 $ cd x11-calc-stable
-$ make -f makefile.linux all
-
+```
+The to compile all the emulators you just need to invoke make.
+```
+$ make clean; make all
+```
+It is also possible to compile a single emulator by specifying the model on
+the command line
+```
+$ make hp29c
+```
+By default the executable files will be created in the `bin` directory, and
+can run either a particular emulator directly, or invoke the launcher which
+will allow you to select which enulator to use by default the next time you
+launch it.
+```
 $ ./bin/x11-calc-29c
 x11-calc-29c: Version 0.10 [Commit ID: 399d546] 01 Nov 23 23:53:00 (Build: 0114)
 ROM Size : 4096 words
 ```
+OR
+```
+$ bin/x11-calc
+```
 If more than one C compiler is installed or if gcc is not available you can
 specify which one to use from the command line.
 ```
-$ make -f makefile.linux CC=clang VERBOSE=1 all
+$ make CC=clang hp11c
 
-$ make -f makefile.linux  CC=tcc VERBOSE=1 all
+$ make CC=tcc
 ```
-
-On  Tru64 UNIX a specific make file is used, and the execuitable files  are
-saved in the same folder as the source.
-
-e.g:
-```
-$ unzip x11-calc-stable.zip
-$ cd x11-calc-stable
-$ make -f makefile.tru64 all
-
-$ ./src/x11-calc-29c
-x11-calc-29c: Version 0.10 [Commit ID: 399d546] 01 Nov 23 23:53:00 (Build: 0114)
-ROM Size : 4096 words
-```
-
-On VMS unzip the source code archive, then run the DCL `make` script.
+#### VMS
+On VMS unzip the source code archive, change the default directory and then
+run `make.com`.
 
 e.g:
 ```
@@ -104,7 +115,34 @@ x11-calc-29c: Version 0.10 [Commit ID: 399d546] 02 Nov 23 23:52:11 (Build: 0114)
 ROM Size : 4096 words
 ```
 
+### Installing
+
+On Linux systems after the compilation is complete you can use the makefile
+to install the emulator locally.
+
+By default the installer will use `$HOME/.local` if it exists, but it is
+possible to specify another directory by setting the directory `prefix`.
+```
+$ make install
+
+OR
+
+$ make install prefix=/usr
+```
+Installer also supports staged installs in a custom directory defined using
+DESTDIR.
+```
+make DESTDIR=/tmp/staging install
+```
+
+### Using Flatpak
+
+If you don't want to download an compile the sources your self the emulator
+is also  available on [Flathub](https://flathub.org/apps/io.github.mike632t.x11-calc) and can be installed using Flatpak.
+
 ### Tested
+
+The emulators have been tested on the following systems:
 
 - Debian 12 (Bookworm), clang 14.0.6, x64 + arm64
 
@@ -130,6 +168,8 @@ ROM Size : 4096 words
 
 - Fedora 35, gcc 11.3.1, x64
 
+- Fedora 35, clang 13.0.1, x64
+
 - Fedora 39, gcc 13.2.1, x64
 
 - Gentoo, gcc 11.2.0, x64
@@ -137,6 +177,8 @@ ROM Size : 4096 words
 - MacOS 10 (Catalina), clang 12.0.0, x64
 
 - MacOS 13.4.1 (Venture), clang 14.0.3, arm64
+
+- NetBSD 9.2, gcc 7.5.0, x64
 
 - SUSE 15.4, clang 13. 0.1, x64
 
@@ -154,16 +196,15 @@ ROM Size : 4096 words
 
 - Windows 11 + WSL2, gcc 12.2.0, x64 + arm64
 
-
 ### Prerequisites
 
 The following packages are required to build and/or run the simulator.
 
 - Debian : gcc | clang | tcc  make libc6-dev libx11-dev xfonts-base
 
-- Fedora : gcc make glibc-devel libX11-devel xorg-x11-fonts-base | xorg-x11-fonts-misc
+- Fedora : gcc | clang  make glibc-devel libX11-devel xorg-x11-fonts-base | xorg-x11-fonts-misc
 
-- Gentoo : gcc  make libc6-dev libx11-dev font-misc-misc
+- Gentoo : gcc make libc6-dev libx11-dev font-misc-misc
 
 - MacOS  : clang make [xquartz](https://www.xquartz.org/)
 
@@ -172,7 +213,6 @@ The following packages are required to build and/or run the simulator.
 - Ubuntu : gcc make libc6-dev libx11-dev xfonts-base
 
 - Windows 11 + WSL2 : gcc make libc6-dev libx11-dev xfonts-base
-
 
 ### Keyboard Shortcuts
 
@@ -193,7 +233,6 @@ exist and 'Space' maps to 'SST' if not shifted.
 memory 'Ctrl-Z' saves the current register contents, and 'Ctrl-C'  restores
 them to the original saved state.
 
-
 ### Loading and saving
 
 For  models with continuous memory the contents of program memory and  data
@@ -209,13 +248,11 @@ copies of programs to be loaded automatically when the simulator starts  or
 the  simulator is reset using 'Ctrl-C'.  However, any changes will be
 saved in the hidden data file.
 
-
 ### Exiting
 
 For  models with a 'sliding' On/Off switch clicking on the switch will turn
 the simulator on or off, but if when switching off you hold down the switch
 down for two seconds the program will exit.
-
 
 ### Debugging
 
@@ -228,16 +265,16 @@ of the CPU registers.
 
 When in trace mode a jump to the same instruction produces no output.
 
-
 ### ROM Images
 
-No ROM images are included for the HP10C, HP11C, HP12C, HP15C, and HP16C.
-
 The '-r <filename>' command line option provides the ability to use the ROM
-contents held in an separate file.
+contents from a separate file.  The contents of the ROM are stored as pairs
+values seperated by a colon containing the memory address and the opcode.
 
-For the HP10C, HP11C, HP12C, HP15C, and HP16C the ROM comprised of pairs of
-hexadecimal values as address:opcode.
+Anything appearing after a semi colon on each line is ignored.
+
+For the HP10C, HP11C, HP12C, HP15C and HP16C the ROM file contains pairs of
+_hexadecimal_ values.
 ```
 0000:107
 0001:04e
@@ -246,8 +283,7 @@ hexadecimal values as address:opcode.
 0004:2ee
 0005:13f
 ```
-Other models include the ROM as part of the program, but you can specify an
-alternate ROM comprising of pairs of octal values.
+For other models the ROM file contains pairs of _octal_ values.
 ```
 00000:00255
 00001:01420
@@ -256,13 +292,23 @@ alternate ROM comprising of pairs of octal values.
 00004:01746
 00005:00472
 ```
-This allows you to use your own ROM images with any of the simulators.
+When loading a ROM from file any gaps between the memory addresses will not
+be filled with zeros, and the existing ROM contents will be left unchanged.
 
+ROM files can therefore be used to load alternative version of the firmware
+for a particular model or apply a patch to the existing firmware.
 
 ### Known Issues
 
-* Keyboard shortcuts only work on Linux.
+* Keyboard shortcuts only work on Linux and NetBSD.
 * A 24 bit colour display is required.
+* For best results you need to have the X windows core fonts installed.
+
+* Parallel make only works on Linux.
+
+##### HP 29C
+
+* All 30 registers have continuous memory.
 
 ##### HP 37E
 
@@ -273,17 +319,22 @@ This allows you to use your own ROM images with any of the simulators.
 * Cannot read or write to magnetic cards.
 * Has continuous memory.
 
-### Raspberry Pi Specific IssuesGentoo
+### Raspberry Pi Specific Issues
 
 * The code uses a simplified display on Arm based systems (except Apple) to
 avoid the display refresh issues seen on the Raspberry Pi if either FKMS or
 KMS overlays are enabled. (Note- Do not disable KMS on the latest Raspberry
 Pi OS release).
-* The window manager on recent Raspberry Pi OS releases doesn't disable the
-ability  to resize or maximize a window if the maximum and  minimum  window
-sizes are the same. The application will resize the window automatically it
-the  user attempts to change the size but if it is maximized then the title
-bar will be hidden (by the window manager) until the window is unmaximized.
+
+### Wayland specific Issues
+
+* Performance under Xwayland is generally poor, the emulator will work well
+on a Raspberry Pi3 using Xwindows but a Raspberry Pi4 using Xwayland cannot
+redraw the display quickly enough to allow background shading to be used to
+draw the display digits. As a result the emulator's LED/LCD display doesn't
+use any background shading on ARM based systems.
+* The emulator window is supposed to be a fixed size.  However wnen running
+on Xwayland the window manager does not handle this correctly.
 
 ### VMS Specific Issues
 

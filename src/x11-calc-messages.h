@@ -54,7 +54,7 @@ extern char * h_err_missing_argument;
 #if defined(unix) || defined(__unix__) || defined(__APPLE__)
 extern char * h_err_unrecognised_option;
 extern char * h_err_invalid_number;
-extern char * h_err_address_range;
+extern char * h_err_numeric_range;
 extern char * h_err_invalid_argument;
 #endif
 
