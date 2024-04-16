@@ -114,7 +114,7 @@ _files		= `ls makefile makefile.*.[0-9] $(SRC)/makefile $(SRC)/makefile.common $
 _source		= `ls $(SRC)/*.c $(SRC)/*.c.[0-9] $(SRC)/*.h $(SRC)/*.h.[0-9] $(SRC)/*.in $(SRC)/*.in.[0-9] 2>/dev/null || true`
 _data		= `ls $(ROM)/$(PROGRAM)*.rom $(ROM)/$(PROGRAM)*.rom.[0-9] $(PRG)/$(PROGRAM)*.dat $(PRG)/$(PROGRAM)*.dat.[0-9] 2>/dev/null || true`
 _images		= `ls $(SRC)/*.ico $(SRC)/*.ico.[0-9] $(SRC)/*.png $(SRC)/*.png.[0-9] $(SRC)/*.svg $(SRC)/*.svg.[0-9] $(IMG)/*.png $(IMG)/*.png.[0-9] 2>/dev/null || true`
-_other		= `ls $(SRC)/make.com  $(SRC)/make.com.[0-9] *.md *.md.[0-9] .gitignore .gitattributes 2>/dev/null || true`
+_other		= `ls $(SRC)/make.com  $(SRC)/make.com.[0-9] *.md *.md.[0-9] $(SRC)/*.md $(SRC)/*.md.[0-9] $(IMG)/*.md $(IMG)/*.md.[0-9] .gitignore .gitattributes 2>/dev/null || true`
 
 _date		= `date +'%Y%m%d%H%M'`
 
@@ -221,7 +221,7 @@ install:
 
 do_copy: $(BIN)
 # No  matter what desktop environment we are using (even if it is NONE)  we
-# need to copy the execuitables to the destination folder
+# need to copy the executable files to the destination folder.
 #
 #	@[ -n "$${VERBOSE+x}" ] && echo "'DESKTOP=$(DESKTOP)' 'DESTDIR=$(DESTDIR)' 'prefix=$(prefix)'"
 #
