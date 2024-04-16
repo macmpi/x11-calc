@@ -99,10 +99,11 @@
 #include <X11/Xlib.h>  /* XOpenDisplay(), etc. */
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
-#include "x11-calc-font.h"
-#include "x11-calc-button.h"
-#include "x11-calc-switch.h"
+#include "x11-calc-messages.h"
 #include "x11-calc-label.h"
+#include "x11-calc-switch.h"
+#include "x11-calc-button.h"
+#include "x11-calc-font.h"
 
 #include "x11-calc.h"
 
@@ -133,7 +134,7 @@ odisplay *h_display_create(int i_index, int i_left, int i_top, int i_width, int 
    int i_count, i_offset, i_size;
 
    /* Attempt to allocate memory for a display. */
-   if ((h_display = malloc(sizeof(*h_display)))==NULL) v_error(errno, "Memory allocation failed!");
+   if ((h_display = malloc(sizeof(*h_display)))==NULL) v_error(errno, h_err_memmory_alloc, __FILE__, __LINE__);
    h_display->index = i_index;
 
    h_display->bezel_position.x = i_left; /* Set properties */
