@@ -205,7 +205,7 @@ odisplay *h_display_create(int i_index, int i_left, int i_top, int i_width, int 
    i_width = 1 + XTextWidth(h_small_font, " GRAD ", 6) * SCALE_WIDTH;
    h_display->label[4] = h_label_create(005, " GRAD " , h_small_font, i_left, i_top,
       i_width, i_height, i_foreground, i_background, False);
-   i_left += i_width;
+   i_left += i_width;v_init_labels
 #endif
    i_width = 1 + XTextWidth(h_small_font, " D.MY ", 6) * SCALE_WIDTH;
    h_display->label[5] = h_label_create(006, " D.MY " , h_small_font, i_left, i_top,
@@ -249,7 +249,7 @@ int i_display_draw(Display* x_display, int x_application_window, int i_screen, o
 
 #if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
    for (i_count = 0; i_count < INDECATORS; i_count++)
-      i_label_draw(x_display, x_application_window, i_screen, h_display->label[i_count]);
+      if (!(h_display->label[i_count] == NULL)) i_label_draw(x_display, x_application_window, i_screen, h_display->label[i_count]);
 #endif
 
   return (True);
@@ -283,9 +283,12 @@ int i_display_resize(odisplay *h_display, float f_scale)  /* Resize display base
 #if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
    for (i_count = 0; i_count < INDECATORS; i_count++)
    {
-      h_display->label[i_count]->label_position.x = h_display->label[i_count]->label_position.x * f_scale;
-      h_display->label[i_count]->label_position.y = h_display->bezel_position.y + h_display->display_position.height - h_small_font->descent;
-      h_display->label[i_count]->label_position.width = h_display->label[i_count]->label_geometry.width * f_scale;
+      if (!(h_display->label[i_count] == NULL))
+      {
+         h_display->label[i_count]->label_position.x = h_display->label[i_count]->label_position.x * f_scale;
+         h_display->label[i_count]->label_position.y = h_display->bezel_position.y + h_display->display_position.height - h_small_font->descent;
+         h_display->label[i_count]->label_position.width = h_display->label[i_count]->label_geometry.width * f_scale;
+      }
    }
 #endif
    return 0;
