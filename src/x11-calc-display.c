@@ -83,6 +83,8 @@
  *                     and the current position of the display - MT
  *                   - Finally renamed x11-calc-segment to the more correct
  *                     x11-calc-digit - MT
+ * 18 Apr 24         - Checks for undefined labels when updating indicators
+ *                     on the display (fixed segmentation fault) - MT
  *
  */
 

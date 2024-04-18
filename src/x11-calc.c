@@ -297,6 +297,8 @@
  *                     ratio - MT
  * 14 Apr 24         - Fixed zoom validation and checks that zoom value has
  *                     been specified - MT
+ * 18 Apr 24         - Checks for undefined labels when updating indicators
+ *                     on the display (fixed segmentation fault) - MT
  *
  * To Do             - Fix vertical button shape when zoomed in
  *                   - Parse command line in a separate routine.
@@ -309,8 +311,8 @@
 
 #define  NAME          "x11-calc"
 #define  VERSION       "0.14"
-#define  BUILD         "0147"
-#define  DATE          "13 Apr 24"
+#define  BUILD         "0148"
+#define  DATE          "18 Apr 24"
 #define  AUTHOR        "MT"
 
 #define  INTERVAL 25   /* Number of ticks to execute before updating the display */
