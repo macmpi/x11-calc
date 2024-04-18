@@ -83,6 +83,8 @@
  *                     and the current position of the display - MT
  *                   - Finally renamed x11-calc-segment to the more correct
  *                     x11-calc-digit - MT
+ * 18 Apr 24         - Checks for undefined labels when updating indicators
+ *                     on the display (fixed segmentation fault) - MT
  *
  */
 
@@ -99,10 +101,11 @@
 #include <X11/Xlib.h>  /* XOpenDisplay(), etc. */
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
-#include "x11-calc-font.h"
-#include "x11-calc-button.h"
-#include "x11-calc-switch.h"
+#include "x11-calc-messages.h"
 #include "x11-calc-label.h"
+#include "x11-calc-switch.h"
+#include "x11-calc-button.h"
+#include "x11-calc-font.h"
 
 #include "x11-calc.h"
 
@@ -133,7 +136,7 @@ odisplay *h_display_create(int i_index, int i_left, int i_top, int i_width, int 
    int i_count, i_offset, i_size;
 
    /* Attempt to allocate memory for a display. */
-   if ((h_display = malloc(sizeof(*h_display)))==NULL) v_error(errno, "Memory allocation failed!");
+   if ((h_display = malloc(sizeof(*h_display)))==NULL) v_error(errno, h_err_memmory_alloc, __FILE__, __LINE__);
    h_display->index = i_index;
 
    h_display->bezel_position.x = i_left; /* Set properties */
@@ -248,7 +251,7 @@ int i_display_draw(Display* x_display, int x_application_window, int i_screen, o
 
 #if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
    for (i_count = 0; i_count < INDECATORS; i_count++)
-      i_label_draw(x_display, x_application_window, i_screen, h_display->label[i_count]);
+      if (!(h_display->label[i_count] == NULL)) i_label_draw(x_display, x_application_window, i_screen, h_display->label[i_count]);
 #endif
 
   return (True);
@@ -282,9 +285,12 @@ int i_display_resize(odisplay *h_display, float f_scale)  /* Resize display base
 #if defined(HP10c) || defined(HP11c) || defined(HP12c) || defined(HP15c) || defined(HP16c)
    for (i_count = 0; i_count < INDECATORS; i_count++)
    {
-      h_display->label[i_count]->label_position.x = h_display->label[i_count]->label_position.x * f_scale;
-      h_display->label[i_count]->label_position.y = h_display->bezel_position.y + h_display->display_position.height - h_small_font->descent;
-      h_display->label[i_count]->label_position.width = h_display->label[i_count]->label_geometry.width * f_scale;
+      if (!(h_display->label[i_count] == NULL))
+      {
+         h_display->label[i_count]->label_position.x = h_display->label[i_count]->label_position.x * f_scale;
+         h_display->label[i_count]->label_position.y = h_display->bezel_position.y + h_display->display_position.height - h_small_font->descent;
+         h_display->label[i_count]->label_position.width = h_display->label[i_count]->label_geometry.width * f_scale;
+      }
    }
 #endif
    return 0;

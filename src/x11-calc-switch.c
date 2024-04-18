@@ -48,6 +48,7 @@
 #include <X11/Xlib.h>  /* XOpenDisplay(), etc. */
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
+#include "x11-calc-messages.h"
 #include "x11-calc-label.h"
 #include "x11-calc-switch.h"
 #include "x11-calc-button.h"
@@ -87,7 +88,7 @@ oswitch *h_switch_create(int i_index, char* s_on, char* s_mid, char* s_off,
    oswitch *h_switch; /* Ponter to switch. */
 
    /* Attempt to allcoate memory for a switch. */
-   if ((h_switch = malloc (sizeof(*h_switch)))==NULL) v_error(errno, "Memory allocation failed!");
+   if ((h_switch = malloc (sizeof(*h_switch)))==NULL) v_error(errno, h_err_memmory_alloc, __FILE__, __LINE__);
 
    h_switch->index = i_index;
    h_switch->on = s_on;

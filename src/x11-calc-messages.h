@@ -43,9 +43,10 @@ extern char * h_err_invalid_address;
 extern char * h_err_invalid_register;
 extern char * h_msg_opcode;
 extern char * h_msg_address;
-const char * h_msg_negative_offset;
-const char * h_msg_positive_offset;
-const char * h_msg_rom;
+
+extern char * h_msg_negative_offset;
+extern char * h_msg_positive_offset;
+extern char * h_msg_rom;
 
 extern char * c_msg_usage;
 extern char * h_err_invalid_operand;
@@ -65,4 +66,5 @@ extern char * h_err_display_colour;
 extern char * h_err_font;
 
 extern char * h_err_creating_file;
+extern char * h_err_memmory_alloc;
 extern const char * h_err_ROM;

@@ -73,7 +73,9 @@ This is free software: you are free to change and redistribute it.\n\
 There is NO WARRANTY, to the extent permitted by law.\n";
 
 const char * h_err_creating_file = "Can't create '%s'.\n";
+const char * h_err_memmory_alloc = "Memory allocation failed in %s line : %d\n";
 const char * h_err_ROM = "Empty ROM - no firmware loaded.\n";
+
 
 #if defined(HEXADECIMAL)
 const char * h_msg_opcode = "%1x-%03x  %03x   ";
