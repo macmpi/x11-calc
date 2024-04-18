@@ -205,7 +205,7 @@ odisplay *h_display_create(int i_index, int i_left, int i_top, int i_width, int 
    i_width = 1 + XTextWidth(h_small_font, " GRAD ", 6) * SCALE_WIDTH;
    h_display->label[4] = h_label_create(005, " GRAD " , h_small_font, i_left, i_top,
       i_width, i_height, i_foreground, i_background, False);
-   i_left += i_width;v_init_labels
+   i_left += i_width;
 #endif
    i_width = 1 + XTextWidth(h_small_font, " D.MY ", 6) * SCALE_WIDTH;
    h_display->label[5] = h_label_create(006, " D.MY " , h_small_font, i_left, i_top,
