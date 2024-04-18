@@ -306,6 +306,10 @@ for a particular model or apply a patch to the existing firmware.
 
 * Parallel make only works on Linux.
 
+##### HP 11C + HP 12C + HP 15C + HP 16C
+
+Keyboard  test is successful but these models do not pass the self-test.
+
 ##### HP 29C
 
 * All 30 registers have continuous memory.
