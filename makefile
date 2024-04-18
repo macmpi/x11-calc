@@ -184,10 +184,8 @@ install:
 # Note that Tru64 requires both DESTDIR and prefix to be explicitly defined
 # when invoking make.
 #
-#	@if [ -z "$${prefix+x}" ]; then echo "'prefix' NOT defined"; else echo "prefix='$(prefix)'";  fi;
-#	@if [ -z "$${DESTDIR+x}" ]; then echo "'DESTDIR' NOT defined"; else echo "DESTDIR='$(DESTDIR)'";  fi;
 
-	@_unset() { if [ -z "$${prefix+x}" ] && [ -z "$(DESTDIR)" ]; then return 0; else return 1; fi;}; \
+	@_unset() { if [ -z "$(DESTDIR)$(prefix)" ]; then return 0; else return 1; fi;}; \
 	_desktop="`echo "$(DESKTOP)" | tr '[:lower:]' '[:upper:]' `"; \
 	if [ -z "$$_desktop" ]; then \
 		if [ -d "$$HOME/.local" ]; then \
@@ -211,9 +209,6 @@ install:
 			_unset && prefix="$$HOME" || true; \
 			$(MAKE) -s DESTDIR=$(DESTDIR) prefix=$$prefix do_none; \
 			;; \
-		"") \
-			echo "Unable to detect desktop: please specify the DESKTOP (GNOME, KDE, MATE, XFCE, ... or NONE)."; \
-			;; \
 		*) \
 			echo "'DESKTOP=$(DESKTOP)' was not recognised: Try 'make install' instead."; \
 			;; \
@@ -223,12 +218,10 @@ do_copy: $(BIN)
 # No  matter what desktop environment we are using (even if it is NONE)  we
 # need to copy the executable files to the destination folder.
 #
-#	@[ -n "$${VERBOSE+x}" ] && echo "'DESKTOP=$(DESKTOP)' 'DESTDIR=$(DESTDIR)' 'prefix=$(prefix)'"
-#
 	@[ -n "$(DESTDIR)" ] || [ -d "$(prefix)" ] || \
 		{ echo "Please ensure $(prefix) exists (or set DESTDIR for staged install)." >&2; exit 1; }
 	@mkdir -p "$(DESTDIR)$(prefix)"
-	@cp $$flags -R $(BIN) "$(DESTDIR)$(prefix)"/ # Fail early if source and destination directories are the same
+	@cp -R $(BIN) "$(DESTDIR)$(prefix)"/ # Fail early if source and destination directories are the same
 
 do_none: do_copy
 # Copy binaries (and saved programs ?) to $(BIN) if no desktop specified.
@@ -242,7 +235,6 @@ do_none: do_copy
 #
 	@[ -n "$${VERBOSE+x}" ] && echo "No desktop option selected" || true
 	@[ -n "$${VERBOSE+x}" ] && echo "Installing in $(DESTDIR)$(prefix)" || true
-#	@[ -n "$${VERBOSE+x}" ] && echo "prefix=$(prefix)" || true
 #
 #	@cp -R $(PRG)/* "$(DESTDIR)$(prefix)/$(BIN)/"
 
@@ -255,7 +247,6 @@ do_cde: do_copy
 #
 	@[ -n "$${VERBOSE+x}" ] && echo "Selected CDE desktop environment" || true
 	@[ -n "$${VERBOSE+x}" ] && echo "Installing in $(DESTDIR)$(prefix)" || true
-#	@[ -n "$${VERBOSE+x}" ] && echo "prefix=$(prefix)" || true
 #
 # Add program files
 	@cp -R $(PRG)/* "$(DESTDIR)/$(prefix)/$(BIN)/"
@@ -266,7 +257,6 @@ do_env: do_copy $(SRC)/$(PROGRAM).desktop.in $(SRC)/$(PROGRAM).svg
 #
 	@[ -n "$${VERBOSE+x}" ] && echo "Selected $(DESKTOP) environment" || true
 	@[ -n "$${VERBOSE+x}" ] && echo "Installing in $(DESTDIR)$(prefix)" || true
-#	@[ -n "$${VERBOSE+x}" ] && echo "prefix=$(prefix)" || true
 #
 # Copy desktop files
 	@mkdir -p "$(DESTDIR)$(prefix)"/share/applications;
