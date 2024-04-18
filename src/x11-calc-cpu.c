@@ -953,8 +953,7 @@ oprocessor *h_processor_create(int *h_rom) /* Create a new processor 'object' */
 {
    oprocessor *h_processor;
    int i_count;
-   if ((h_processor = malloc(sizeof(*h_processor)))==NULL)
-      v_error(errno, "Memory allocation failed!"); /* Attempt to allocate memory to hold the processor structure */
+   if ((h_processor = malloc(sizeof(*h_processor)))==NULL) v_error(errno, h_err_memmory_alloc, __FILE__, __LINE__);
    for (i_count = 0; i_count < REGISTERS; i_count++)
       h_processor->reg[i_count] = h_register_create((i_count + 1) * -1); /* Allocate storage for the registers */
    for (i_count = 0; i_count < MEMORY_SIZE; i_count++)

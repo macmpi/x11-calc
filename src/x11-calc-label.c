@@ -48,6 +48,7 @@
 #include <X11/Xlib.h>  /* XOpenDisplay(), etc. */
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
+#include "x11-calc-messages.h"
 #include "x11-calc-label.h"
 #include "x11-calc-switch.h"
 #include "x11-calc-button.h"
@@ -85,7 +86,7 @@ olabel *h_label_create(int i_index, char* s_text, XFontStruct *h_font,
    olabel *h_label; /* Ponter to label. */
 
    /* Attempt to allcoate memory for a label. */
-   if ((h_label = malloc (sizeof(*h_label)))==NULL) v_error(errno, "Memory allocation failed!");
+   if ((h_label = malloc (sizeof(*h_label)))==NULL) v_error(errno, h_err_memmory_alloc, __FILE__, __LINE__);
 
    h_label->index = i_index;
    h_label->text = s_text;

@@ -77,8 +77,9 @@
 #include <X11/Xlib.h>  /* XOpenDisplay(), etc. */
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
-#include "x11-calc-switch.h"
+#include "x11-calc-messages.h"
 #include "x11-calc-label.h"
+#include "x11-calc-switch.h"
 #include "x11-calc-button.h"
 
 #include "x11-calc.h"
@@ -142,7 +143,7 @@ obutton *h_button_create(int i_index, char c_key,
    obutton *h_button; /* Ponter to button. */
 
    /* Attempt to allocate memory for a button. */
-   if ((h_button = malloc (sizeof(*h_button)))==NULL) v_error(errno, "Memory allocation failed in %s line : %d\n", __FILE__, __LINE__);
+   if ((h_button = malloc (sizeof(*h_button)))==NULL) v_error(errno, h_err_memmory_alloc, __FILE__, __LINE__);
 
    h_button->index = i_index;
    h_button->key = c_key;
