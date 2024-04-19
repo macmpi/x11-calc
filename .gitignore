@@ -4,3 +4,4 @@
 !src/*.in
 !LICENSE
 !README.md
+!*.xml
