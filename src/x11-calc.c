@@ -300,8 +300,7 @@
  * 18 Apr 24         - Checks for undefined labels when updating indicators
  *                     on the display (fixed segmentation fault) - MT
  *
- * To Do             - Fix vertical button shape when zoomed in
- *                   - Parse command line in a separate routine.
+ * To Do             - Parse command line in a separate routine.
  *                   - Add verbose option.
  *                   - Allow VMS users to set breakpoints?
  *                   - Free up allocated memory on exit.
