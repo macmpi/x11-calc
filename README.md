@@ -236,9 +236,12 @@ them to the original saved state.
 ### Loading and saving
 
 For  models with continuous memory the contents of program memory and  data
-registers are saved in a hidden file in the users' HOME directory when  the
-program  exits  or the calculator is switched off, and restored  from  this
-hidden file when the simulator is loaded or reset using 'Ctrl-C'
+registers  are saved automatically when the calculator is switched  off  or
+the  window is closed.  The current state of the simulator will be saved in
+either `$HOME/.local/share/x11-calc/` or in a hidden file in the user's  HOME
+directory if `$HOME/.local/` does not exist.
+
+Resetting the simulator using 'Ctrl-C' will reload the saved state.
 ```
 ~/.x11-calc-nn.dat
 ```
@@ -304,11 +307,11 @@ for a particular model or apply a patch to the existing firmware.
 * A 24 bit colour display is required.
 * For best results you need to have the X windows core fonts installed.
 
-* Parallel make only works on Linux.
+* Parallel make only works on Linux and NetBSD
 
 ##### HP 11C + HP 12C + HP 15C + HP 16C
 
-Keyboard  test is successful but these models do not pass the self-test.
+Keyboard test is successful but these models do not pass the self-test.
 
 ##### HP 29C
 
