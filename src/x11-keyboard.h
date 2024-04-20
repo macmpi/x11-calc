@@ -23,6 +23,8 @@
  *
  */
 
+#if defined(__linux__) || defined(__NetBSD__)
+
 typedef struct { /* Calculator button structure. */
    Display* display;
    char key;
@@ -34,3 +36,5 @@ okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, int i_keycod
 okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate);
 
 okeyboard *h_keyboard_create(Display* x_display);
+
+#endif
