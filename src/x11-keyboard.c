@@ -25,6 +25,7 @@
  * 01 Apr 24         - Only attempt to define the keyboard functions if the
  *                     operating  system libraries support the key  symbols
  *                     used to decode a keystroke - MT
+ * 20 Apr 24         - Now uses unsigned integer types - MT
  *
  */
 
@@ -48,7 +49,7 @@
 #if defined(__linux__) || defined(__NetBSD__)
 
 /* Attempts to translate a key code into a character. */
-static void v_key_decode(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate) {
+static void v_key_decode(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate) {
    h_keyboard->keysym = XKeycodeToKeysym(x_display, i_keycode, 0);
    h_keyboard->key = '\000';
    switch (h_keyboard->keysym) {
@@ -153,7 +154,7 @@ static void v_key_decode(okeyboard *h_keyboard, Display *x_display, int i_keycod
 
 /* Update the keyboard state */
 
-okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate) {
+okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate) {
    v_key_decode(h_keyboard, x_display, i_keycode, i_keystate);
    debug(fprintf(stderr, "Key pressed - '%s'.\n", XKeysymToString(h_keyboard->keysym)));
    return(h_keyboard);
@@ -165,7 +166,7 @@ okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, int i_keycod
  * Updates the keyboard state when a key is released.
  *
  */
-okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate) {
+okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate) {
    v_key_decode(h_keyboard, x_display, i_keycode, i_keystate);
    debug(fprintf(stderr, "Key released - '%s'.\n", XKeysymToString(h_keyboard->keysym)));
    return(h_keyboard);

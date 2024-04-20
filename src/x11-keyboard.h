@@ -31,9 +31,9 @@ typedef struct { /* Calculator button structure. */
    int keysym;
 } okeyboard;
 
-okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate);
+okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate);
 
-okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate);
+okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate);
 
 okeyboard *h_keyboard_create(Display* x_display);
 
