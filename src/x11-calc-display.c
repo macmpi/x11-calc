@@ -233,7 +233,7 @@ odisplay *h_display_create(int i_index, int i_left, int i_top, int i_width, int 
  *
  */
 
-int i_display_draw(Display* x_display, int x_application_window, int i_screen, odisplay *h_display)
+int i_display_draw(Display *x_display, int x_application_window, int i_screen, odisplay *h_display)
 {
    int i_count;
 

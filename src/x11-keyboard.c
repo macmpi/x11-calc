@@ -180,7 +180,7 @@ okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, unsigned in
  *
  */
 
-okeyboard *h_keyboard_create(Display* x_display) {
+okeyboard *h_keyboard_create(Display *x_display) {
    okeyboard *h_keyboard; /* Ponter to keyboard structure. */
    if ((h_keyboard = malloc (sizeof(*h_keyboard))) != NULL){
       h_keyboard->display = x_display;

@@ -27,14 +27,14 @@
 
 typedef struct { /* Calculator button structure. */
    Display* display;
+   KeySym keysym;
    char key;
-   int keysym;
 } okeyboard;
 
 okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate);
 
 okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate);
 
-okeyboard *h_keyboard_create(Display* x_display);
+okeyboard *h_keyboard_create(Display *x_display);
 
 #endif
