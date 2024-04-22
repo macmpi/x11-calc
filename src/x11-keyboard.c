@@ -43,11 +43,10 @@
 #include <X11/Xlib.h>  /* XOpenDisplay(), etc. */
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
-#include "x11-keyboard.h"
-
 #include "gcc-debug.h"
 
 #if defined(__linux__) || defined(__NetBSD__)
+#include "x11-keyboard.h"
 
 /* Attempts to translate a key code into a character. */
 static void v_key_decode(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate) {

@@ -24,8 +24,6 @@
  *
  */
 
-#if defined(__linux__) || defined(__NetBSD__)
-
 typedef struct { /* Calculator button structure. */
    Display* display;
    KeySym keysym;
@@ -38,4 +36,3 @@ void h_key_released(okeyboard *h_keyboard, Display *x_display, unsigned int i_ke
 
 okeyboard *h_keyboard_create(Display *x_display);
 
-#endif
