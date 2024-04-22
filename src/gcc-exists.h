@@ -23,8 +23,8 @@
  *
  */
 
-int i_isfile(char *_name);
+int i_isfile(const char *_name);
 
-int i_isdir(char *_name);
+int i_isdir(const char *_name);
 
-int i_exists(char *_name);
+int i_exists(const char *_name);
