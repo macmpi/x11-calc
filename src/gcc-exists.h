@@ -18,8 +18,9 @@
  * You  should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * 06 Jul 20   0.1   - Initial version - MT
- *             0.2   - Added exists() - MT
+ * 06 Jul 20         - Initial version - MT
+ *                   - Added exists() - MT
+ * 22 Apr 24         - Tidied up function prototypes - MT
  *
  */
 
