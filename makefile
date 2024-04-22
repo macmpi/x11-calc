@@ -184,7 +184,6 @@ install:
 # Note that Tru64 requires both DESTDIR and prefix to be explicitly defined
 # when invoking make.
 #
-
 	@_unset() { if [ -z "$(DESTDIR)$(prefix)" ]; then return 0; else return 1; fi;}; \
 	_desktop="`echo "$(DESKTOP)" | tr '[:lower:]' '[:upper:]' `"; \
 	if [ -z "$$_desktop" ]; then \
