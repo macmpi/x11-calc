@@ -342,7 +342,9 @@
 #include "x11-calc-display.h"
 #include "x11-calc-cpu.h"
 
-#include "x11-keyboard.h"
+#if defined(__linux__) || defined(__NetBSD__)
+   #include "x11-keyboard.h"
+#endif
 
 #include "x11-calc-messages.h"
 
