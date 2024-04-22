@@ -20,6 +20,7 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * 19 Sep 13         - Initial version - MT
+ * 22 Apr 24         - Tidied up return types - MT
  *
  */
 
@@ -31,9 +32,9 @@ typedef struct { /* Calculator button structure. */
    char key;
 } okeyboard;
 
-okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate);
+void h_key_pressed(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate);
 
-okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate);
+void h_key_released(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate);
 
 okeyboard *h_keyboard_create(Display *x_display);
 

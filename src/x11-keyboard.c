@@ -26,6 +26,7 @@
  *                     operating  system libraries support the key  symbols
  *                     used to decode a keystroke - MT
  * 20 Apr 24         - Now uses unsigned integer types - MT
+ * 22 Apr 24         - Tidied up return types - MT
  *
  */
 
@@ -154,10 +155,9 @@ static void v_key_decode(okeyboard *h_keyboard, Display *x_display, unsigned int
 
 /* Update the keyboard state */
 
-okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate) {
+void h_key_pressed(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate) {
    v_key_decode(h_keyboard, x_display, i_keycode, i_keystate);
    debug(fprintf(stderr, "Key pressed - '%s'.\n", XKeysymToString(h_keyboard->keysym)));
-   return(h_keyboard);
 }
 
 /*
@@ -166,10 +166,9 @@ okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, unsigned int
  * Updates the keyboard state when a key is released.
  *
  */
-okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate) {
+void h_key_released(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate) {
    v_key_decode(h_keyboard, x_display, i_keycode, i_keystate);
    debug(fprintf(stderr, "Key released - '%s'.\n", XKeysymToString(h_keyboard->keysym)));
-   return(h_keyboard);
 }
 /*
  * keyboard_create (index)
