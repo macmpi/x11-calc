@@ -21,6 +21,7 @@
  * 30 Jan 22         - Initial version (derived from x11-calc-10.c) - MT
  * 12 Mar 22         - Added the label state property - MT
  * 18 Mar 24         - Embedded firmware - MT
+ * 22 Apr 24         - Removed duplicate definition - MT
  *
  * TO DO :           -
  */
@@ -50,8 +51,6 @@
 #include "gcc-debug.h"
 
 oregister o_mem[MEMORY_SIZE];
-
-int i_rom[ROM_SIZE];
 
 void v_init_labels(olabel *h_label[]) {
    int i_height = h_small_font->ascent + h_small_font->descent;
@@ -927,3 +926,4 @@ int i_rom[ROM_SIZE] = {
    0x010c, 0x01e8, 0x01e6, 0x01e6, 0x03c8, 0x03cc, 0x0023, 0x0266,
    0x03e3, 0x03e0, 0x039d, 0x000c, 0x03cd, 0x004e, 0x0000, 0x0000
 };
+

@@ -25,6 +25,7 @@
  * 12 Mar 22         - Added the label state property - MT
  * 22 May 22         - Fixed shortcut key for SST - MT
  * 18 Mar 24         - Embedded firmware - MT
+ * 22 Apr 24         - Removed duplicate definition - MT
  *
  * TO DO :           -
  */
@@ -54,8 +55,6 @@
 #include "gcc-debug.h"
 
 oregister o_mem[MEMORY_SIZE];
-
-int i_rom[ROM_SIZE];
 
 void v_init_labels(olabel *h_label[]) {
    int i_height = h_small_font->ascent + h_small_font->descent;
