@@ -64,6 +64,8 @@
 #  23 Mar 24         - Updated some error messages and trimmed extra spaces
 #                      from the console output - MT
 #  01 Apr 24         - _models list to be filled by makefile - macmpi
+#  24 Apr 24         - Made help dialog wider and suppressed echoing of the
+#                      command - MT
 #
 
 SUCCESS=0
@@ -86,7 +88,7 @@ _launch() {
 
    MODEL="`echo "$MODEL" | sed 's/^hp//'`"
    _core_app="`dirname "$0"`/x11-calc-$MODEL"
-   echo "`basename $0`: Executing '`echo $_core_app $OPTIONS`'."
+   #echo "`basename $0`: Executing '`echo $_core_app $OPTIONS`'."
 
    if [ -f "$_core_app" ]; then
       "$_core_app" $OPTIONS # Assume script is in the same directory as the executable files
@@ -273,7 +275,7 @@ case $1 in
       CMD_OPTS="--help"
       if _has_zenity
       then
-         _launch | zenity --title="x11-calc Help" --text-info --font="courier" --height=320 --width=512
+         _launch | zenity --title="x11-calc Help" --text-info --font="courier" --height=320 --width=640
       else
          _launch
       fi
