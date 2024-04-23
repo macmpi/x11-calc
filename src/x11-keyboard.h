@@ -20,9 +20,11 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * 19 Sep 13         - Initial version - MT
- * 22 Apr 24         - Tidied up return types - MT
+ * 22 Apr 24         - Tidied up data types - MT
  *
  */
+
+#if defined(__linux__) || defined(__NetBSD__)
 
 typedef struct { /* Calculator button structure. */
    Display* display;
@@ -36,3 +38,4 @@ void h_key_released(okeyboard *h_keyboard, Display *x_display, unsigned int i_ke
 
 okeyboard *h_keyboard_create(Display *x_display);
 
+#endif

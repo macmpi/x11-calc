@@ -26,7 +26,7 @@
  *                     operating  system libraries support the key  symbols
  *                     used to decode a keystroke - MT
  * 20 Apr 24         - Now uses unsigned integer types - MT
- * 22 Apr 24         - Tidied up return types - MT
+ * 22 Apr 24         - Tidied up data types - MT
  *
  */
 
@@ -43,10 +43,11 @@
 #include <X11/Xlib.h>  /* XOpenDisplay(), etc. */
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
+#include "x11-keyboard.h"
+
 #include "gcc-debug.h"
 
 #if defined(__linux__) || defined(__NetBSD__)
-#include "x11-keyboard.h"
 
 /* Attempts to translate a key code into a character. */
 static void v_key_decode(okeyboard *h_keyboard, Display *x_display, unsigned int i_keycode, unsigned int i_keystate) {
@@ -77,7 +78,7 @@ static void v_key_decode(okeyboard *h_keyboard, Display *x_display, unsigned int
    case XK_Scroll_Lock:
    case XK_Sys_Req:
    case XK_Delete:
-      h_keyboard->key = h_keyboard->keysym & 0x1f; /* (values chosen to map to ASCII - see keysymdef.h) */
+      h_keyboard->key = (char)(h_keyboard->keysym & 0x1f); /* (values chosen to map to ASCII - see keysymdef.h) */
       break;
    /* Numeric keypad */
    case  XK_KP_F1:
@@ -117,7 +118,7 @@ static void v_key_decode(okeyboard *h_keyboard, Display *x_display, unsigned int
          case  XK_KP_7:
          case  XK_KP_8:
          case  XK_KP_9:
-            h_keyboard->key = h_keyboard->keysym & 0x7f; /* (values chosen to map to ASCII - see keysymdef.h) */
+            h_keyboard->key = (char)(h_keyboard->keysym & 0x7f); /* (values chosen to map to ASCII - see keysymdef.h) */
             break;
          }
       }
@@ -130,22 +131,22 @@ static void v_key_decode(okeyboard *h_keyboard, Display *x_display, unsigned int
    case  XK_KP_Subtract:
    case  XK_KP_Decimal:
    case  XK_KP_Divide:
-      h_keyboard->key = h_keyboard->keysym & 0x7f; /* (values chosen to map to ASCII - see keysymdef.h) */
+      h_keyboard->key = (char)(h_keyboard->keysym & 0x7f); /* (values chosen to map to ASCII - see keysymdef.h) */
       break;
    /* Everything else */
    default:
-      h_keyboard->key = h_keyboard->keysym & 0xff;
+      h_keyboard->key = (char)(h_keyboard->keysym & 0xff);
       if (isalpha(h_keyboard->keysym)) { /* For alpha keys check both caps lock and shift */
          if (!(i_keystate & ShiftMask) != !(i_keystate & LockMask))
-            h_keyboard->key = XKeycodeToKeysym(x_display, i_keycode, 1);
+            h_keyboard->key = (char)(XKeycodeToKeysym(x_display, i_keycode, 1));
       }
       else {
          if (i_keystate & ShiftMask)
-            h_keyboard->key = XKeycodeToKeysym(x_display, i_keycode, 1);
+            h_keyboard->key = (char)(XKeycodeToKeysym(x_display, i_keycode, 1));
       }
 
       if (i_keystate & ControlMask) {
-         h_keyboard->key = XKeycodeToKeysym(x_display, i_keycode, 1);
+         h_keyboard->key = (char)(XKeycodeToKeysym(x_display, i_keycode, 1));
          if (((h_keyboard->key >= '@') && (h_keyboard->key <= '_')) || ((h_keyboard->key >= 'a') && (h_keyboard->key <= 'z'))) /* Only modify valid control keys */
             h_keyboard->key &= 0x1f; /* (values chosen to map to ASCII - see keysymdef.h) */
       }
