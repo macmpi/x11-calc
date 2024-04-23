@@ -26,7 +26,7 @@
 #  29 Mar 24         - Use linux/bsd/osf1 makefiles -macmpi
 #
 
-MODEL	=  21
+MODEL	= 21
 
 all:
 	@_flavor="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
