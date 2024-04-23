@@ -300,6 +300,9 @@
  * 18 Apr 24         - Checks for undefined labels when updating indicators
  *                     on the display (fixed segmentation fault) - MT
  * 22 Apr 24         - Define display colour separately - MT
+ * 23 Apr 24         - Separated out prototypes for error handlers - MT
+ *                   - Tidied up include files and removed some (currently)
+ *                     redundant code - MT
  *
  * To Do             - Parse command line in a separate routine.
  *                   - Add verbose option.
@@ -311,8 +314,8 @@
 
 #define  NAME          "x11-calc"
 #define  VERSION       "0.14"
-#define  BUILD         "0149"
-#define  DATE          "18 Apr 24"
+#define  BUILD         "0150"
+#define  DATE          "23 Apr 24"
 #define  AUTHOR        "MT"
 
 #define  INTERVAL 25   /* Number of ticks to execute before updating the display */
@@ -331,6 +334,9 @@
 #include <X11/Xutil.h> /* XSizeHints etc */
 #include <X11/cursorfont.h>
 
+#include "x11-calc-messages.h"
+#include "x11-calc-errors.h"
+
 #include "x11-calc-font.h"
 #include "x11-calc-button.h"
 #include "x11-calc-switch.h"
@@ -343,11 +349,7 @@
 #include "x11-calc-display.h"
 #include "x11-calc-cpu.h"
 
-#if defined(__linux__) || defined(__NetBSD__)
-   #include "x11-keyboard.h"
-#endif
-
-#include "x11-calc-messages.h"
+#include "x11-keyboard.h"
 
 #include "gcc-debug.h" /* print() */
 #include "gcc-wait.h"  /* i_wait() */
@@ -794,27 +796,8 @@ int main(int argc, char *argv[])
    i_count = 0;
 
 #if defined(SWITCHES)
-   if (h_switch[0] != NULL) h_processor->enabled = h_switch[0]->state; /* Allow switches to be undefined if not used */
-#if defined(HP10)
-      if (SWITCHES == 2)
-         switch(h_switch[1]->state)
-         {
-            case 0:
-               h_processor->print = MANUAL;
-               break;
-            case 3:
-            case 1:
-               h_processor->print = TRACE;
-               h_display->enabled = True;
-               break;
-            case 2:
-               h_processor->print = NORMAL;
-               h_display->enabled = False;
-               break;
-         }
-#else
-      if (SWITCHES == 2) h_processor->mode = h_switch[1]->state;
-#endif
+   h_processor->enabled = h_switch[0]->state; /* Allow switches to be undefined if not used */
+   if (SWITCHES == 2) h_processor->mode = h_switch[1]->state;
 #endif
 
    while (!b_abort) /* Main program event loop */
@@ -963,33 +946,11 @@ int main(int argc, char *argv[])
                      }
                   }
                   if (SWITCHES == 2)
-#if defined(HP10)
-                     if (h_switch_pressed(h_switch[1], x_event.xbutton.x, x_event.xbutton.y) != NULL)
-                     {
-                        switch(i_switch_click(h_switch[1]))
-                        {
-                        case 0:
-                           h_processor->print = MANUAL;
-                           break;
-                        case 3:
-                        case 1:
-                           h_processor->print = TRACE;
-                           h_display->enabled = True;
-                           break;
-                        case 2:
-                           h_processor->print = NORMAL;
-                           h_display->enabled = False;
-                           break;
-                        }
-                        i_switch_draw(x_display, x_application_window, i_screen, h_switch[1]);
-                     }
-#else
                      if (h_switch_pressed(h_switch[1], x_event.xbutton.x, x_event.xbutton.y) != NULL)
                      {
                         h_processor->mode = i_switch_click(h_switch[1]); /* Update prgm/run switch */
                         i_switch_draw(x_display, x_application_window, i_screen, h_switch[1]);
                      }
-#endif
                }
 #endif
             }
@@ -1035,7 +996,6 @@ int main(int argc, char *argv[])
 
    v_save_state(h_processor); /* Save state */
 
-   /** XFreeCursor (x_display, x_cursor); /* Free cursor */
    XDestroyWindow(x_display, x_application_window); /* Close connection to server */
    XCloseDisplay(x_display);
 
