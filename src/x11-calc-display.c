@@ -86,6 +86,7 @@
  * 18 Apr 24         - Checks for undefined labels when updating indicators
  *                     on the display (fixed segmentation fault) - MT
  * 22 Apr 24         - Shortened long lines - MT
+ * 23 Apr 24         - Separated out prototypes for error handlers - MT
  *
  */
 
@@ -103,17 +104,18 @@
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
 #include "x11-calc-messages.h"
+#include "x11-calc-errors.h"
+
 #include "x11-calc-label.h"
 #include "x11-calc-switch.h"
 #include "x11-calc-button.h"
 #include "x11-calc-font.h"
 
-#include "x11-calc.h"
-
-#include "x11-calc-colour.h"
 #include "x11-calc-digit.h"
 #include "x11-calc-display.h"
 #include "x11-calc-cpu.h"
+
+#include "x11-calc.h"
 
 #include "gcc-debug.h"
 

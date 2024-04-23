@@ -31,6 +31,7 @@
  *                     to the error handler) - MT
  * 29 Mar 24         - Fixed  compiler 'vairable may be used uninitialized'
  *                     warnings - MT
+ * 23 Apr 24         - Separated out prototypes for error handlers - MT
  *
  */
 
@@ -49,13 +50,14 @@
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
 #include "x11-calc-messages.h"
+#include "x11-calc-errors.h"
+
 #include "x11-calc-label.h"
 #include "x11-calc-switch.h"
 #include "x11-calc-button.h"
 
 #include "x11-calc.h"
 
-#include "x11-calc-colour.h"
 #include "gcc-debug.h"
 
 /* switch_pressed (switch, x, y) */
@@ -122,8 +124,7 @@ int i_switch_resize(oswitch *h_switch, float f_scale)
    h_switch->switch_position.y = h_switch->switch_geometry.y * f_scale;
    h_switch->switch_position.width = h_switch->switch_geometry.width * f_scale;
    h_switch->switch_position.height = h_switch->switch_geometry.height * f_scale;
-
-   return 0;
+   return(True);
 }
 
 /* switch_draw (display, window, screen, switch) */

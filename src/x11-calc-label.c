@@ -28,6 +28,7 @@
  * 03 Mar 24         - Updated error handling (now passes the  error number
  *                     to the error handler) - MT
  * 22 Apr 24         - Shortened long lines - MT
+ * 23 Apr 24         - Separated out prototypes for error handlers - MT
  *
  * TO DO:            - Implement ability to align text in a label using the
  *                     style property to modify the position and appearance
@@ -50,13 +51,14 @@
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
 #include "x11-calc-messages.h"
+#include "x11-calc-errors.h"
+
 #include "x11-calc-label.h"
 #include "x11-calc-switch.h"
 #include "x11-calc-button.h"
 
 #include "x11-calc.h"
 
-#include "x11-calc-colour.h"
 #include "gcc-debug.h"
 
 /* label_pressed (label, x, y) */
