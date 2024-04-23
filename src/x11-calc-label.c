@@ -29,6 +29,7 @@
  *                     to the error handler) - MT
  * 22 Apr 24         - Shortened long lines - MT
  * 23 Apr 24         - Separated out prototypes for error handlers - MT
+ *                   - Removed unnecessary includes - MT
  *
  * TO DO:            - Implement ability to align text in a label using the
  *                     style property to modify the position and appearance
@@ -37,8 +38,8 @@
  */
 
 #define NAME           "x11-calc-label"
-#define BUILD          "0006"
-#define DATE           "03 Mar 24"
+#define BUILD          "0009"
+#define DATE           "23 Apr 24"
 #define AUTHOR         "MT"
 
 #include <errno.h>     /* errno */
@@ -56,8 +57,6 @@
 #include "x11-calc-label.h"
 #include "x11-calc-switch.h"
 #include "x11-calc-button.h"
-
-#include "x11-calc.h"
 
 #include "gcc-debug.h"
 

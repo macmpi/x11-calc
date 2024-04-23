@@ -32,12 +32,13 @@
  * 29 Mar 24         - Fixed  compiler 'vairable may be used uninitialized'
  *                     warnings - MT
  * 23 Apr 24         - Separated out prototypes for error handlers - MT
+ *                   - Removed unnecessary includes - MT
  *
  */
 
 #define NAME           "x11-calc-switch"
-#define BUILD          "0009"
-#define DATE           "29 Mar 24"
+#define BUILD          "0011"
+#define DATE           "23 Apr 24"
 #define AUTHOR         "MT"
 
 #include <errno.h>     /* errno */
@@ -55,8 +56,6 @@
 #include "x11-calc-label.h"
 #include "x11-calc-switch.h"
 #include "x11-calc-button.h"
-
-#include "x11-calc.h"
 
 #include "gcc-debug.h"
 
