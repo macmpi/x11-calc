@@ -85,6 +85,7 @@
  *                     x11-calc-digit - MT
  * 18 Apr 24         - Checks for undefined labels when updating indicators
  *                     on the display (fixed segmentation fault) - MT
+ * 22 Apr 24         - Shortened long lines - MT
  *
  */
 
@@ -240,11 +241,14 @@ int i_display_draw(Display *x_display, int x_application_window, int i_screen, o
    if (h_display->display_position.y != 0 || h_display->display_position.x != 0 || h_display->display_position.width != h_display->bezel_position.width || h_display->bezel_position.height != h_display->display_position.height)
    {
       XSetForeground(x_display, DefaultGC(x_display, i_screen), h_display->border); /* Set the border colour. */
-      XFillRectangle(x_display, x_application_window, DefaultGC(x_display, i_screen), h_display->bezel_position.x, h_display->bezel_position.y, h_display->bezel_position.width, h_display->bezel_position.height); /* Fill in the border. */
+      XFillRectangle(x_display, x_application_window, DefaultGC(x_display, i_screen),
+         h_display->bezel_position.x, h_display->bezel_position.y, h_display->bezel_position.width, h_display->bezel_position.height); /* Fill in the border. */
    }
 
    XSetForeground(x_display, DefaultGC(x_display, i_screen), h_display->fill); /* Set the background colour. */
-   XFillRectangle(x_display, x_application_window, DefaultGC(x_display, i_screen), h_display->bezel_position.x + h_display->display_position.x, h_display->bezel_position.y + h_display->display_position.y, h_display->display_position.width, h_display->display_position.height); /* Fill in the background. */
+   XFillRectangle(x_display, x_application_window, DefaultGC(x_display, i_screen),
+      h_display->bezel_position.x + h_display->display_position.x, h_display->bezel_position.y + h_display->display_position.y,
+      h_display->display_position.width, h_display->display_position.height); /* Fill in the background. */
 
    for (i_count = 0; i_count < DIGITS; i_count++) /* Draw each digit. */
       if (!(h_display->digit[i_count] == NULL)) i_digit_draw(x_display, x_application_window, i_screen, h_display->digit[i_count]);
