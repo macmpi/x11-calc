@@ -25,6 +25,9 @@
  * 01 Apr 24         - Only attempt to define the keyboard functions if the
  *                     operating  system libraries support the key  symbols
  *                     used to decode a keystroke - MT
+ * 20 Apr 24         - Now uses unsigned integer types - MT
+ * 22 Apr 24         - Tidied up data types - MT
+ * 23 Apr 24         - More changes to data types - MT
  *
  */
 
@@ -48,8 +51,8 @@
 #if defined(__linux__) || defined(__NetBSD__)
 
 /* Attempts to translate a key code into a character. */
-static void v_key_decode(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate) {
-   h_keyboard->keysym = XKeycodeToKeysym(x_display, i_keycode, 0);
+static void v_key_decode(okeyboard *h_keyboard, Display *x_display, KeyCode x_keycode, unsigned int i_keystate) {
+   h_keyboard->keysym = XKeycodeToKeysym(x_display, x_keycode, 0);
    h_keyboard->key = '\000';
    switch (h_keyboard->keysym) {
    /* Modifier keys */
@@ -76,7 +79,7 @@ static void v_key_decode(okeyboard *h_keyboard, Display *x_display, int i_keycod
    case XK_Scroll_Lock:
    case XK_Sys_Req:
    case XK_Delete:
-      h_keyboard->key = h_keyboard->keysym & 0x1f; /* (values chosen to map to ASCII - see keysymdef.h) */
+      h_keyboard->key = (char)(h_keyboard->keysym & 0x1f); /* (values chosen to map to ASCII - see keysymdef.h) */
       break;
    /* Numeric keypad */
    case  XK_KP_F1:
@@ -96,7 +99,7 @@ static void v_key_decode(okeyboard *h_keyboard, Display *x_display, int i_keycod
    case  XK_KP_Delete:
    case  XK_KP_Equal:
       if (!(i_keystate & Mod2Mask) != !(i_keystate & ShiftMask)) { /* If numlock or shift (but not both) is pressed check number*/
-         h_keyboard->keysym = XKeycodeToKeysym(x_display, i_keycode, 1);
+         h_keyboard->keysym = XKeycodeToKeysym(x_display, x_keycode, 1);
          switch (h_keyboard->keysym) {
          case  XK_KP_Tab:
          case  XK_KP_Enter:
@@ -116,7 +119,7 @@ static void v_key_decode(okeyboard *h_keyboard, Display *x_display, int i_keycod
          case  XK_KP_7:
          case  XK_KP_8:
          case  XK_KP_9:
-            h_keyboard->key = h_keyboard->keysym & 0x7f; /* (values chosen to map to ASCII - see keysymdef.h) */
+            h_keyboard->key = (char)(h_keyboard->keysym & 0x7f); /* (values chosen to map to ASCII - see keysymdef.h) */
             break;
          }
       }
@@ -129,22 +132,22 @@ static void v_key_decode(okeyboard *h_keyboard, Display *x_display, int i_keycod
    case  XK_KP_Subtract:
    case  XK_KP_Decimal:
    case  XK_KP_Divide:
-      h_keyboard->key = h_keyboard->keysym & 0x7f; /* (values chosen to map to ASCII - see keysymdef.h) */
+      h_keyboard->key = (char)(h_keyboard->keysym & 0x7f); /* (values chosen to map to ASCII - see keysymdef.h) */
       break;
    /* Everything else */
    default:
-      h_keyboard->key = h_keyboard->keysym & 0xff;
+      h_keyboard->key = (char)(h_keyboard->keysym & 0xff);
       if (isalpha(h_keyboard->keysym)) { /* For alpha keys check both caps lock and shift */
          if (!(i_keystate & ShiftMask) != !(i_keystate & LockMask))
-            h_keyboard->key = XKeycodeToKeysym(x_display, i_keycode, 1);
+            h_keyboard->key = (char)(XKeycodeToKeysym(x_display, x_keycode, 1));
       }
       else {
          if (i_keystate & ShiftMask)
-            h_keyboard->key = XKeycodeToKeysym(x_display, i_keycode, 1);
+            h_keyboard->key = (char)(XKeycodeToKeysym(x_display, x_keycode, 1));
       }
 
       if (i_keystate & ControlMask) {
-         h_keyboard->key = XKeycodeToKeysym(x_display, i_keycode, 1);
+         h_keyboard->key = (char)(XKeycodeToKeysym(x_display, x_keycode, 1));
          if (((h_keyboard->key >= '@') && (h_keyboard->key <= '_')) || ((h_keyboard->key >= 'a') && (h_keyboard->key <= 'z'))) /* Only modify valid control keys */
             h_keyboard->key &= 0x1f; /* (values chosen to map to ASCII - see keysymdef.h) */
       }
@@ -153,10 +156,9 @@ static void v_key_decode(okeyboard *h_keyboard, Display *x_display, int i_keycod
 
 /* Update the keyboard state */
 
-okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate) {
-   v_key_decode(h_keyboard, x_display, i_keycode, i_keystate);
+void h_key_pressed(okeyboard *h_keyboard, Display *x_display, KeyCode x_keycode, unsigned int i_keystate) {
+   v_key_decode(h_keyboard, x_display, x_keycode, i_keystate);
    debug(fprintf(stderr, "Key pressed - '%s'.\n", XKeysymToString(h_keyboard->keysym)));
-   return(h_keyboard);
 }
 
 /*
@@ -165,10 +167,9 @@ okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, int i_keycod
  * Updates the keyboard state when a key is released.
  *
  */
-okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate) {
-   v_key_decode(h_keyboard, x_display, i_keycode, i_keystate);
+void h_key_released(okeyboard *h_keyboard, Display *x_display, KeyCode x_keycode, unsigned int i_keystate) {
+   v_key_decode(h_keyboard, x_display, x_keycode, i_keystate);
    debug(fprintf(stderr, "Key released - '%s'.\n", XKeysymToString(h_keyboard->keysym)));
-   return(h_keyboard);
 }
 /*
  * keyboard_create (index)
@@ -179,7 +180,7 @@ okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, int i_keyco
  *
  */
 
-okeyboard *h_keyboard_create(Display* x_display) {
+okeyboard *h_keyboard_create(Display *x_display) {
    okeyboard *h_keyboard; /* Ponter to keyboard structure. */
    if ((h_keyboard = malloc (sizeof(*h_keyboard))) != NULL){
       h_keyboard->display = x_display;

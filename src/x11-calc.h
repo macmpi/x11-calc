@@ -60,6 +60,7 @@
  *                     any that are not - MT
  * 14 Mar 24         - Allow SCALE_HEIGHT and SCALE_WIDTH to be passed from
  *                     command line at compile time - MT
+ * 23 Apr 24         - Separated out prototypes for error handlers - MT
  *
  * TO DO :           -
  */
@@ -93,36 +94,6 @@
 #define COLOUR_DEPTH 1
 #else
 #define COLOUR_DEPTH 24
-#endif
-
-/* Check that all error codes are defined and define any that are not */
-
-#if !defined(SUCCESS)
-#define SUCCESS      0
-#endif
-
-#if !defined(ENOENT)
-#define ENOENT       2
-#endif
-
-#if !defined(EINVAL)
-#define EINVAL       22
-#endif
-
-#if !defined(ENODATA)
-#define ENODATA      61
-#endif
-
-#if !defined(ENOACC)
-#define ENOACC      126
-#endif
-
-#if !defined(ENOCMD)
-#define ENOCMD      127
-#endif
-
-#if !defined(ENOFNT)
-#define ENOFNT      192
 #endif
 
 #if defined(HP35)
@@ -270,11 +241,3 @@
 #include "x11-calc-16c.h"
 
 #endif
-
-void v_version(); /* Display version information */
-
-void v_about(); /* Display help text */
-
-void v_error(int i_errno, const char *s_fmt, ...); /* Print formatted error message */
-
-void v_warning(const char *s_fmt, ...); /* Print formatted warning message */

@@ -59,6 +59,8 @@
  * 13 Apr 24         - Uses the key height to draw a button with horizontal
  *                     dividing line in the same place regardless of aspect
  *                     ratio - MT
+ * 23 Apr 24         - Separated out prototypes for error handlers - MT
+ *
  * To Do             - Add a new style to handle the type of button used by
  *                     the classic series.
  */
@@ -78,13 +80,15 @@
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
 #include "x11-calc-messages.h"
+#include "x11-calc-errors.h"
+
 #include "x11-calc-label.h"
 #include "x11-calc-switch.h"
 #include "x11-calc-button.h"
+#include "x11-calc-colour.h"
 
 #include "x11-calc.h"
 
-#include "x11-calc-colour.h"
 #include "gcc-debug.h"
 
 /*

@@ -389,6 +389,7 @@
  *                   - Fixed unused result compiler warnings - MT
  *                   - Fixed array subscript and string operation  compiler
  *                     warnings -MT
+ * 23 Apr 24         - Separated out prototypes for error handlers - MT
  *
  * To Do             - Finish adding code to display any modified registers
  *                     to every instruction.
@@ -412,19 +413,17 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-/** #include "x11-calc-font.h" /* Delete */
+#include "x11-calc-messages.h"
+#include "x11-calc-errors.h"
+
 #include "x11-calc-label.h"
 #include "x11-calc-switch.h"
 #include "x11-calc-button.h"
 
 #include "x11-calc-cpu.h"
 
-#include "x11-calc-messages.h"
-
 #include "gcc-debug.h"  /* print() */
 #include "gcc-exists.h" /* i_isfile(), i_isdir(), i_exists() */
-#include "gcc-wait.h"   /* i_wait() */
-
 
 #if defined(unix) || defined(__unix__) || defined(__APPLE__)
 #include <sys/stat.h>
