@@ -98,6 +98,10 @@
 #                      environment if neither 'prefix' or 'DESTDIR' are set
 #                      by the user - MT
 #  09 Apr 24         - Optimized install script - MT
+#  24 Apr 24         - Fix  parallel  make with .NOTPARALLEL accross models
+#                      in  top  makefile  to prevent concurrent compiles of
+#                      same  common  files.  Make  is  still  parallelizing
+#                      submakes calls which do the real work. - macmpi
 #
 
 PROGRAM		=  x11-calc
@@ -141,6 +145,8 @@ MENU		= hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp
 
 .PHONY: backup clean install
 
+.NOTPARALLEL: $(MODELS)
+
 all: $(MODELS) $(PROGRAM)
 
 classic: $(_classic) $(PROGRAM)
@@ -153,7 +159,7 @@ spice: $(_spice) $(PROGRAM)
 
 voyager: $(_voyager) $(PROGRAM)
 
-# Base pre-model compile target:
+# Base per-model compile target:
 .DEFAULT:
 	@_model="`echo "$@" | sed 's/hp//'`"; \
 	cd $(SRC); \
