@@ -99,4 +99,4 @@ ifneq ($(SCALE_HEIGHT),)
 CFLAGS		+= -DSCALE_HEIGHT=$(SCALE_HEIGHT)
 endif
 
-include makefile.common
+include makefile.all_flavors
