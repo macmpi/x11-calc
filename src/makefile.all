@@ -29,6 +29,7 @@
 #  09 Apr 24         - Finally renamed x11-calc-segment to the more correct
 #                      x11-calc-digit - MT
 #  29 Apr 24         - renamed makefile.all_flavors - macmpi
+#                    - renamed makefile.all - MT
 #
 
 MODEL	= 21
