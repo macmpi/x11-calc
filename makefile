@@ -102,6 +102,7 @@
 #                      in  top  makefile  to prevent concurrent compiles of
 #                      same  common  files.  Make  is  still  parallelizing
 #                      submakes calls which do the real work. - macmpi
+#  29 Apr 24         - Improve  parallel  make  performance  -  macmpi
 #
 
 PROGRAM		=  x11-calc
@@ -145,8 +146,6 @@ MENU		= hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp
 
 .PHONY: backup clean install
 
-.NOTPARALLEL: $(MODELS)
-
 all: $(MODELS) $(PROGRAM)
 
 classic: $(_classic) $(PROGRAM)
@@ -160,10 +159,13 @@ spice: $(_spice) $(PROGRAM)
 voyager: $(_voyager) $(PROGRAM)
 
 # Base per-model compile target:
-.DEFAULT:
+$(MODELS) $(MODELS:hp%=%): commons
 	@_model="`echo "$@" | sed 's/hp//'`"; \
 	cd $(SRC); \
 	$(MAKE) -s MODEL=$$_model all
+
+commons:
+	@cd $(SRC); $(MAKE) -s commons
 
 $(PROGRAM): $(BIN)/$(PROGRAM)
 

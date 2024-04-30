@@ -1,5 +1,5 @@
 #
-#  makefile.generic - RPN (Reverse Polish) calculator simulator.
+#  makefile.all_flavors - RPN (Reverse Polish) calculator simulator.
 #
 #  Copyright(C) 2024 - macmpi, MT
 #
@@ -28,6 +28,8 @@
 #  28 Mar 24         - Streamlined macros for use on osf1 - macmpi
 #  09 Apr 24         - Finally renamed x11-calc-segment to the more correct
 #                      x11-calc-digit - MT
+#  29 Apr 24         - renamed makefile.all_flavors - macmpi
+#                    - renamed makefile.all - MT
 #
 
 MODEL	= 21
@@ -49,7 +51,7 @@ CFLAGS_ADD	= -fcommon -Wall -pedantic -std=gnu99 \
 
 all: $(BIN)/$(PROGRAM)
 
-$(BIN)/$(PROGRAM): $(COMMON:.c=.o_cm) $(SHARED:.c=.o_HP$(MODEL)) x11-calc-$(MODEL).o
+$(BIN)/$(PROGRAM): commons $(SHARED:.c=.o_HP$(MODEL)) x11-calc-$(MODEL).o
 	@mkdir -p $(BIN)
 	@rm -f $(BIN)/$(PROGRAM)
 	@[ -n "$${VERBOSE+x}" ] && echo && \
@@ -57,6 +59,8 @@ $(BIN)/$(PROGRAM): $(COMMON:.c=.o_cm) $(SHARED:.c=.o_HP$(MODEL)) x11-calc-$(MODE
 		|| true
 	@$(CC) $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o $(LDFLAGS) $(LDLIBS) $(LDLIBS_ADD) -o $@
 	@ls $@ | sed "s:$(BIN)/::g"
+
+commons: $(COMMON:.c=.o_cm)
 
 .SUFFIXES: .o_cm .o_HP$(MODEL) .o
 

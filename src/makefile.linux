@@ -86,7 +86,7 @@ LDFLAGS	?=
 LDLIBS	?=
 
 LANG	= LANG_$(shell (echo $$LANG | cut -f 1 -d '_'))
-
+_flavors
 COMMIT	!= git log -1 HEAD --format=%h 2> /dev/null
 
 ifneq ($(COMMIT),)
@@ -99,4 +99,4 @@ ifneq ($(SCALE_HEIGHT),)
 CFLAGS		+= -DSCALE_HEIGHT=$(SCALE_HEIGHT)
 endif
 
-include makefile.common
+include makefile.all
