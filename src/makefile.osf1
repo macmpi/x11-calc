@@ -42,4 +42,4 @@ CFLAGS	=
 LDFLAGS	=
 LDLIBS	=
 
-include makefile.all_flavors
+include makefile.all
