@@ -86,17 +86,16 @@ LDFLAGS	?=
 LDLIBS	?=
 
 LANG	= LANG_$(shell (echo $$LANG | cut -f 1 -d '_'))
-_flavors
 COMMIT	!= git log -1 HEAD --format=%h 2> /dev/null
 
 ifneq ($(COMMIT),)
-CFLAGS		+= -DCOMMIT_ID='"[Commit Id : $(COMMIT)]"'
+CFLAGS	+= -DCOMMIT_ID='"[Commit Id : $(COMMIT)]"'
 endif
 ifneq ($(SCALE_WIDTH),)
-CFLAGS		+= -DSCALE_WIDTH=$(SCALE_WIDTH)
+CFLAGS	+= -DSCALE_WIDTH=$(SCALE_WIDTH)
 endif
 ifneq ($(SCALE_HEIGHT),)
-CFLAGS		+= -DSCALE_HEIGHT=$(SCALE_HEIGHT)
+CFLAGS	+= -DSCALE_HEIGHT=$(SCALE_HEIGHT)
 endif
 
 include makefile.all

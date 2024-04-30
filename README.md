@@ -56,6 +56,12 @@ More [screenshots](./img/#top)
 22 Sep 23
    - Added ability to build using make on MacOS.
 
+### How to get it
+
+   - [Compile and install from source](#Compiling)
+
+   - [Install a binary package](#Using a precompiled package)
+
 ### Compiling
 
 To  build the simulator check that you have all the prerequisites installed
@@ -135,7 +141,7 @@ DESTDIR.
 make DESTDIR=/tmp/staging install
 ```
 
-### Using Flatpak
+### Using a precompiled package
 
 If you don't want to download an compile the sources your self the emulator
 is also  available on [Flathub](https://flathub.org/apps/io.github.mike632t.x11-calc) and can be installed using Flatpak.
@@ -213,6 +219,11 @@ The following packages are required to build and/or run the simulator.
 - Ubuntu : gcc make libc6-dev libx11-dev xfonts-base
 
 - Windows 11 + WSL2 : gcc make libc6-dev libx11-dev xfonts-base
+
+
+### Starting the simulator
+
+After installing the simulators then if your desktop is supported
 
 ### Keyboard Shortcuts
 
