@@ -51,7 +51,7 @@ CFLAGS_ADD	= -fcommon -Wall -pedantic -std=gnu99 \
 
 all: $(BIN)/$(PROGRAM)
 
-$(BIN)/$(PROGRAM): commons $(SHARED:.c=.o_HP$(MODEL)) x11-calc-$(MODEL).o
+$(BIN)/$(PROGRAM): common $(SHARED:.c=.o_HP$(MODEL)) x11-calc-$(MODEL).o
 	@mkdir -p $(BIN)
 	@rm -f $(BIN)/$(PROGRAM)
 	@[ -n "$${VERBOSE+x}" ] && echo && \
@@ -60,7 +60,7 @@ $(BIN)/$(PROGRAM): commons $(SHARED:.c=.o_HP$(MODEL)) x11-calc-$(MODEL).o
 	@$(CC) $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o $(LDFLAGS) $(LDLIBS) $(LDLIBS_ADD) -o $@
 	@ls $@ | sed "s:$(BIN)/::g"
 
-commons: $(COMMON:.c=.o_cm)
+common: $(COMMON:.c=.o_cm)
 
 .SUFFIXES: .o_cm .o_HP$(MODEL) .o
 
