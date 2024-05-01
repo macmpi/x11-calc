@@ -150,6 +150,8 @@ is also  available on [Flathub](https://flathub.org/apps/io.github.mike632t.x11-
 
 The emulators have been tested on the following systems:
 
+- Alpine 3.19, gcc 13.2.1, x64 + arm64
+
 - Debian 12 (Bookworm), clang 14.0.6, x64 + arm64
 
 - Debian 12 (Bookworm), tcc 0.9.27, x64 + arm64
