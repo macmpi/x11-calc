@@ -34,6 +34,14 @@ LDLIBS	?=
 OS != uname -s
 
 # Operating system specific settings
+.if ${OS} == "FreeBSD"
+LANG 	= LANG_en
+LDLIBS	+= -lcompat
+CFLAGS	+= -Wno-variadic-macros
+CFLAGS	+= -I/usr/local/include/
+LDFLAGS	+= -L/usr/local/lib/
+.endif
+
 .if ${OS} == "NetBSD"
 LANG 	= LANG_en
 LDLIBS	+= -lcompat
