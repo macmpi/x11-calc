@@ -64,7 +64,7 @@ More [screenshots](./img/#top)
 
 ### Compiling
 
-To  build the simulator check that you have all the prerequisites installed
+To  build the simulator check that you have all the [prerequisites](#Prerequisites) installed
 then download the source code from github and unzip it (this will created a
 new directory automatically).
 
@@ -222,6 +222,11 @@ The following packages are required to build and/or run the simulator.
 
 - Windows 11 + WSL2 : gcc make libc6-dev libx11-dev xfonts-base
 
+When all the prerequisites are available, you should be able to [compile](#Compiling) the
+program using make if it is in the list of tested platforms.
+
+Note - If you are using a newer version of the operating system or compiler
+then you may encounter some minor issues.
 
 ### Starting the simulator
 
