@@ -60,7 +60,7 @@ More [screenshots](./img/#top)
 
    - [Compile and install from source](#Compiling)
 
-   - [Install a binary package](#Using a precompiled package)
+   - [Install a binary package](#Using_a_precompiled_package)
 
 ### Compiling
 
