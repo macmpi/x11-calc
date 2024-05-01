@@ -46,8 +46,8 @@ DEBUG	=
 LDLIBS_ADD	= -lX11 -lm
 
 CFLAGS_ADD	= -fcommon -Wall -pedantic -std=gnu99 \
-				-Wno-comment -Wno-deprecated-declarations -Wno-builtin-macro-redefined \
-				-D$(LANG) $(DEBUG)
+			-Wno-comment -Wno-deprecated-declarations -Wno-builtin-macro-redefined \
+			-D$(LANG) $(DEBUG)
 
 all: $(BIN)/$(PROGRAM)
 
