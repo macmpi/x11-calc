@@ -29,11 +29,11 @@
 MODEL	= 21
 
 all:
-	@_flavor="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
-	echo "$$_flavor" | grep -qwE "freebsd|netbsd|darwin" && _flavor=bsd; \
-	$(MAKE) -s -f "makefile.$$_flavor" MODEL=$(MODEL) $@
+	@_os="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
+	echo "$$_os" | grep -qwE "freebsd|netbsd|darwin" && _os=bsd; \
+	$(MAKE) -s -f "makefile.$$_os" MODEL=$(MODEL) $@
 
 .DEFAULT:
-	@_flavor="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
-	echo "$$_flavor" | grep -qwE "freebsd|netbsd|darwin" && _flavor=bsd; \
-	$(MAKE) -s -f "makefile.$$_flavor" MODEL=$(MODEL) $@
+	@_os="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
+	echo "$$_os" | grep -qwE "freebsd|netbsd|darwin" && _os=bsd; \
+	$(MAKE) -s -f "makefile.$$_os" MODEL=$(MODEL) $@
