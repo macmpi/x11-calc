@@ -180,6 +180,8 @@ The emulators have been tested on the following systems:
 
 - Fedora 39, gcc 13.2.1, x64
 
+- FreeBSD 14.0, clang 16.0.6, x64
+
 - Gentoo, gcc 11.2.0, x64
 
 - MacOS 10 (Catalina), clang 12.0.0, x64
