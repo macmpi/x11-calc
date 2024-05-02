@@ -303,6 +303,7 @@
  * 23 Apr 24         - Separated out prototypes for error handlers - MT
  *                   - Tidied up include files and removed some (currently)
  *                     redundant code - MT
+ *  2 May 24         - Added shortcut keys for 'A-E' on 15C and 11C - MT
  *
  * To Do             - Parse command line in a separate routine.
  *                   - Add verbose option.
@@ -314,8 +315,8 @@
 
 #define  NAME          "x11-calc"
 #define  VERSION       "0.14"
-#define  BUILD         "0150"
-#define  DATE          "23 Apr 24"
+#define  BUILD         "0151"
+#define  DATE          "02 May 24"
 #define  AUTHOR        "MT"
 
 #define  INTERVAL 25   /* Number of ticks to execute before updating the display */
