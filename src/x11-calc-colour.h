@@ -39,6 +39,8 @@
 
 #define BEIGE          0xffffff /* Beige numeric keys. */
 #define BLACK          0xffffff /* Black function keys. */
+#define GREY           0x000000 /* grey function keys. */
+#define GRAY           0x000000 /* grey function keys. */
 #define DIM_GREY       0xffffff /* grey function keys. */
 #define DIM_GRAY       0xffffff /* grey function keys. */
 #define DARK_GREY      0xffffff /* grey function keys. */
@@ -67,6 +69,8 @@
 
 #define BEIGE          0xd9c8b6 /* Beige numeric keys. */
 #define BLACK          0x2e312e /* Black function keys. */
+#define GREY           0x4f4f4f /* Dark grey function keys. */
+#define GRAY           0x4f4f4f /* Dark grey function keys. */
 #define DIM_GREY       0x4f4f4f /* Dark grey function keys. */
 #define DIM_GRAY       0x4f4f4f /* Dark grey function keys. */
 #define DARK_GREY      0x8f8f8f /* grey function keys. */

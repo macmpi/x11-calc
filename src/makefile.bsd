@@ -56,4 +56,4 @@ CFLAGS	+= -I/opt/X11/include/X11/
 LDFLAGS += -L/opt/X11/lib/
 .endif
 
-include makefile.common
+include makefile.all

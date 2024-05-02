@@ -22,6 +22,7 @@
  * 02 Mar 22         - Fixed ROM size - MT
  * 09 Mar 22         - Fixed width and height (when scaled) - MT
  * 21 Mar 24         - Fixed display position - MT
+ * 22 Apr 24         - Define display colour separately - MT
  *
  */
 
@@ -33,7 +34,7 @@
 #define DIGITS             11
 #define INDECATORS         8
 
-#define DIGIT_COLOUR       DIM_GREY
+#define DIGIT_COLOUR       GREY
 #define DIGIT_BACKGROUND   MID_GREY
 #define DISPLAY_BACKGROUND MID_GREY
 #define BEZEL_COLOUR       LIGHT_GREY

@@ -33,6 +33,8 @@
  *                     need to include stdio.h - MT
  * 27 Feb 24         - Fixed busy loop 'bug' on newer compilers that do not
  *                     set 'linux' when compiling on Linux - MT
+ * 22 Apr 22         - Moved  compiler feature macro definitions to generic
+ *                     busy loop - MT
  *
  */
 
@@ -40,9 +42,6 @@
 #define BUILD          "0005"
 #define DATE           "07 Feb 24"
 #define AUTHOR         "MT"
-
-#define _DEFAULT_SOURCE
-#define _BSD_SOURCE
 
 #if defined(linux) || defined(__linux__) || defined(__NetBSD__)
 #include <unistd.h>
@@ -74,6 +73,8 @@ float f_seconds;
 f_seconds = l_delay / 1000.0;
 return (lib$wait(&f_seconds)); /* Use VMS LIB$WAIT */
 #else
+/** #define _DEFAULT_SOURCE /* Possibly required for busy loop more testing needed */
+/** #define _BSD_SOURCE /* Possibly required for busy loop more testing needed */
 struct timeb o_start, o_end;
 ftime(&o_start);
 ftime(&o_end);
