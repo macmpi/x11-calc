@@ -48,7 +48,7 @@
 
 #include "gcc-debug.h"
 
-#if defined(__linux__) || defined(__NetBSD__)
+#if defined(__linux__) || defined(__NetBSD__) || defined (__FreeBSD__)
 
 /* Attempts to translate a key code into a character. */
 static void v_key_decode(okeyboard *h_keyboard, Display *x_display, KeyCode x_keycode, unsigned int i_keystate) {

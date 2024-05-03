@@ -25,7 +25,7 @@
  *
  */
 
-#if defined(__linux__) || defined(__NetBSD__)
+#if defined(__linux__) || defined(__NetBSD__) || defined (__FreeBSD__)
 
 typedef struct { /* Calculator button structure. */
    Display* display;
