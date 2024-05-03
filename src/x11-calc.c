@@ -305,6 +305,8 @@
  *                     redundant code - MT
  *  2 May 24         - Added shortcut keys for 'A-E' on 15C and 11C - MT
  *                   - Keyboard shortcuts enabled on FreeBSD - MT
+ *  3 May 24         - Sets the abort flag and interval counter immediately
+ *                     before the main loop - MT
  *
  * To Do             - Parse command line in a separate routine.
  *                   - Add verbose option.
@@ -794,14 +796,13 @@ int main(int argc, char *argv[])
    else
       v_read_state(h_processor, s_pathname); /* Load user specified settings */
 
-   b_abort = False;
-   i_count = 0;
-
 #if defined(SWITCHES)
    h_processor->enabled = h_switch[0]->state; /* Allow switches to be undefined if not used */
    if (SWITCHES == 2) h_processor->mode = h_switch[1]->state;
 #endif
 
+   b_abort = False;
+   i_count = 0;
    while (!b_abort) /* Main program event loop */
    {
       i_count--;
