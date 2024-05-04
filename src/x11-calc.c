@@ -303,10 +303,11 @@
  * 23 Apr 24         - Separated out prototypes for error handlers - MT
  *                   - Tidied up include files and removed some (currently)
  *                     redundant code - MT
- *  2 May 24         - Added shortcut keys for 'A-E' on 15C and 11C - MT
+ * 02 May 24         - Added shortcut keys for 'A-E' on 15C and 11C - MT
  *                   - Keyboard shortcuts enabled on FreeBSD - MT
- *  3 May 24         - Sets the abort flag and interval counter immediately
+ * 03 May 24         - Sets the abort flag and interval counter immediately
  *                     before the main loop - MT
+ * 04 May 24         - Do not define un used switches - MT
  *
  * To Do             - Parse command line in a separate routine.
  *                   - Add verbose option.
@@ -318,8 +319,8 @@
 
 #define  NAME          "x11-calc"
 #define  VERSION       "0.14"
-#define  BUILD         "0153"
-#define  DATE          "03 May 24"
+#define  BUILD         "0154"
+#define  DATE          "04 May 24"
 #define  AUTHOR        "MT"
 
 #define  INTERVAL 25   /* Number of ticks to execute before updating the display */
