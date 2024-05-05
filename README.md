@@ -1,4 +1,5 @@
-## x11-calc - Another RPN (Reverse Polish) calculator. <a id="top"></a>
+<a id="top"></a>
+## x11-calc - Another RPN (Reverse Polish) calculator.
 
 Simulators for  the HP 35, HP 80, HP 45, HP 70, HP 21, HP 22, HP25, HP 25C,
 HP 27,  HP 29C,  HP 31E, HP 32E, HP 33E, HP 33C,  HP 34C,  HP 37E,  HP 38C,
@@ -15,23 +16,23 @@ Tru64 Unix.
 
 ![HP10](./img/x11-calc-10c.png) ![HP11](./img/x11-calc-11c.png)
 
-- [Latest News](#Latest-News-back-to-top)
+- [Latest News](#latest)
 
-- [What will it run on](#Tested-platforms-back-to-top)
+- [What will it run on](#tested)
 
-- [How to get it](#How-to-get-it-back-to-top)
+- [How to get it](#obtaining)
 
-- [Using it](#Using-the-simulator-back-to-top)
+- [Using it](#using)
 
-- [Known issues](#Known-issues-back-to-top)
+- [Known issues](#issues)
 
-- [Acknowledgements](#Acknowledgements-back-to-top)
+- [Acknowledgements](#acknowledgements)
 
-- [Submitting a problem report](#Problem-reports-Back-to-Top)
+- [Submitting a problem report](#problems)
 
 - [More screenshots](./img/#top)
 
-
+<a id="latest"></a>
 ### Latest News <sup>[Back to Top](#top)</sup>
 
 04 May 24
@@ -77,7 +78,7 @@ Tru64 Unix.
 22 Sep 23
    - Added ability to build using make on MacOS.
 
-
+<a id="tested"></a>
 ### Tested platforms <sup>[Back to Top](#top)</sup>
 
 The simulator has been successfully compiled and tested on:
@@ -138,17 +139,17 @@ The simulator has been successfully compiled and tested on:
 
    - Windows 11 + WSL2, gcc 12.2.0, x64 + arm64
 
-
+<a id="obtaining"></a>
 ### How to get it <sup>[Back to Top](#top)</sup>
 
 You can either download the source code from GitHub and compile it yourself
 or you can use a pre-compiled package.
 
-   - [Building from the source](#Building-from-the-source-back-to-top)
+   - [Building from the source](#building)
 
-   - [Using binary package](#Using-a-pre-compiled-package-back-to-top)
+   - [Using binary package](#packages)
 
-
+<a id="using"></a>
 ### Using the simulator <sup>[Back to Top](#top)</sup>
 
 If you install the simulator on most modern desktops it should create a new
@@ -259,7 +260,7 @@ be filled with zeros, and the existing ROM contents will be left unchanged.
 ROM files can therefore be used to load alternative version of the firmware
 for a particular model or apply a patch to the existing firmware.
 
-
+<a id="building"></a>
 ### Building from the source <sup>[Back to Top](#top)</sup>
 
 #### Prerequisites
@@ -360,13 +361,13 @@ DESTDIR.
 make DESTDIR=/tmp/staging install
 ```
 
-
+<a id="packages"></a>
 ### Using a pre-compiled package <sup>[Back to Top](#top)</sup>
 
 If you don't want to download an compile the sources yourself you can use a
 pre-compiled binary package from [Flathub](https://flathub.org/apps/io.github.mike632t.x11-calc) using Flatpak.
 
-
+<a id="issues"></a>
 ### Known Issues <sup>[Back to Top](#top)</sup>
 
 #### General issues
@@ -417,7 +418,7 @@ on Xwayland the window manager does not handle this correctly.
 - Not all text is visible due to the limited colour palette.
 - Not all key legends are shown as the font is missing some characters.
 
-
+<a id="acknowledgements"></a>
 ### Acknowledgements <sup>[Back to Top](#top)</sup>
 
 There are almost certainly some names I've missed off this list but without
@@ -443,7 +444,7 @@ for Flatpak and for packaging and testing the simulators on Alpine Linux.
 
 - `Jonakeys` for getting the simulators working on FreeBSD.
 
-
+<a id="problems"></a>
 ### Problem Reports <sup>[Back to Top](#top)</sup>
 
 If you find problems or have suggestions relating to these simulators, then
