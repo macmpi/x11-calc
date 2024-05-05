@@ -10,7 +10,8 @@ Use  of any language extensions or non standard language features has  been
 avoided in order to try to make the code as portable as possible.
 
 The  aim  is to have the same source code compile without  modification  on
-Linux, VAX/VMS, and Tru64 Unix.
+as  many systems and architectures as possible including Linux, VAX/VMS and
+Tru64 Unix.
 
 ![HP10](./img/x11-calc-10c.png) ![HP11](./img/x11-calc-11c.png)
 
@@ -18,6 +19,12 @@ More [screenshots](./img/#top)
 
 
 ### Latest News
+
+05 May 24
+
+   - Fixed a bug that affected some simulators when compiled on MacOS.
+   - Updated this README with more details of the keyboard shortcuts.
+   - Added some much needed acknowledgements.
 
 14 Apr 24
 
@@ -150,79 +157,79 @@ is also  available on [Flathub](https://flathub.org/apps/io.github.mike632t.x11-
 
 The emulators have been tested on the following systems:
 
-- Alpine 3.19, gcc 13.2.1, x64 + arm64
+   - Alpine 3.19, gcc 13.2.1, x64 + arm64
 
-- Debian 12 (Bookworm), clang 14.0.6, x64 + arm64
+   - Debian 12 (Bookworm), clang 14.0.6, x64 + arm64
 
-- Debian 12 (Bookworm), tcc 0.9.27, x64 + arm64
+   - Debian 12 (Bookworm), tcc 0.9.27, x64 + arm64
 
-- Debian 12 (Bookworm), gcc 12.2.0, x64 + arm64
+   - Debian 12 (Bookworm), gcc 12.2.0, x64 + arm64
 
-- Debian 11 (Bullseye), clang 11.0.1-2, x64
+   - Debian 11 (Bullseye), clang 11.0.1-2, x64
 
-- Debian 11 (Bullseye), gcc 10.2.1, x64
+   - Debian 11 (Bullseye), gcc 10.2.1, x64
 
-- Debian 11 (Bullseye), tcc 0.9.27, x64
+   - Debian 11 (Bullseye), tcc 0.9.27, x64
 
-- Debian 10 (Buster), gcc 8.3.0, x64 + arm
+   - Debian 10 (Buster), gcc 8.3.0, x64 + arm
 
-- Debian 10 (Buster), clang 7.0.1, x64
+   - Debian 10 (Buster), clang 7.0.1, x64
 
-- Debian 9 (Stretch), gcc 6.3.0, arm
+   - Debian 9 (Stretch), gcc 6.3.0, arm
 
-- Debian 5 (Lenny), gcc 4.2.4, alpha
+   - Debian 5 (Lenny), gcc 4.2.4, alpha
 
-- Fedora 34, gcc 11.2.1, x64
+   - Fedora 34, gcc 11.2.1, x64
 
-- Fedora 35, gcc 11.3.1, x64
+   - Fedora 35, gcc 11.3.1, x64
 
-- Fedora 35, clang 13.0.1, x64
+   - Fedora 35, clang 13.0.1, x64
 
-- Fedora 39, gcc 13.2.1, x64
+   - Fedora 39, gcc 13.2.1, x64
 
-- FreeBSD 14.0, clang 16.0.6, x64
+   - FreeBSD 14.0, clang 16.0.6, x64
 
-- Gentoo, gcc 11.2.0, x64
+   - Gentoo, gcc 11.2.0, x64
 
-- MacOS 10 (Catalina), clang 12.0.0, x64
+   - MacOS 10 (Catalina), clang 12.0.0, x64
 
-- MacOS 13.4.1 (Venture), clang 14.0.3, arm64
+   - MacOS 13.4.1 (Venture), clang 14.0.3, arm64
 
-- NetBSD 9.2, gcc 7.5.0, x64
+   - NetBSD 9.2, gcc 7.5.0, x64
 
-- SUSE 15.4, clang 13. 0.1, x64
+   - SUSE 15.4, clang 13. 0.1, x64
 
-- SUSE 15.4, gcc 7.5.0, x64
+   - SUSE 15.4, gcc 7.5.0, x64
 
-- Ubuntu 20.04, gcc 9.4.0, x64
+   - Ubuntu 20.04, gcc 9.4.0, x64
 
-- Ubuntu 20.04, clang 10.0.0, x64
+   - Ubuntu 20.04, clang 10.0.0, x64
 
-- Ubuntu 20.04, tcc 0.9.27, x64
+   - Ubuntu 20.04, tcc 0.9.27, x64
 
-- VAX/VMS 5.4-3, VAX C 3.2, VAX (simh)
+   - VAX/VMS 5.4-3, VAX C 3.2, VAX (simh)
 
-- OpenVMS 9.2-1, VSI C 7.4-726, x64
+   - OpenVMS 9.2-1, VSI C 7.4-726, x64
 
-- Windows 11 + WSL2, gcc 12.2.0, x64 + arm64
+   - Windows 11 + WSL2, gcc 12.2.0, x64 + arm64
 
 ### Prerequisites
 
 The following packages are required to build and/or run the simulator.
 
-- Debian : gcc | clang | tcc  make libc6-dev libx11-dev xfonts-base
+   - Debian : gcc | clang | tcc  make libc6-dev libx11-dev xfonts-base
 
-- Fedora : gcc | clang  make glibc-devel libX11-devel xorg-x11-fonts-base | xorg-x11-fonts-misc
+   - Fedora : gcc | clang  make glibc-devel libX11-devel xorg-x11-fonts-base | xorg-x11-fonts-misc
 
-- Gentoo : gcc make libc6-dev libx11-dev font-misc-misc
+   - Gentoo : gcc make libc6-dev libx11-dev font-misc-misc
 
-- MacOS  : clang make [xquartz](https://www.xquartz.org/)
+   - MacOS  : clang make [xquartz](https://www.xquartz.org/)
 
-- SUSE   : gcc | clang make libX11-devel
+   - SUSE   : gcc | clang make libX11-devel
 
-- Ubuntu : gcc make libc6-dev libx11-dev xfonts-base
+   - Ubuntu : gcc make libc6-dev libx11-dev xfonts-base
 
-- Windows 11 + WSL2 : gcc make libc6-dev libx11-dev xfonts-base
+   - Windows 11 + WSL2 : gcc make libc6-dev libx11-dev xfonts-base
 
 When all the prerequisites are available, you should be able to [compile](#Compiling) the
 program using make if it is in the list of tested platforms.
@@ -232,7 +239,15 @@ then you may encounter some minor issues.
 
 ### Starting the simulator
 
-After installing the simulators then if your desktop is supported
+If you install the simulator on most modern desktops it should create a new
+menu entry that will start the launcher script by default. When invoked for
+the first time this will prompt you to select the default simulator as well
+as any additional command line options.  These selections will be saved and
+used in future.
+
+On some desktop environments it is also possible to right click on the menu
+icon which will display a sub-menu that will allow you to select a specific
+model directly as well as change the default model and options.
 
 ### Keyboard Shortcuts
 
@@ -246,12 +261,23 @@ The following keyboard shortcuts should work on Linux:
 'Esc' or 'Backspace' corresponds to 'Clx', 'c' to CHS, 'e' to 'EEX', and on
 financial models 'n' and 'i' correspond to 'n' and 'i' if not shifted.
 
-On programmable models 'A' - 'E' correspond to the function keys where they
-exist and 'Space' maps to 'SST' if not shifted.
+'A' - 'E' , 'A' - 'F' , or 'A' - 'B' correspond to program labels  (whether
+shifted or not).
 
-'Ctrl-Z'  Quits,  and  'Ctrl-C' does a reset.  For models  with  continuous
-memory 'Ctrl-Z' saves the current register contents, and 'Ctrl-C'  restores
-them to the original saved state.
+'Space' maps to 'SST' (if not shifted.
+
+The following control keys can also be used.
+
+'Ctrl-Z' Exists the simulator. For models  with  continuous memory 'Ctrl-Z'
+saves the current memory contents.
+
+'Ctrl-C' Resets the simulator to its initial state.
+
+'Ctrl-T' Toggles tracing of the simulator code execution.
+
+'Ctrl-S' Enable tracing and executes a single instruction.
+
+'Ctrl-Q' Resumes execution (does not disable trace).
 
 ### Loading and saving
 
@@ -323,39 +349,40 @@ for a particular model or apply a patch to the existing firmware.
 
 ### Known Issues
 
-* Keyboard shortcuts only work on Linux and NetBSD.
-* A 24 bit colour display is required.
-* For best results you need to have the X windows core fonts installed.
+- Keyboard shortcuts only work on Linux and NetBSD.
+- A 24 bit colour display is required.
+- For best results you need to have the X windows core fonts installed.
 
-* Parallel make only works on Linux and NetBSD
+- Parallel make only works on Linux, NetBSD and FreeBSD.
 
 ##### HP 11C + HP 12C + HP 15C + HP 16C
 
-Keyboard test is successful but these models do not pass the self-test.
+- Keyboard test is successful but these models do not pass the self-test.
 
 ##### HP 29C
 
-* All 30 registers have continuous memory.
+- All 30 registers have continuous memory.
 
 ##### HP 37E
 
-* Fails self test.
+- Fails self-test.
 
 ##### HP 67
 
-* Cannot read or write to magnetic cards.
-* Has continuous memory.
+- Cannot read or write to magnetic cards.
+- Has  continuous memory (which allows saved programs to be loaded from the
+command line).
 
 ### Raspberry Pi Specific Issues
 
-* The code uses a simplified display on Arm based systems (except Apple) to
+- The code uses a simplified display on Arm based systems (except Apple) to
 avoid the display refresh issues seen on the Raspberry Pi if either FKMS or
 KMS overlays are enabled. (Note- Do not disable KMS on the latest Raspberry
 Pi OS release).
 
 ### Wayland specific Issues
 
-* Performance under Xwayland is generally poor, the emulator will work well
+- Performance under Xwayland is generally poor, the emulator will work well
 on a Raspberry Pi3 using Xwindows but a Raspberry Pi4 using Xwayland cannot
 redraw the display quickly enough to allow background shading to be used to
 draw the display digits. As a result the emulator's LED/LCD display doesn't
@@ -365,9 +392,33 @@ on Xwayland the window manager does not handle this correctly.
 
 ### VMS Specific Issues
 
-* Colour palette assumes a black and white display.
-* Not all text is visible due to the limited colour palette and the DEC fonts
+- Colour palette assumes a black and white display.
+- Not all text is visible due to the limited colour palette and the DEC fonts
 are missing some characters (for example the Pi symbol).
+
+
+### Acknowledgements
+
+There are almost certainly some names I've missed off this list but without
+the help and encouragement from a multiple it is unlikely that this project
+would have happened at all or that it would got as far as it has.
+
+- Teenix for convincing me that it was possible in the first place and help
+since (at least I think I glad he did).
+
+- Teenix/Panamatik for their excellent simulators from which I was able to
+figure out most of what should happen when each instruction is executed.
+
+- Macmpi for completely rewriting the makefiles and packaging the simulator
+for flatpak and for packaging and testing the simulators on Alpine Linux.
+
+- Agarza/Martin HEPPERLE for translating the help text
+
+- Thomas KLEMM for his testing and debugging on MacOS.
+
+- Mark SHIN for testing on MacOS.
+
+- Jonakeys for testing on FreeBSD.
 
 ### Problem Reports
 
