@@ -215,41 +215,41 @@ const char * h_err_invalid_option = "ungueltige option %s\n";
 const char * h_msg_loading = "Chargement de '%s'.\n";
 const char * h_msg_saving = "Enregistrement de '%s'.\n";
 
-const char * h_err_register_alloc = "Erreur d'execution\t : Ligne %s : %d : Echec de l'allocation de memoire !\n";
+const char * h_err_register_alloc = "Erreur d'exécution\t : Ligne %s : %d : Echec de l'allocation mémoire !\n";
 const char * h_err_opening_file = "Impossible d'ouvrir '%s'.\n";
 
 const char * h_err_display = "Impossible de se connecter au serveur X '%s'.\n";
-const char * h_err_display_properties = "Impossible d'obtenir les proprietes d'affichage.\n";
+const char * h_err_display_properties = "Impossible d'obtenir les propriétés d'affichage.\n";
 const char * h_err_display_colour = "Nécessite un affichage couleur %d bits.\n";
 const char * h_err_font = "Impossible de charger la police '%s' (x11 base bitmap fonts required).\n";
 
 #if defined(HEXADECIMAL)
-const char * h_err_unexpected_opcode = "Code opération inattendu (%03x) à %1x-%03x dans la ligne %s : %d\n";
-const char * h_err_unexpected_error = "Erreur inattendue à %1x-%03x dans la ligne %s : %d\n";
-const char * h_err_invalid_address = "Adresse (%02o) hors plage à %1x-%03x dans la ligne %s : %d\n";
-const char * h_err_invalid_register = "Registre invalide (REG[%03d]) à %1x-%03x dans la ligne %s : %d\n";
+const char * h_err_unexpected_opcode = "Instruction inattendue (%03x) à %1x-%03x , ligne %s : %d\n";
+const char * h_err_unexpected_error = "Erreur inattendue à %1x-%03x , ligne %s : %d\n";
+const char * h_err_invalid_address = "Adresse (%02o) hors plage à %1x-%03x , ligne %s : %d\n";
+const char * h_err_invalid_register = "Registre invalide (REG[%03d]) à %1x-%03x , ligne %s : %d\n";
 # else
-const char * h_err_unexpected_opcode = "Code opération inattendu (%04o) à %1o-%04o dans la ligne %s : %d\n";
-const char * h_err_unexpected_error = "Erreur inattendue à %1o-%04o dans la ligne %s : %d\n";
-const char * h_err_invalid_address = "Adresse (%02o) hors plage à %1o-%04o dans la ligne %s : %d\n";
-const char * h_err_invalid_register = "Registre invalide (REG[%03d]) à %1o-%04o dans la ligne %s : %d\n";
+const char * h_err_unexpected_opcode = "Instruction inattendue (%04o) à %1o-%04o , ligne %s : %d\n";
+const char * h_err_unexpected_error = "Erreur inattendue à %1o-%04o , ligne %s : %d\n";
+const char * h_err_invalid_address = "Adresse (%02o) hors plage à %1o-%04o , ligne %s : %d\n";
+const char * h_err_invalid_register = "Registre invalide (REG[%03d]) à %1o-%04o , ligne %s : %d\n";
 #endif /* Hexadecmal */
 
-const char * h_err_missing_argument = "l'option necessite un argument -- '%s'\n";
+const char * h_err_missing_argument = "l'option nécessite un argument -- '%s'\n";
 
 #if defined(unix) || defined(__unix__) || defined(__APPLE__)
 const char * c_msg_usage = "Utilisation : %s [OPTION]... [FICHIER]\n\
-Une émulateur RPN Calculator pour X11.\n\n\
+Un émulateur de calculatrices NPI sur X11.\n\n\
   -b  ADDR                 définir un point d'arrêt (octal)\n\
   -i  OPCODE               définir un piège d'instruction (octal)\n\
-  -r  FILE                 lire le contenu de la ROM de FILE\n\
-  -s,                      single step\n\
-  -t,                      trace execution\n\
+  -r  FILE                 lire le contenu du fichier ROM\n\
+  -s,                      pas à pas\n\
+  -t,                      trace d'éxecution\n\
       --zoom ZOOM          agrandir la taille de la fenêtre\n\
       --cursor             curseur d'affichage (par défaut)\n\
       --no-cursor          masquer le curseur\n\
       --help               afficher cette aide et quitter\n\
-      --version            affiche les informations de version et quitte\n\n";
+      --version            afficher les informations de version et quitter\n\n";
 const char * h_err_invalid_operand = "opérande(s) invalide(s)\n";
 const char * h_err_invalid_option = "option invalide -- '%c'\n";
 const char * h_err_unrecognised_option = "option non reconnue '%s'\n";
@@ -258,15 +258,15 @@ const char * h_err_numeric_range = "hors de portée -- '%s' \n";
 const char * h_err_invalid_argument = "argument attendu -- '%c' \n";
 #else
 const char * c_msg_usage = "Utilisation : %s [OPTION]... [FICHIER]\n\
-Une émulateur RPN Calculator pour X11.\n\n\
+Un émulateur de calculatrices NPI sur X11.\n\n\
   /cursor                  curseur d'affichage (par défaut)\n\
   /nocursor                masquer le curseur\n\
-  /step                    trace execution\n\
+  /step                    pas à pas\n\
   /trace                   trace execution\n\
-  /version                 affiche les informations de version et quitte\n\
+  /version                 afficher les informations de version et quitter\n\
   /?, /help                afficher cette aide et quitter\n";
 
-const char * h_err_invalid_operand = "parametre(s) invalide(s)\n";
+const char * h_err_invalid_operand = "paramètre(s) invalide(s)\n";
 const char * h_err_invalid_option = "option invalide %s\n";
 #endif /* Unix */
 
