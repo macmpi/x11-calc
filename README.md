@@ -25,9 +25,12 @@ Tru64 Unix.
 
 - [Known issues](#Known-issues-back-to-top)
 
-- [ Acknowledgements](#Acknowledgements-back-to-top)
+- [Acknowledgements](#Acknowledgements-back-to-top)
+
+- [Submitting a problem report](#Problem-reports-Back-to-Top)
 
 - [More screenshots](./img/#top)
+
 
 ### Latest News <sup>[Back to Top](#top)</sup>
 
@@ -73,6 +76,7 @@ Tru64 Unix.
 
 22 Sep 23
    - Added ability to build using make on MacOS.
+
 
 ### Tested platforms <sup>[Back to Top](#top)</sup>
 
@@ -134,6 +138,7 @@ The simulator has been successfully compiled and tested on:
 
    - Windows 11 + WSL2, gcc 12.2.0, x64 + arm64
 
+
 ### How to get it <sup>[Back to Top](#top)</sup>
 
 You can either download the source code from GitHub and compile it yourself
@@ -142,6 +147,7 @@ or you can use a pre-compiled package.
    - [Building from the source](#Building-from-the-source-back-to-top)
 
    - [Using binary package](#Using-a-pre-compiled-package-back-to-top)
+
 
 ### Using the simulator <sup>[Back to Top](#top)</sup>
 
@@ -253,6 +259,7 @@ be filled with zeros, and the existing ROM contents will be left unchanged.
 ROM files can therefore be used to load alternative version of the firmware
 for a particular model or apply a patch to the existing firmware.
 
+
 ### Building from the source <sup>[Back to Top](#top)</sup>
 
 #### Prerequisites
@@ -357,10 +364,12 @@ DESTDIR.
 make DESTDIR=/tmp/staging install
 ```
 
+
 ### Using a pre-compiled package <sup>[Back to Top](#top)</sup>
 
 If you don't want to download an compile the sources your self the emulator
 is also  available on [Flathub](https://flathub.org/apps/io.github.mike632t.x11-calc) and can be installed using Flatpak.
+
 
 ### Known Issues <sup>[Back to Top](#top)</sup>
 
@@ -438,7 +447,8 @@ for Flatpak and for packaging and testing the simulators on Alpine Linux.
 
 - `Jonakeys` for getting the simulators working on FreeBSD.
 
-### Problem Reports<sup>[Back to Top](#top)</sup>
+
+### Problem Reports <sup>[Back to Top](#top)</sup>
 
 If you find problems or have suggestions relating to these simulators, then
 please create a new [issue](https://github.com/mike632t/x11-calc/issues).
