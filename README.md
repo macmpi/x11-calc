@@ -1,4 +1,4 @@
-## x11-calc - Another RPN (Reverse Polish) calculator.
+## x11-calc - Another RPN (Reverse Polish) calculator. <a id="top"></a>
 
 Emulators  for  the HP 35, HP 80, HP 45, HP 70, HP 21, HP 22, HP25, HP 25C,
 HP 27,  HP 29C,  HP 31E, HP 32E, HP 33E, HP 33C,  HP 34C,  HP 37E,  HP 38C,
@@ -15,12 +15,23 @@ Tru64 Unix.
 
 ![HP10](./img/x11-calc-10c.png) ![HP11](./img/x11-calc-11c.png)
 
-More [screenshots](./img/#top)
+- [Latest News](#Latest-News-back-to-top)
 
+- [What will it run on](#Tested-platforms-back-to-top)
 
-### Latest News
+- [How to get it](#How-to-get-it-back-to-top)
 
-05 May 24
+- [Using it](#Using-the-simulator-back-to-top)
+
+- [Known issues](#Known-issues-back-to-top)
+
+- [ Acknowledgements](#Acknowledgements-back-to-top)
+
+- [More screenshots](./img/#top)
+
+### Latest News <sup>[Back to Top](#top)</sup>
+
+04 May 24
 
    - Fixed a bug that affected some simulators when compiled on MacOS.
    - Updated this README with more details of the keyboard shortcuts.
@@ -63,13 +74,210 @@ More [screenshots](./img/#top)
 22 Sep 23
    - Added ability to build using make on MacOS.
 
-### How to get it
+### Tested platforms <sup>[Back to Top](#top)</sup>
 
-   - [Compile and install from source](#Compiling)
+The simulator has been successfully compiled and tested on:
 
-   - [Install a binary package](#Using-a-precompiled-package)
+   - Alpine 3.19, gcc 13.2.1, x64 + arm64
 
-### Compiling
+   - Debian 12 (Bookworm), clang 14.0.6, x64 + arm64
+
+   - Debian 12 (Bookworm), tcc 0.9.27, x64 + arm64
+
+   - Debian 12 (Bookworm), gcc 12.2.0, x64 + arm64
+
+   - Debian 11 (Bullseye), clang 11.0.1-2, x64
+
+   - Debian 11 (Bullseye), gcc 10.2.1, x64
+
+   - Debian 11 (Bullseye), tcc 0.9.27, x64
+
+   - Debian 10 (Buster), gcc 8.3.0, x64 + arm
+
+   - Debian 10 (Buster), clang 7.0.1, x64
+
+   - Debian 9 (Stretch), gcc 6.3.0, arm
+
+   - Debian 5 (Lenny), gcc 4.2.4, alpha
+
+   - Fedora 34, gcc 11.2.1, x64
+
+   - Fedora 35, gcc 11.3.1, x64
+
+   - Fedora 35, clang 13.0.1, x64
+
+   - Fedora 39, gcc 13.2.1, x64
+
+   - FreeBSD 14.0, clang 16.0.6, x64
+
+   - Gentoo, gcc 11.2.0, x64
+
+   - MacOS 10 (Catalina), clang 12.0.0, x64
+
+   - MacOS 13.4.1 (Ventura), clang 14.0.3, arm64
+
+   - NetBSD 9.2, gcc 7.5.0, x64
+
+   - SUSE 15.4, clang 13. 0.1, x64
+
+   - SUSE 15.4, gcc 7.5.0, x64
+
+   - Ubuntu 20.04, gcc 9.4.0, x64
+
+   - Ubuntu 20.04, clang 10.0.0, x64
+
+   - Ubuntu 20.04, tcc 0.9.27, x64
+
+   - VAX/VMS 5.4-3, VAX C 3.2, VAX (simh)
+
+   - OpenVMS 9.2-1, VSI C 7.4-726, x64
+
+   - Windows 11 + WSL2, gcc 12.2.0, x64 + arm64
+
+### How to get it <sup>[Back to Top](#top)</sup>
+
+You can either download the source code from GitHub and compile it yourself
+or you can use a pre-compiled package.
+
+   - [Building from the source](#Building-from-the-source-back-to-top)
+
+   - [Using binary package](#Using-a-pre-compiled-package-back-to-top)
+
+### Using the simulator <sup>[Back to Top](#top)</sup>
+
+If you install the simulator on most modern desktops it should create a new
+menu entry that will start the launcher script by default. When invoked for
+the first time this will prompt you to select the default simulator as well
+as any additional command line options.  These selections will be saved and
+used in future.
+
+On some desktop environments it is also possible to right click on the menu
+icon which will display a sub-menu that will allow you to select a specific
+model directly as well as change the default model and options.
+
+#### Keyboard Shortcuts
+
+The following keyboard shortcuts should work on Linux:
+
+'0' - '9', '+'. '-'. '*'. '/' and 'Enter' should do what you expect them to
+(when using numeric key pad you need to use numlock as usual).
+
+'f' and where applicable 'g' and 'h' correspond to the shift keys.
+
+'Esc' or 'Backspace' corresponds to 'Clx', 'c' to CHS, 'e' to 'EEX', and on
+financial models 'n' and 'i' correspond to 'n' and 'i' if not shifted.
+
+'A' - 'E' , 'A' - 'F' , or 'A' - 'B' correspond to program labels  (whether
+shifted or not).
+
+'Space' maps to 'SST' (if not shifted.
+
+The following control keys can also be used.
+
+'Ctrl-Z' Exists the simulator. For models  with  continuous memory 'Ctrl-Z'
+saves the current memory contents.
+
+'Ctrl-C' Resets the simulator to its initial state.
+
+'Ctrl-T' Toggles tracing of the simulator code execution.
+
+'Ctrl-S' Enable tracing and executes a single instruction.
+
+'Ctrl-Q' Resumes execution (does not disable trace).
+
+#### Loading and saving
+
+For  models with continuous memory the contents of program memory and  data
+registers  are saved automatically when the calculator is switched  off  or
+the  window is closed.  The current state of the simulator will be saved in
+either `$HOME/.local/share/x11-calc/` or in a hidden file in the user's  HOME
+directory if `$HOME/.local/` does not exist.
+
+Resetting the simulator using 'Ctrl-C' will reload the saved state.
+```
+~/.x11-calc-nn.dat
+```
+When  starting the simulator the name of the data file used to restore  the
+saved state can be specified on the command line allowing previously  saved
+copies of programs to be loaded automatically when the simulator starts  or
+the  simulator is reset using 'Ctrl-C'.  However, any changes will be
+saved in the hidden data file.
+
+#### Exiting
+
+For  models with a 'sliding' On/Off switch clicking on the switch will turn
+the simulator on or off, but if when switching off you hold down the switch
+down for two seconds the program will exit.
+
+#### Debugging
+
+You  can  start the simulation in trace mode using '-t', or in single  step
+mode using '-s', and set a break-point using '-b &lt;octal address&gt;'.
+
+'Ctrl-T'  also toggles trace mode when running, 'Ctrl-S' executes the  next
+instruction, 'Ctrl-Q' resumes execution, and 'Ctrl-R' displays the contents
+of the CPU registers.
+
+When in trace mode a jump to the same instruction produces no output.
+
+#### ROM Images
+
+The '-r <filename>' command line option provides the ability to use the ROM
+contents from a separate file.  The contents of the ROM are stored as pairs
+values separated by a colon containing the memory address and the opcode.
+
+Anything appearing after a semi colon on each line is ignored.
+
+For the HP10C, HP11C, HP12C, HP15C and HP16C the ROM file contains pairs of
+_hexadecimal_ values.
+```
+0000:107
+0001:04e
+0002:270
+0003:238
+0004:2ee
+0005:13f
+```
+For other models the ROM file contains pairs of _octal_ values.
+```
+00000:00255
+00001:01420
+00002:00451
+00003:01456
+00004:01746
+00005:00472
+```
+When loading a ROM from file any gaps between the memory addresses will not
+be filled with zeros, and the existing ROM contents will be left unchanged.
+
+ROM files can therefore be used to load alternative version of the firmware
+for a particular model or apply a patch to the existing firmware.
+
+### Building from the source <sup>[Back to Top](#top)</sup>
+
+#### Prerequisites
+
+If you want to compile the simulator from the source code yourself then the
+following packages must be installed.
+
+   - Debian : gcc | clang | tcc  make libc6-dev libx11-dev xfonts-base
+
+   - Fedora : gcc | clang  make glibc-devel libX11-devel xorg-x11-fonts-base | xorg-x11-fonts-misc
+
+   - Gentoo : gcc make libc6-dev libx11-dev font-misc-misc
+
+   - MacOS  : clang make [xquartz](https://www.xquartz.org/)
+
+   - SUSE   : gcc | clang make libX11-devel
+
+   - Ubuntu : gcc make libc6-dev libx11-dev xfonts-base
+
+   - Windows 11 + WSL2 : gcc make libc6-dev libx11-dev xfonts-base
+
+When all the prerequisites are available, you should be able to [compile](#Compiling) the
+program using make if it is in the list of tested platforms.
+
+#### Compiling
 
 To  build the simulator check that you have all the [prerequisites](#Prerequisites) installed
 then download the source code from github and unzip it (this will created a
@@ -113,7 +321,8 @@ $ make CC=clang hp11c
 
 $ make CC=tcc
 ```
-#### VMS
+##### VMS
+
 On VMS unzip the source code archive, change the default directory and then
 run `make.com`.
 
@@ -128,7 +337,7 @@ x11-calc-29c: Version 0.10 [Commit ID: 399d546] 02 Nov 23 23:52:11 (Build: 0114)
 ROM Size : 4096 words
 ```
 
-### Installing
+#### Installing
 
 On Linux systems after the compilation is complete you can use the makefile
 to install the emulator locally.
@@ -148,211 +357,18 @@ DESTDIR.
 make DESTDIR=/tmp/staging install
 ```
 
-### Using a precompiled package
+### Using a pre-compiled package <sup>[Back to Top](#top)</sup>
 
 If you don't want to download an compile the sources your self the emulator
 is also  available on [Flathub](https://flathub.org/apps/io.github.mike632t.x11-calc) and can be installed using Flatpak.
 
-### Tested
+### Known Issues <sup>[Back to Top](#top)</sup>
 
-The emulators have been tested on the following systems:
+#### General issues
 
-   - Alpine 3.19, gcc 13.2.1, x64 + arm64
-
-   - Debian 12 (Bookworm), clang 14.0.6, x64 + arm64
-
-   - Debian 12 (Bookworm), tcc 0.9.27, x64 + arm64
-
-   - Debian 12 (Bookworm), gcc 12.2.0, x64 + arm64
-
-   - Debian 11 (Bullseye), clang 11.0.1-2, x64
-
-   - Debian 11 (Bullseye), gcc 10.2.1, x64
-
-   - Debian 11 (Bullseye), tcc 0.9.27, x64
-
-   - Debian 10 (Buster), gcc 8.3.0, x64 + arm
-
-   - Debian 10 (Buster), clang 7.0.1, x64
-
-   - Debian 9 (Stretch), gcc 6.3.0, arm
-
-   - Debian 5 (Lenny), gcc 4.2.4, alpha
-
-   - Fedora 34, gcc 11.2.1, x64
-
-   - Fedora 35, gcc 11.3.1, x64
-
-   - Fedora 35, clang 13.0.1, x64
-
-   - Fedora 39, gcc 13.2.1, x64
-
-   - FreeBSD 14.0, clang 16.0.6, x64
-
-   - Gentoo, gcc 11.2.0, x64
-
-   - MacOS 10 (Catalina), clang 12.0.0, x64
-
-   - MacOS 13.4.1 (Venture), clang 14.0.3, arm64
-
-   - NetBSD 9.2, gcc 7.5.0, x64
-
-   - SUSE 15.4, clang 13. 0.1, x64
-
-   - SUSE 15.4, gcc 7.5.0, x64
-
-   - Ubuntu 20.04, gcc 9.4.0, x64
-
-   - Ubuntu 20.04, clang 10.0.0, x64
-
-   - Ubuntu 20.04, tcc 0.9.27, x64
-
-   - VAX/VMS 5.4-3, VAX C 3.2, VAX (simh)
-
-   - OpenVMS 9.2-1, VSI C 7.4-726, x64
-
-   - Windows 11 + WSL2, gcc 12.2.0, x64 + arm64
-
-### Prerequisites
-
-The following packages are required to build and/or run the simulator.
-
-   - Debian : gcc | clang | tcc  make libc6-dev libx11-dev xfonts-base
-
-   - Fedora : gcc | clang  make glibc-devel libX11-devel xorg-x11-fonts-base | xorg-x11-fonts-misc
-
-   - Gentoo : gcc make libc6-dev libx11-dev font-misc-misc
-
-   - MacOS  : clang make [xquartz](https://www.xquartz.org/)
-
-   - SUSE   : gcc | clang make libX11-devel
-
-   - Ubuntu : gcc make libc6-dev libx11-dev xfonts-base
-
-   - Windows 11 + WSL2 : gcc make libc6-dev libx11-dev xfonts-base
-
-When all the prerequisites are available, you should be able to [compile](#Compiling) the
-program using make if it is in the list of tested platforms.
-
-Note - If you are using a newer version of the operating system or compiler
-then you may encounter some minor issues.
-
-### Starting the simulator
-
-If you install the simulator on most modern desktops it should create a new
-menu entry that will start the launcher script by default. When invoked for
-the first time this will prompt you to select the default simulator as well
-as any additional command line options.  These selections will be saved and
-used in future.
-
-On some desktop environments it is also possible to right click on the menu
-icon which will display a sub-menu that will allow you to select a specific
-model directly as well as change the default model and options.
-
-### Keyboard Shortcuts
-
-The following keyboard shortcuts should work on Linux:
-
-'0' - '9', '+'. '-'. '*'. '/' and 'Enter' should do what you expect them to
-(when using numeric key pad you need to use numlock as usual).
-
-'f' and where applicable 'g' and 'h' correspond to the shift keys.
-
-'Esc' or 'Backspace' corresponds to 'Clx', 'c' to CHS, 'e' to 'EEX', and on
-financial models 'n' and 'i' correspond to 'n' and 'i' if not shifted.
-
-'A' - 'E' , 'A' - 'F' , or 'A' - 'B' correspond to program labels  (whether
-shifted or not).
-
-'Space' maps to 'SST' (if not shifted.
-
-The following control keys can also be used.
-
-'Ctrl-Z' Exists the simulator. For models  with  continuous memory 'Ctrl-Z'
-saves the current memory contents.
-
-'Ctrl-C' Resets the simulator to its initial state.
-
-'Ctrl-T' Toggles tracing of the simulator code execution.
-
-'Ctrl-S' Enable tracing and executes a single instruction.
-
-'Ctrl-Q' Resumes execution (does not disable trace).
-
-### Loading and saving
-
-For  models with continuous memory the contents of program memory and  data
-registers  are saved automatically when the calculator is switched  off  or
-the  window is closed.  The current state of the simulator will be saved in
-either `$HOME/.local/share/x11-calc/` or in a hidden file in the user's  HOME
-directory if `$HOME/.local/` does not exist.
-
-Resetting the simulator using 'Ctrl-C' will reload the saved state.
-```
-~/.x11-calc-nn.dat
-```
-When  starting the simulator the name of the data file used to restore  the
-saved state can be specified on the command line allowing previously  saved
-copies of programs to be loaded automatically when the simulator starts  or
-the  simulator is reset using 'Ctrl-C'.  However, any changes will be
-saved in the hidden data file.
-
-### Exiting
-
-For  models with a 'sliding' On/Off switch clicking on the switch will turn
-the simulator on or off, but if when switching off you hold down the switch
-down for two seconds the program will exit.
-
-### Debugging
-
-You  can  start the simulation in trace mode using '-t', or in single  step
-mode using '-s', and set a breakpoint using '-b &lt;octal address&gt;'.
-
-'Ctrl-T'  also toggles trace mode when running, 'Ctrl-S' executes the  next
-instruction, 'Ctrl-Q' resumes execution, and 'Ctrl-R' displays the contents
-of the CPU registers.
-
-When in trace mode a jump to the same instruction produces no output.
-
-### ROM Images
-
-The '-r <filename>' command line option provides the ability to use the ROM
-contents from a separate file.  The contents of the ROM are stored as pairs
-values seperated by a colon containing the memory address and the opcode.
-
-Anything appearing after a semi colon on each line is ignored.
-
-For the HP10C, HP11C, HP12C, HP15C and HP16C the ROM file contains pairs of
-_hexadecimal_ values.
-```
-0000:107
-0001:04e
-0002:270
-0003:238
-0004:2ee
-0005:13f
-```
-For other models the ROM file contains pairs of _octal_ values.
-```
-00000:00255
-00001:01420
-00002:00451
-00003:01456
-00004:01746
-00005:00472
-```
-When loading a ROM from file any gaps between the memory addresses will not
-be filled with zeros, and the existing ROM contents will be left unchanged.
-
-ROM files can therefore be used to load alternative version of the firmware
-for a particular model or apply a patch to the existing firmware.
-
-### Known Issues
-
-- Keyboard shortcuts only work on Linux and NetBSD.
 - A 24 bit colour display is required.
+- Keyboard shortcuts are not available on all systems.
 - For best results you need to have the X windows core fonts installed.
-
 - Parallel make only works on Linux, NetBSD and FreeBSD.
 
 ##### HP 11C + HP 12C + HP 15C + HP 16C
@@ -373,14 +389,14 @@ for a particular model or apply a patch to the existing firmware.
 - Has  continuous memory (which allows saved programs to be loaded from the
 command line).
 
-### Raspberry Pi Specific Issues
+#### Raspberry Pi Specific Issues
 
 - The code uses a simplified display on Arm based systems (except Apple) to
 avoid the display refresh issues seen on the Raspberry Pi if either FKMS or
 KMS overlays are enabled. (Note- Do not disable KMS on the latest Raspberry
 Pi OS release).
 
-### Wayland specific Issues
+#### Wayland specific Issues
 
 - Performance under Xwayland is generally poor, the emulator will work well
 on a Raspberry Pi3 using Xwindows but a Raspberry Pi4 using Xwayland cannot
@@ -390,37 +406,39 @@ use any background shading on ARM based systems.
 * The emulator window is supposed to be a fixed size.  However wnen running
 on Xwayland the window manager does not handle this correctly.
 
-### VMS Specific Issues
+#### VMS Specific Issues
 
 - Colour palette assumes a black and white display.
 - Not all text is visible due to the limited colour palette and the DEC fonts
 are missing some characters (for example the Pi symbol).
 
 
-### Acknowledgements
+### Acknowledgements <sup>[Back to Top](#top)</sup>
 
 There are almost certainly some names I've missed off this list but without
 the help and encouragement from a multiple it is unlikely that this project
 would have happened at all or that it would got as far as it has.
 
-- Teenix for convincing me that it was possible in the first place and help
+- `Teenix` for convincing me that it was possible in the first place and help
 since (at least I think I glad he did).
 
-- Teenix/Panamatik for their excellent simulators from which I was able to
+- `Teenix/Panamatik` for their excellent simulators from which I was able to
 figure out most of what should happen when each instruction is executed.
 
-- Macmpi for completely rewriting the makefiles and packaging the simulator
-for flatpak and for packaging and testing the simulators on Alpine Linux.
+- `Agarza` for providing the details of the voyager displays.
 
-- Agarza/Martin HEPPERLE for translating the help text
+- `Macmpi` for completely rewriting the makefiles and packaging the simulator
+for Flatpak and for packaging and testing the simulators on Alpine Linux.
 
-- Thomas KLEMM for his testing and debugging on MacOS.
+- `Agarza/Martin HEPPERLE` for translating the help text.
 
-- Mark SHIN for testing on MacOS.
+- `Thomas KLEMM` for his testing and debugging efforts on MacOS.
 
-- Jonakeys for testing on FreeBSD.
+- `Mark SHIN` for testing on MacOS.
 
-### Problem Reports
+- `Jonakeys` for getting the simulators working on FreeBSD.
+
+### Problem Reports<sup>[Back to Top](#top)</sup>
 
 If you find problems or have suggestions relating to these simulators, then
 please create a new [issue](https://github.com/mike632t/x11-calc/issues).
