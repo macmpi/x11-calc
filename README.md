@@ -1,6 +1,6 @@
 ## x11-calc - Another RPN (Reverse Polish) calculator. <a id="top"></a>
 
-Emulators  for  the HP 35, HP 80, HP 45, HP 70, HP 21, HP 22, HP25, HP 25C,
+Simulators for  the HP 35, HP 80, HP 45, HP 70, HP 21, HP 22, HP25, HP 25C,
 HP 27,  HP 29C,  HP 31E, HP 32E, HP 33E, HP 33C,  HP 34C,  HP 37E,  HP 38C,
 HP 38E, HP 67, HP 10C, HP 11C, HP 12C, HP 15C, and HP 16C.
 
@@ -299,19 +299,15 @@ Then change directory to the new folder.
 ```
 $ cd x11-calc-stable
 ```
-The to compile all the emulators you just need to invoke make.
+The to compile all the simulators you just need to invoke make.
 ```
 $ make clean; make all
 ```
-It is also possible to compile a single emulator by specifying the model on
-the command line
+You can also compile a single simulator by specifying the model number.
 ```
 $ make hp29c
 ```
-By default the executable files will be created in the `bin` directory, and
-can run either a particular emulator directly, or invoke the launcher which
-will allow you to select which enulator to use by default the next time you
-launch it.
+By default the executable files will be created in the `bin` directory.
 ```
 $ ./bin/x11-calc-29c
 x11-calc-29c: Version 0.10 [Commit ID: 399d546] 01 Nov 23 23:53:00 (Build: 0114)
@@ -347,7 +343,7 @@ ROM Size : 4096 words
 #### Installing
 
 On Linux systems after the compilation is complete you can use the makefile
-to install the emulator locally.
+to install the simulators locally.
 
 By default the installer will use `$HOME/.local` if it exists, but it is
 possible to specify another directory by setting the directory `prefix`.
@@ -358,7 +354,7 @@ OR
 
 $ make install prefix=/usr
 ```
-Installer also supports staged installs in a custom directory defined using
+The makefile also supports staged installs in a custom directory defined by
 DESTDIR.
 ```
 make DESTDIR=/tmp/staging install
@@ -367,8 +363,8 @@ make DESTDIR=/tmp/staging install
 
 ### Using a pre-compiled package <sup>[Back to Top](#top)</sup>
 
-If you don't want to download an compile the sources your self the emulator
-is also  available on [Flathub](https://flathub.org/apps/io.github.mike632t.x11-calc) and can be installed using Flatpak.
+If you don't want to download an compile the sources yourself you can use a
+pre-compiled binary package from [Flathub](https://flathub.org/apps/io.github.mike632t.x11-calc) using Flatpak.
 
 
 ### Known Issues <sup>[Back to Top](#top)</sup>
@@ -407,19 +403,19 @@ Pi OS release).
 
 #### Wayland specific Issues
 
-- Performance under Xwayland is generally poor, the emulator will work well
-on a Raspberry Pi3 using Xwindows but a Raspberry Pi4 using Xwayland cannot
-redraw the display quickly enough to allow background shading to be used to
-draw the display digits. As a result the emulator's LED/LCD display doesn't
-use any background shading on ARM based systems.
-* The emulator window is supposed to be a fixed size.  However wnen running
+- Updating the display under Xwayland is very slow and even though all  the
+simulators  work well on a Raspberry Pi3 using X11, on a Raspberry Pi4 with
+Xwayland  it cannot redraw the display quickly enough to allow the  display
+segments to be drawn with a shaded background.  As a result the display has
+been simplified to make it work.
+- The simulator window is supposed to be a fixed size. However when running
 on Xwayland the window manager does not handle this correctly.
 
 #### VMS Specific Issues
 
 - Colour palette assumes a black and white display.
-- Not all text is visible due to the limited colour palette and the DEC fonts
-are missing some characters (for example the Pi symbol).
+- Not all text is visible due to the limited colour palette.
+- Not all key legends are shown as the font is missing some characters.
 
 
 ### Acknowledgements <sup>[Back to Top](#top)</sup>
