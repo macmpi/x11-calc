@@ -145,7 +145,7 @@ The simulator has been successfully compiled and tested on:
 You can either download the source code from GitHub and compile it yourself
 or you can use a pre-compiled package.
 
-   - [Building from the source](#building)
+   - [Building from the source](#uilding)
 
    - [Using binary package](#packages)
 
