@@ -121,6 +121,8 @@ The simulator has been successfully compiled and tested on:
 
    - MacOS 13.4.1 (Ventura), clang 14.0.3, arm64
 
+   - MacOS 14.4.1 (Sonoma), clang 15.0.0, arm46
+
    - NetBSD 9.2, gcc 7.5.0, x64
 
    - SUSE 15.4, clang 13. 0.1, x64
@@ -274,7 +276,9 @@ following packages must be installed.
 
    - Gentoo : gcc make libc6-dev libx11-dev font-misc-misc
 
-   - MacOS  : clang make [xquartz](https://www.xquartz.org/)
+   - MacOS  : clang pmake [xquartz](https://www.xquartz.org/)
+
+   - NetBSD : clang | gcc pmake
 
    - SUSE   : gcc | clang make libX11-devel
 
@@ -433,7 +437,7 @@ figure out most of what should happen when each instruction is executed.
 
 - `Agarza` for providing the details of the voyager displays.
 
-- `Macmpi` for completely rewriting the makefiles and packaging the simulator
+- `Macmpi` for completely rewriting the makefiles creating a Flatpak package  the simulator
 for Flatpak and for packaging and testing the simulators on Alpine Linux.
 
 - `Agarza/Martin HEPPERLE` for translating the help text.
