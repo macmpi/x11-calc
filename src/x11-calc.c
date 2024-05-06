@@ -307,7 +307,7 @@
  *                   - Keyboard shortcuts enabled on FreeBSD - MT
  * 03 May 24         - Sets the abort flag and interval counter immediately
  *                     before the main loop - MT
- * 04 May 24         - Do not define un used switches - MT
+ * 04 May 24         - Do not define unused switches - MT
  *
  * To Do             - Parse command line in a separate routine.
  *                   - Add verbose option.
