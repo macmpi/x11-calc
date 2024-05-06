@@ -273,7 +273,7 @@
  * 09 Mar 24         - Updated makefile and screenshots - MT
  * 14 Mar 24         - Allow SCALE_HEIGHT and SCALE_WIDTH to be passed from
  *                     command line at compile time - MT
- * 18 Mar 24         - Embedded missing firmware - MT
+ * 18 Mar 24   0.14  - Embedded missing firmware - MT
  * 29 Mar 24         - Fixed compiler warnings - MT
  * 30 Mar 24         - Corrected number of switches on models with only one
  *                     switch - MT
@@ -299,9 +299,17 @@
  *                     been specified - MT
  * 18 Apr 24         - Checks for undefined labels when updating indicators
  *                     on the display (fixed segmentation fault) - MT
+ * 22 Apr 24         - Define display colour separately - MT
+ * 23 Apr 24         - Separated out prototypes for error handlers - MT
+ *                   - Tidied up include files and removed some (currently)
+ *                     redundant code - MT
+ * 02 May 24         - Added shortcut keys for 'A-E' on 15C and 11C - MT
+ *                   - Keyboard shortcuts enabled on FreeBSD - MT
+ * 03 May 24         - Sets the abort flag and interval counter immediately
+ *                     before the main loop - MT
+ * 04 May 24         - Do not define unused switches - MT
  *
- * To Do             - Fix vertical button shape when zoomed in
- *                   - Parse command line in a separate routine.
+ * To Do             - Parse command line in a separate routine.
  *                   - Add verbose option.
  *                   - Allow VMS users to set breakpoints?
  *                   - Free up allocated memory on exit.
@@ -311,8 +319,8 @@
 
 #define  NAME          "x11-calc"
 #define  VERSION       "0.14"
-#define  BUILD         "0148"
-#define  DATE          "18 Apr 24"
+#define  BUILD         "0154"
+#define  DATE          "04 May 24"
 #define  AUTHOR        "MT"
 
 #define  INTERVAL 25   /* Number of ticks to execute before updating the display */
@@ -331,6 +339,9 @@
 #include <X11/Xutil.h> /* XSizeHints etc */
 #include <X11/cursorfont.h>
 
+#include "x11-calc-messages.h"
+#include "x11-calc-errors.h"
+
 #include "x11-calc-font.h"
 #include "x11-calc-button.h"
 #include "x11-calc-switch.h"
@@ -344,8 +355,6 @@
 #include "x11-calc-cpu.h"
 
 #include "x11-keyboard.h"
-
-#include "x11-calc-messages.h"
 
 #include "gcc-debug.h" /* print() */
 #include "gcc-wait.h"  /* i_wait() */
@@ -442,7 +451,7 @@ int main(int argc, char *argv[])
    olabel *h_label[LABELS];
 #endif
 
-#if defined(__linux__) || defined(__NetBSD__)
+#if defined(__linux__) || defined(__NetBSD__) || defined(__FreeBSD__)
    okeyboard *h_keyboard;
 #endif
 
@@ -763,7 +772,7 @@ int main(int argc, char *argv[])
       i_label_resize(h_label[i_count], f_scale);
 #endif
 
-#if defined(__linux__) || defined(__NetBSD__)
+#if defined(__linux__) || defined(__NetBSD__) || defined(__FreeBSD__)
    h_keyboard = h_keyboard_create(x_display); /* Only works with Linux */
 #endif
 
@@ -788,33 +797,13 @@ int main(int argc, char *argv[])
    else
       v_read_state(h_processor, s_pathname); /* Load user specified settings */
 
+#if defined(SWITCHES)
+   h_processor->enabled = h_switch[0]->state; /* Allow switches to be undefined if not used */
+   if (SWITCHES == 2) h_processor->mode = h_switch[1]->state;
+#endif
+
    b_abort = False;
    i_count = 0;
-
-#if defined(SWITCHES)
-   if (h_switch[0] != NULL) h_processor->enabled = h_switch[0]->state; /* Allow switches to be undefined if not used */
-#if defined(HP10)
-      if (SWITCHES == 2)
-         switch(h_switch[1]->state)
-         {
-            case 0:
-               h_processor->print = MANUAL;
-               break;
-            case 3:
-            case 1:
-               h_processor->print = TRACE;
-               h_display->enabled = True;
-               break;
-            case 2:
-               h_processor->print = NORMAL;
-               h_display->enabled = False;
-               break;
-         }
-#else
-      if (SWITCHES == 2) h_processor->mode = h_switch[1]->state;
-#endif
-#endif
-
    while (!b_abort) /* Main program event loop */
    {
       i_count--;
@@ -856,7 +845,7 @@ int main(int argc, char *argv[])
                h_processor->keypressed = False; /* Don't clear the status bit here!! */
             }
             break;
-#if defined(__linux__) || defined(__NetBSD__)
+#if defined(__linux__) || defined(__NetBSD__) || defined(__FreeBSD__)
          case KeyPress :
             h_key_pressed(h_keyboard, x_display, x_event.xkey.keycode, x_event.xkey.state); /* Attempts to translate a key code into a character */
             if (h_keyboard->key == (XK_BackSpace & 0x1f)) h_keyboard->key = XK_Escape & 0x1f; /* Map backspace to escape */
@@ -961,33 +950,11 @@ int main(int argc, char *argv[])
                      }
                   }
                   if (SWITCHES == 2)
-#if defined(HP10)
-                     if (h_switch_pressed(h_switch[1], x_event.xbutton.x, x_event.xbutton.y) != NULL)
-                     {
-                        switch(i_switch_click(h_switch[1]))
-                        {
-                        case 0:
-                           h_processor->print = MANUAL;
-                           break;
-                        case 3:
-                        case 1:
-                           h_processor->print = TRACE;
-                           h_display->enabled = True;
-                           break;
-                        case 2:
-                           h_processor->print = NORMAL;
-                           h_display->enabled = False;
-                           break;
-                        }
-                        i_switch_draw(x_display, x_application_window, i_screen, h_switch[1]);
-                     }
-#else
                      if (h_switch_pressed(h_switch[1], x_event.xbutton.x, x_event.xbutton.y) != NULL)
                      {
                         h_processor->mode = i_switch_click(h_switch[1]); /* Update prgm/run switch */
                         i_switch_draw(x_display, x_application_window, i_screen, h_switch[1]);
                      }
-#endif
                }
 #endif
             }
@@ -1033,7 +1000,6 @@ int main(int argc, char *argv[])
 
    v_save_state(h_processor); /* Save state */
 
-   /** XFreeCursor (x_display, x_cursor); /* Free cursor */
    XDestroyWindow(x_display, x_application_window); /* Close connection to server */
    XCloseDisplay(x_display);
 

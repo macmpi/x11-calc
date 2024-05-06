@@ -26,15 +26,14 @@
 #  29 Mar 24         - Use linux/bsd/osf1 makefiles -macmpi
 #
 
-MODEL	=  21
+MODEL	= 21
 
 all:
-	@_flavor="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
-	echo "$$_flavor" | grep -qwE "netbsd|darwin" && _flavor=bsd; \
-	$(MAKE) -f "makefile.$$_flavor" MODEL=$(MODEL) $@
+	@_os="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
+	echo "$$_os" | grep -qwE "freebsd|netbsd|darwin" && _os=bsd; \
+	$(MAKE) -s -f "makefile.$$_os" MODEL=$(MODEL) $@
 
-clean:
-	@_flavor="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
-	echo "$$_flavor" | grep -qwE "netbsd|darwin" && _flavor=bsd; \
-	$(MAKE) -f "makefile.$$_flavor" MODEL=$(MODEL) $@
-
+.DEFAULT:
+	@_os="`uname -s | tr '[:upper:]' '[:lower:]'`"; \
+	echo "$$_os" | grep -qwE "freebsd|netbsd|darwin" && _os=bsd; \
+	$(MAKE) -s -f "makefile.$$_os" MODEL=$(MODEL) $@

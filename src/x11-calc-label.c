@@ -27,6 +27,9 @@
  * 24 Feb 24         - Do not need to include "x11-font.h" - MT
  * 03 Mar 24         - Updated error handling (now passes the  error number
  *                     to the error handler) - MT
+ * 22 Apr 24         - Shortened long lines - MT
+ * 23 Apr 24         - Separated out prototypes for error handlers - MT
+ *                   - Removed unnecessary includes - MT
  *
  * TO DO:            - Implement ability to align text in a label using the
  *                     style property to modify the position and appearance
@@ -35,8 +38,8 @@
  */
 
 #define NAME           "x11-calc-label"
-#define BUILD          "0006"
-#define DATE           "03 Mar 24"
+#define BUILD          "0009"
+#define DATE           "23 Apr 24"
 #define AUTHOR         "MT"
 
 #include <errno.h>     /* errno */
@@ -49,13 +52,12 @@
 #include <X11/Xutil.h> /* XSizeHints etc. */
 
 #include "x11-calc-messages.h"
+#include "x11-calc-errors.h"
+
 #include "x11-calc-label.h"
 #include "x11-calc-switch.h"
 #include "x11-calc-button.h"
 
-#include "x11-calc.h"
-
-#include "x11-calc-colour.h"
 #include "gcc-debug.h"
 
 /* label_pressed (label, x, y) */
@@ -145,13 +147,17 @@ int i_label_draw(Display *h_display, int x_application_window, int i_screen, ola
          i_upper = h_label->label_position.y + (h_label->text_font->ascent) + (h_label->label_position.height - (h_label->text_font->ascent + h_label->text_font->descent)) / 2; /* Position text in middle of label. */
 
          XSetForeground(h_display, DefaultGC(h_display, i_screen), h_label->background);
-         XFillRectangle(h_display, x_application_window, DefaultGC(h_display, i_screen), h_label->label_position.x, h_label->label_position.y , h_label->label_position.width, h_label->label_position.height); /* Fill in label background. */
+         XFillRectangle(h_display, x_application_window, DefaultGC(h_display, i_screen),
+            h_label->label_position.x, h_label->label_position.y , h_label->label_position.width, h_label->label_position.height); /* Fill in label background. */
 
          XSetForeground(h_display, DefaultGC(h_display, i_screen), h_label->colour); /* Set the text colour. */
-         if (h_label->state < 0) XDrawLine(h_display, x_application_window, DefaultGC(h_display, i_screen),h_label->label_position.x , i_offset, h_label->label_position.x + h_label->label_position.width - 2, i_offset); /* Draw line through middle of label. */
+         if (h_label->state < 0)
+            XDrawLine(h_display, x_application_window, DefaultGC(h_display, i_screen),
+            h_label->label_position.x , i_offset, h_label->label_position.x + h_label->label_position.width - 2, i_offset); /* Draw line through middle of label. */
 
          XSetForeground(h_display, DefaultGC(h_display, i_screen), h_label->background);
-         XFillRectangle(h_display, x_application_window, DefaultGC(h_display, i_screen), (i_indent - 3), h_label->label_position.y , XTextWidth(h_label->text_font, h_label->text, strlen(h_label->text)) + 5, h_label->label_position.height); /* Fill in label background. */
+         XFillRectangle(h_display, x_application_window, DefaultGC(h_display, i_screen),
+            (i_indent - 3), h_label->label_position.y , XTextWidth(h_label->text_font, h_label->text, strlen(h_label->text)) + 5, h_label->label_position.height); /* Fill in label background. */
 
          XSetForeground(h_display, DefaultGC(h_display, i_screen), h_label->colour); /* Set the background colour. */
          XDrawString(h_display, x_application_window, DefaultGC(h_display, i_screen), i_indent, i_upper, h_label->text, strlen(h_label->text)); /* Draw the text. */

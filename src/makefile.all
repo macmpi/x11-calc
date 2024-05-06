@@ -1,5 +1,5 @@
 #
-#  makefile.generic - RPN (Reverse Polish) calculator simulator.
+#  makefile.all_flavors - RPN (Reverse Polish) calculator simulator.
 #
 #  Copyright(C) 2024 - macmpi, MT
 #
@@ -28,15 +28,17 @@
 #  28 Mar 24         - Streamlined macros for use on osf1 - macmpi
 #  09 Apr 24         - Finally renamed x11-calc-segment to the more correct
 #                      x11-calc-digit - MT
+#  29 Apr 24         - renamed makefile.all_flavors - macmpi
+#                    - renamed makefile.all - MT
 #
 
-MODEL	=  21
-PROGRAM	=  x11-calc-$(MODEL)
+MODEL	= 21
+PROGRAM	= x11-calc-$(MODEL)
 BIN		= ../bin
 
 # SHARED sources are model-dependant via HP$(MODEL) #define statements
-SHARED	=  x11-calc.c x11-calc-cpu.c x11-calc-display.c x11-calc-digit.c x11-calc-messages.c x11-calc-button.c
-COMMON	=  x11-calc-switch.c x11-calc-label.c x11-calc-colour.c x11-calc-font.c  x11-keyboard.c gcc-wait.c gcc-exists.c
+SHARED	= x11-calc.c x11-calc-cpu.c x11-calc-display.c x11-calc-digit.c x11-calc-messages.c x11-calc-button.c
+COMMON	= x11-calc-switch.c x11-calc-label.c x11-calc-colour.c x11-calc-font.c x11-keyboard.c gcc-wait.c gcc-exists.c
 
 CC		= cc
 DEBUG	=
@@ -44,12 +46,12 @@ DEBUG	=
 LDLIBS_ADD	= -lX11 -lm
 
 CFLAGS_ADD	= -fcommon -Wall -pedantic -std=gnu99 \
-				-Wno-comment -Wno-deprecated-declarations -Wno-builtin-macro-redefined \
-				-D$(LANG) $(DEBUG)
+			-Wno-comment -Wno-deprecated-declarations -Wno-builtin-macro-redefined \
+			-D$(LANG) $(DEBUG)
 
 all: $(BIN)/$(PROGRAM)
 
-$(BIN)/$(PROGRAM): $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o
+$(BIN)/$(PROGRAM): common $(SHARED:.c=.o_HP$(MODEL)) x11-calc-$(MODEL).o
 	@mkdir -p $(BIN)
 	@rm -f $(BIN)/$(PROGRAM)
 	@[ -n "$${VERBOSE+x}" ] && echo && \
@@ -58,7 +60,9 @@ $(BIN)/$(PROGRAM): $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODE
 	@$(CC) $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o $(LDFLAGS) $(LDLIBS) $(LDLIBS_ADD) -o $@
 	@ls $@ | sed "s:$(BIN)/::g"
 
-.SUFFIXES: .o_HP$(MODEL) .o_cm .o
+common: $(COMMON:.c=.o_cm)
+
+.SUFFIXES: .o_cm .o_HP$(MODEL) .o
 
 .c.o_HP$(MODEL):
 	@[ -n "$${VERBOSE+x}" ] && echo && echo "$(CC) $(CFLAGS) $(CFLAGS_ADD) -DHP$(MODEL) -c $< -o $@" || true
@@ -68,10 +72,10 @@ $(BIN)/$(PROGRAM): $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODE
 	@[ -n "$${VERBOSE+x}" ] && echo && echo "$(CC) $(CFLAGS) $(CFLAGS_ADD) -DHP$(MODEL) -c $< -o $@" || true
 	@$(CC) $(CFLAGS) $(CFLAGS_ADD) -DHP$(MODEL) -c $< -o $@
 
-# COMMON files are NOT supposed to be instanciated per MODEL (will fix soon)
+# COMMON files are NOT supposed to be instanciated per MODEL
 .c.o_cm:
-	@[ -n "$${VERBOSE+x}" ] && echo && echo "$(CC) $(CFLAGS) $(CFLAGS_ADD) -DHP$(MODEL) -c $< -o $@" || true
-	@$(CC) $(CFLAGS) $(CFLAGS_ADD) -DHP$(MODEL) -c $< -o $@
+	@[ -n "$${VERBOSE+x}" ] && echo && echo "$(CC) $(CFLAGS) $(CFLAGS_ADD) -c $< -o $@" || true
+	@$(CC) $(CFLAGS) $(CFLAGS_ADD) -c $< -o $@
 
 clean:
 	@rm -f $(SHARED:.c=.o_HP$(MODEL)) $(COMMON:.c=.o_cm) x11-calc-$(MODEL).o

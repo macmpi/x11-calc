@@ -61,6 +61,7 @@
  *                     to the error handler) - MT
  * 09 Apr 24         - Finally renamed x11-calc-segment to the more correct
  *                     x11-calc-digit - MT
+ * 23 Apr 24         - Separated out prototypes for error handlers - MT
  *
  * TO DO :           - Optimize drawing of display digits.
  ^
@@ -79,14 +80,17 @@
 #include <X11/Xlib.h>  /* XOpenDisplay(), etc */
 #include <X11/Xutil.h> /* XSizeHints etc */
 
+#include "x11-calc-messages.h"
+#include "x11-calc-errors.h"
+
 #include "x11-calc-switch.h"
 #include "x11-calc-button.h"
 #include "x11-calc-label.h"
-
-#include "x11-calc.h"
+#include "x11-calc-digit.h"
 
 #include "x11-calc-colour.h"
-#include "x11-calc-digit.h"
+
+#include "x11-calc.h"
 
 #include "gcc-debug.h"
 

@@ -20,17 +20,23 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * 19 Sep 13         - Initial version - MT
+ * 22 Apr 24         - Tidied up data types - MT
+ * 23 Apr 24         - More changes to data types - MT
  *
  */
 
+#if defined(__linux__) || defined(__NetBSD__) || defined (__FreeBSD__)
+
 typedef struct { /* Calculator button structure. */
    Display* display;
+   KeySym keysym;
    char key;
-   int keysym;
 } okeyboard;
 
-okeyboard *h_key_pressed(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate);
+void h_key_pressed(okeyboard *h_keyboard, Display *x_display, KeyCode x_keycode, unsigned int i_keystate);
 
-okeyboard *h_key_released(okeyboard *h_keyboard, Display *x_display, int i_keycode, int i_keystate);
+void h_key_released(okeyboard *h_keyboard, Display *x_display, KeyCode x_keycode, unsigned int i_keystate);
 
-okeyboard *h_keyboard_create(Display* x_display);
+okeyboard *h_keyboard_create(Display *x_display);
+
+#endif

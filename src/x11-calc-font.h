@@ -28,6 +28,7 @@
  *                     of  text required and select the most suitable fonts
  *                     from these alternatives to reduce the dependancy  on
  *                     a single set of fonts - MT
+ * 22 Apr 24         - Tidied up function prototypes - MT
  *
  *
  */
@@ -42,4 +43,4 @@ extern const char *s_small_fonts[];
 extern const char *s_alternate_fonts[];
 extern const char *s_large_fonts[];
 
-XFontStruct *h_get_font(Display *x_display, const char* s_fonts[]);
+XFontStruct *h_get_font(Display *x_display, const char** s_fonts);
