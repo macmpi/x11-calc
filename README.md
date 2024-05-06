@@ -145,7 +145,7 @@ The simulator has been successfully compiled and tested on:
 You can either download the source code from GitHub and compile it yourself
 or you can use a pre-compiled package.
 
-   - [Building from the source](#uilding)
+   - [Building from the source](#building)
 
    - [Using binary package](#packages)
 
@@ -437,6 +437,8 @@ figure out most of what should happen when each instruction is executed.
 for Flatpak and for packaging and testing the simulators on Alpine Linux.
 
 - `Agarza/Martin HEPPERLE` for translating the help text.
+
+- `Brouhaha` for taking the time to explain the workings of vairous models.
 
 - `Thomas KLEMM` for his testing and debugging efforts on MacOS.
 
