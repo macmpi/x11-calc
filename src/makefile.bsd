@@ -25,6 +25,7 @@
 #  https://www.gnu.org/software/make/manual/html_node/Prerequisite-Types.html
 #
 #  28 Mar 24         - Initial version - macmpi
+#  06 May 24			- Fixed include path for Darwin - MT
 #
 
 CFLAGS	?=
@@ -52,7 +53,7 @@ LDFLAGS	+= -L/usr/X11R7/lib/ -R /usr/X11R7/lib
 
 .if ${OS} == "Darwin" # MacOS
 LANG 	= LANG_en
-CFLAGS	+= -I/opt/X11/include/X11/
+CFLAGS	+= -I/opt/X11/include/
 LDFLAGS += -L/opt/X11/lib/
 .endif
 
