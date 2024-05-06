@@ -60,6 +60,11 @@
   </screenshots>
 
   <releases>
+  <release version="0.14.0154" date="2024-05-06">
+    <description>
+      <p>Another bug fix and addition of shortcut keys for 'A-E' on 15C and 11C</p>
+    </description>
+  </release>
   <release version="0.14.0148" date="2024-04-19">
     <description>
       <p>Minor bug fix</p>
