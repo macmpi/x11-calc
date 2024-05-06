@@ -438,7 +438,7 @@ for Flatpak and for packaging and testing the simulators on Alpine Linux.
 
 - `Agarza/Martin HEPPERLE` for translating the help text.
 
-- `Brouhaha` for taking the time to explain the workings of vairous models.
+- `Brouhaha` for taking the time to explain the workings of various models.
 
 - `Thomas KLEMM` for his testing and debugging efforts on MacOS.
 
