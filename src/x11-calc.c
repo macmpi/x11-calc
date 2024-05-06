@@ -303,6 +303,11 @@
  * 23 Apr 24         - Separated out prototypes for error handlers - MT
  *                   - Tidied up include files and removed some (currently)
  *                     redundant code - MT
+ * 02 May 24         - Added shortcut keys for 'A-E' on 15C and 11C - MT
+ *                   - Keyboard shortcuts enabled on FreeBSD - MT
+ * 03 May 24         - Sets the abort flag and interval counter immediately
+ *                     before the main loop - MT
+ * 04 May 24         - Do not define unused switches - MT
  *
  * To Do             - Parse command line in a separate routine.
  *                   - Add verbose option.
@@ -314,8 +319,8 @@
 
 #define  NAME          "x11-calc"
 #define  VERSION       "0.14"
-#define  BUILD         "0150"
-#define  DATE          "23 Apr 24"
+#define  BUILD         "0154"
+#define  DATE          "04 May 24"
 #define  AUTHOR        "MT"
 
 #define  INTERVAL 25   /* Number of ticks to execute before updating the display */
@@ -446,7 +451,7 @@ int main(int argc, char *argv[])
    olabel *h_label[LABELS];
 #endif
 
-#if defined(__linux__) || defined(__NetBSD__)
+#if defined(__linux__) || defined(__NetBSD__) || defined(__FreeBSD__)
    okeyboard *h_keyboard;
 #endif
 
@@ -767,7 +772,7 @@ int main(int argc, char *argv[])
       i_label_resize(h_label[i_count], f_scale);
 #endif
 
-#if defined(__linux__) || defined(__NetBSD__)
+#if defined(__linux__) || defined(__NetBSD__) || defined(__FreeBSD__)
    h_keyboard = h_keyboard_create(x_display); /* Only works with Linux */
 #endif
 
@@ -792,14 +797,13 @@ int main(int argc, char *argv[])
    else
       v_read_state(h_processor, s_pathname); /* Load user specified settings */
 
-   b_abort = False;
-   i_count = 0;
-
 #if defined(SWITCHES)
    h_processor->enabled = h_switch[0]->state; /* Allow switches to be undefined if not used */
    if (SWITCHES == 2) h_processor->mode = h_switch[1]->state;
 #endif
 
+   b_abort = False;
+   i_count = 0;
    while (!b_abort) /* Main program event loop */
    {
       i_count--;
@@ -841,7 +845,7 @@ int main(int argc, char *argv[])
                h_processor->keypressed = False; /* Don't clear the status bit here!! */
             }
             break;
-#if defined(__linux__) || defined(__NetBSD__)
+#if defined(__linux__) || defined(__NetBSD__) || defined(__FreeBSD__)
          case KeyPress :
             h_key_pressed(h_keyboard, x_display, x_event.xkey.keycode, x_event.xkey.state); /* Attempts to translate a key code into a character */
             if (h_keyboard->key == (XK_BackSpace & 0x1f)) h_keyboard->key = XK_Escape & 0x1f; /* Map backspace to escape */

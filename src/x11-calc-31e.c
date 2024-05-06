@@ -30,6 +30,7 @@
  *                     for buttons and switches into two functions - MT
  * 21 Oct 23         - Updated switch parameters to accomodate a 3 position
  *                     switch - MT
+ * 04 May 24         - Do not define unused switches - MT
  *
  */
 
@@ -63,7 +64,6 @@ void v_init_switches(oswitch *h_switch[]) /* Define the switches. */
 {
    /* Define the switches. */
    h_switch[0] = h_switch_create(00000, "OFF", "", "ON ", h_alternate_font, KBD_LEFT, KBD_TOP, 2 * KEY_WIDTH + KEY_GAP, SWITCH_HEIGHT, True, MID_GREY, DARK_GREY);
-   h_switch[1] = NULL;
 }
 
 void v_init_buttons(obutton *h_button[]) {

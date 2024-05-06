@@ -102,6 +102,7 @@
 #                      in  top  makefile  to prevent concurrent compiles of
 #                      same  common  files.  Make  is  still  parallelizing
 #                      submakes calls which do the real work. - macmpi
+#  29 Apr 24         - Improve  parallel  make  performance  -  macmpi
 #
 
 PROGRAM		=  x11-calc
@@ -114,7 +115,7 @@ IMG		= img
 
 # Files to be backed up (and the current date).
 
-_files		= `ls makefile makefile.*.[0-9] $(SRC)/makefile $(SRC)/makefile.common $(SRC)/makefile.linux $(SRC)/makefile.bsd $(SRC)/makefile.osf1 $(SRC)/makefile.*.[0-9] 2>/dev/null || true`
+_files		= `ls makefile makefile.*.[0-9] $(SRC)/makefile $(SRC)/makefile.all $(SRC)/makefile.linux $(SRC)/makefile.bsd $(SRC)/makefile.osf1 $(SRC)/makefile.*.[0-9] 2>/dev/null || true`
 _source		= `ls $(SRC)/*.c $(SRC)/*.c.[0-9] $(SRC)/*.h $(SRC)/*.h.[0-9] $(SRC)/*.in $(SRC)/*.in.[0-9] 2>/dev/null || true`
 _data		= `ls $(ROM)/$(PROGRAM)*.rom $(ROM)/$(PROGRAM)*.rom.[0-9] $(PRG)/$(PROGRAM)*.dat $(PRG)/$(PROGRAM)*.dat.[0-9] 2>/dev/null || true`
 _images		= `ls $(SRC)/*.ico $(SRC)/*.ico.[0-9] $(SRC)/*.png $(SRC)/*.png.[0-9] $(SRC)/*.svg $(SRC)/*.svg.[0-9] $(IMG)/*.png $(IMG)/*.png.[0-9] 2>/dev/null || true`
@@ -145,8 +146,6 @@ MENU		= hp35 hp21 hp25c hp29c hp31e hp32e hp33c hp34c hp10c hp11c hp12c hp15c hp
 
 .PHONY: backup clean install
 
-.NOTPARALLEL: $(MODELS)
-
 all: $(MODELS) $(PROGRAM)
 
 classic: $(_classic) $(PROGRAM)
@@ -160,10 +159,13 @@ spice: $(_spice) $(PROGRAM)
 voyager: $(_voyager) $(PROGRAM)
 
 # Base per-model compile target:
-.DEFAULT:
+$(MODELS): common
 	@_model="`echo "$@" | sed 's/hp//'`"; \
 	cd $(SRC); \
 	$(MAKE) -s MODEL=$$_model all
+
+common:
+	@cd $(SRC); $(MAKE) -s common
 
 $(PROGRAM): $(BIN)/$(PROGRAM)
 
