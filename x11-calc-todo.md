@@ -26,6 +26,10 @@
 
 - [ ] Allow user to resize the window at runtime (scroll wheel?).
 
+- [ ] Finish debugging HP10 instruction set.
+
+- [ ] Add logic for a  separate 'PIK chip' and move printer code.
+
 - [ ] Add new button styles for HP67 and HP1x.
 
 - [ ] Implement  different styles of digit (to allow for different  decimal
@@ -35,16 +39,13 @@
 
 - [ ] Translate README.
 
-- [ ] Finish debugging HP10 instruction set.
-
 - [ ] Move VMS make script to top level directory.
 
 - [ ] Implement the display decoder as a separate 'chip'.
 
-- [ ] Add logic for a  separate 'PIK chip' and move printer code.
+- [ ] Expand tilde (~) in filenames.
 
-- [ ] Expand ~ in path.
-      https://stackoverflow.com/questions/40128376/how-to-expand-tilde-in-path
+  [https://stackoverflow.com/questions/40128376/how-to-expand-tilde-in-path]::
 
 - [ ] Add HP19C.
 
