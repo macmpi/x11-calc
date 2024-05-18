@@ -385,10 +385,6 @@ pre-compiled binary package from [Flathub](https://flathub.org/apps/io.github.mi
 
 - Keyboard test is successful but these models do not pass the self-test.
 
-##### HP 29C
-
-- All 30 registers have continuous memory.
-
 ##### HP 37E
 
 - Fails self-test.
@@ -426,21 +422,23 @@ on Xwayland the window manager does not handle this correctly.
 ### Acknowledgements <sup>[Back to Top](#top)</sup>
 
 There are almost certainly some names I've missed off this list but without
-the help and encouragement from a multiple it is unlikely that this project
-would have happened at all or that it would got as far as it has.
+the help and encouragement from several members of the calculator community
+it is unlikely that this project would have happened at all or that I would
+have managed to get as far as I have.
 
-- `Teenix` for convincing me that it was possible in the first place and help
-since (at least I think I glad he did).
+- `Teenix` for convincing me that it was possible in the first place.
 
-- `Teenix/Panamatik` for their excellent simulators from which I was able to
-figure out most of what should happen when each instruction is executed.
+- `Teenix` and `Panamatik` for their excellent simulators from which I was able
+to figure out most of what should happen when each instruction is executed.
 
 - `Agarza` for providing the details of the voyager displays.
 
-- `Macmpi` for completely rewriting the makefiles creating a Flatpak package  the simulator
-for Flatpak and for packaging and testing the simulators on Alpine Linux.
+- `Macmpi` for completely rewriting the makefiles and packaging the simulator
+for Flatpak.
 
-- `Agarza/Martin HEPPERLE` for translating the help text.
+- `Macmpi` for packaging and testing the simulators on Alpine Linux
+
+- `Agarza` and `Martin HEPPERLE` for translating the help text.
 
 - `Brouhaha` for taking the time to explain the workings of various models.
 
