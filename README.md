@@ -158,11 +158,11 @@ If you install the simulator on most modern desktops it should create a new
 menu entry that will start the launcher script by default. When invoked for
 the first time this will prompt you to select the default simulator as well
 as any additional command line options.  These selections will be saved and
-used in future.
+the selected simulator will become the new default.
 
-On some desktop environments it is also possible to right click on the menu
-icon which will display a sub-menu that will allow you to select a specific
-model directly as well as change the default model and options.
+When using some desktop environments (like GNOME and KDE) it is possible to
+access a sub-menu that will allow you to select a specific model as well as
+change the default settings by right clicking on the menu icon.
 
 #### Keyboard Shortcuts
 
@@ -217,6 +217,12 @@ saved in the hidden data file.
 For  models with a 'sliding' On/Off switch clicking on the switch will turn
 the simulator on or off, but if when switching off you hold down the switch
 down for two seconds the program will exit.
+
+#### Window Size
+
+The size of the simulator window can be adjusted from the command line with
+the `--zoom ZOOM` option, where the value for ZOOM can be in the range zero
+to four (0-4).
 
 #### Debugging
 
