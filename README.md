@@ -83,6 +83,8 @@ Tru64 Unix.
 
 The simulator has been successfully compiled and tested on:
 
+   - Alpine 3.20, gcc 13.2.1, x64 + arm64
+
    - Alpine 3.19, gcc 13.2.1, x64 + arm64
 
    - Debian 12 (Bookworm), clang 14.0.6, x64 + arm64
@@ -375,7 +377,12 @@ make DESTDIR=/tmp/staging install
 ### Using a pre-compiled package <sup>[Back to Top](#top)</sup>
 
 If you don't want to download an compile the sources yourself you can use a
-pre-compiled binary package from [Flathub](https://flathub.org/apps/io.github.mike632t.x11-calc) using Flatpak.
+pre-compiled binary package compatible with most distros from [Flathub](https://flathub.org/apps/io.github.mike632t.x11-calc) using Flatpak.
+
+A native binary package is also available on Alpine Linux 3.20 release.\
+If x11 is not already installed, add it as standalone (`setup-xorg-base`) or together with a standard desktop (`setup-desktop`).\
+Make sure `community` repo is enabled and then install with `apk add x11-calc`.\
+To leverage GUI for setup, install `apk add zenity`. Optional program saves may be installed with `apk add x11-calc-prg`.
 
 <a id="issues"></a>
 ### Known Issues <sup>[Back to Top](#top)</sup>
